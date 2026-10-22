@@ -45,7 +45,7 @@ assumptions. Any disagreement should be raised before planning begins.
 
 ---
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 — Fresh Developer Onboarding (Priority: P1)
 
@@ -81,7 +81,8 @@ seconds. This story delivers a working local system with zero pre-existing knowl
    **Then** the database schema is automatically created via versioned migrations (no manual SQL
    required).
 
-**Test Plan** *(Principle 3 — required; tests must be written before or with code)*:
+**Test Plan** _(Principle 3 — required; tests must be written before or with code)_:
+
 - Unit: Config validation module — test every required variable missing, wrong type, and wrong
   format independently.
 - Integration: Start the Docker Compose stack in CI; hit `/health`; assert JSON structure and
@@ -126,7 +127,8 @@ merge without additional intervention.
 6. **Given** a PR where all checks pass, **When** the CI pipeline completes, **Then** all status
    checks are green and the PR is mergeable.
 
-**Test Plan** *(Principle 3 — required)*:
+**Test Plan** _(Principle 3 — required)_:
+
 - Unit: N/A — this story tests the CI pipeline itself.
 - Integration: GitHub Actions workflow test matrix — one job per failure category as described
   above; each job MUST be verified to fail on a synthetic bad input and pass on a clean input.
@@ -171,7 +173,8 @@ across all log lines for the same request. Submit a request with a simulated sen
 5. **Given** an unhandled exception occurs, **When** it is logged, **Then** the stack trace is
    included as a structured field, but no sensitive variables from the call stack are exposed.
 
-**Test Plan** *(Principle 3 — required)*:
+**Test Plan** _(Principle 3 — required)_:
+
 - Unit: Logger redaction module — assert `[REDACTED]` for every known sensitive key pattern;
   assert JSON validity; assert requestId propagation through async context.
 - Integration: Start the app in test mode; fire requests with sensitive headers; parse log output
@@ -200,7 +203,7 @@ across all log lines for the same request. Submit a request with a simulated sen
 
 ---
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -242,7 +245,7 @@ across all log lines for the same request. Submit a request with a simulated sen
 - **FR-015**: A `CONTRIBUTING.md` MUST document the branching convention, commit message
   convention, and the speckit workflow required before writing any production code.
 
-### Key Entities *(include if feature involves data)*
+### Key Entities _(include if feature involves data)_
 
 - **User**: Represents a registered user account. At this stage contains only identity and
   authentication fields. Key attributes: `id` (UUID), `email` (unique string), `password_hash`
@@ -255,7 +258,7 @@ across all log lines for the same request. Submit a request with a simulated sen
 
 ---
 
-## Accessibility & Localisation *(mandatory — Principle 6)*
+## Accessibility & Localisation _(mandatory — Principle 6)_
 
 - **A11Y-001**: The `/health` endpoint and any developer-facing HTML error pages MUST be keyboard-
   navigable (not applicable — these are JSON endpoints with no HTML UI in this epic).
@@ -270,7 +273,7 @@ across all log lines for the same request. Submit a request with a simulated sen
 
 ---
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 

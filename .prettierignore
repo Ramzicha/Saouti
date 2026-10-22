@@ -8,3 +8,5 @@ test-results/
 pnpm-lock.yaml
 package-lock.json
 src/lib/db/migrations/
+.agent/
+.specify/

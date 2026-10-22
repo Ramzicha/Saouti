@@ -12,7 +12,10 @@ export async function runMigrations(): Promise<void> {
     await client.query('SELECT pg_advisory_lock($1)', [ADVISORY_LOCK_ID]);
     logger.info('Advisory lock acquired. Executing migrations...');
 
-    const migrationsFolder = path.resolve(process.cwd(), 'src/lib/db/migrations');
+    const migrationsFolder = path.resolve(
+      process.cwd(),
+      'src/lib/db/migrations',
+    );
     await migrate(db, { migrationsFolder });
 
     logger.info('Database migrations applied successfully.');

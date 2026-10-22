@@ -8,12 +8,12 @@
 
 ## Prerequisites
 
-| Tool | Minimum version | Check |
-|------|----------------|-------|
-| Git | 2.40+ | `git --version` |
-| Docker | 24.0+ (with Compose v2) | `docker --version` && `docker compose version` |
-| pnpm | 9.0+ | `pnpm --version` |
-| Node.js | 20 LTS | `node --version` |
+| Tool    | Minimum version         | Check                                          |
+| ------- | ----------------------- | ---------------------------------------------- |
+| Git     | 2.40+                   | `git --version`                                |
+| Docker  | 24.0+ (with Compose v2) | `docker --version` && `docker compose version` |
+| pnpm    | 9.0+                    | `pnpm --version`                               |
+| Node.js | 20 LTS                  | `node --version`                               |
 
 > **Windows developers**: Use WSL 2. All commands below are for the WSL 2 shell.
 > Run `wsl --install` from PowerShell (Admin) if not already set up.
@@ -74,6 +74,7 @@ docker compose up
 ```
 
 This starts four services:
+
 - **app** — Next.js web application on port `3000`
 - **worker** — Background job worker (no public port)
 - **db** — PostgreSQL 16 on port `5432`
@@ -102,8 +103,8 @@ Expected output:
   "version": "0.1.0",
   "services": {
     "database": { "status": "ok", "latencyMs": 3 },
-    "queue":    { "status": "ok", "latencyMs": 1 },
-    "worker":   { "status": "ok", "lastHeartbeatAt": "2026-10-22T22:43:55.000Z" }
+    "queue": { "status": "ok", "latencyMs": 1 },
+    "worker": { "status": "ok", "lastHeartbeatAt": "2026-10-22T22:43:55.000Z" }
   }
 }
 ```
@@ -154,13 +155,13 @@ docker compose down -v
 
 ## Common Issues
 
-| Symptom | Cause | Fix |
-|---------|-------|-----|
-| `ENCRYPTION_KEY must be a 64-character hex string` at startup | `.env` has a short or missing key | Run `openssl rand -hex 32` and paste the result |
-| `database: { "status": "error" }` | PostgreSQL not ready yet | Wait 10 s and retry; or check `docker compose logs db` |
-| `worker: { "status": "unknown" }` after 30 s | Worker has not processed a heartbeat | Check `docker compose logs worker` for connection errors |
-| Port 5432 already in use | Local PostgreSQL is running | Stop local PostgreSQL or change `DB_PORT` in `docker-compose.yml` |
-| pnpm install fails | Wrong Node.js version | Ensure Node.js 20 LTS: `nvm use 20` |
+| Symptom                                                       | Cause                                | Fix                                                               |
+| ------------------------------------------------------------- | ------------------------------------ | ----------------------------------------------------------------- |
+| `ENCRYPTION_KEY must be a 64-character hex string` at startup | `.env` has a short or missing key    | Run `openssl rand -hex 32` and paste the result                   |
+| `database: { "status": "error" }`                             | PostgreSQL not ready yet             | Wait 10 s and retry; or check `docker compose logs db`            |
+| `worker: { "status": "unknown" }` after 30 s                  | Worker has not processed a heartbeat | Check `docker compose logs worker` for connection errors          |
+| Port 5432 already in use                                      | Local PostgreSQL is running          | Stop local PostgreSQL or change `DB_PORT` in `docker-compose.yml` |
+| pnpm install fails                                            | Wrong Node.js version                | Ensure Node.js 20 LTS: `nvm use 20`                               |
 
 ---
 

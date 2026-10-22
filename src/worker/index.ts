@@ -1,7 +1,11 @@
 import { runMigrations } from '@/lib/db/migrate';
 import { pool } from '@/lib/db/client';
 import { saoutiQueue, redisConnection } from '@/lib/queue/client';
-import { createWorker, recordHeartbeat, workerRedisConnection } from '@/lib/queue/worker';
+import {
+  createWorker,
+  recordHeartbeat,
+  workerRedisConnection,
+} from '@/lib/queue/worker';
 import { logger } from '@/lib/logger';
 
 async function startWorker() {

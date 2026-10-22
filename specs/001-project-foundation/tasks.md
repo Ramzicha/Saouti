@@ -81,7 +81,7 @@ start in correct order.
 
 - [x] T027 [US1] Create `src/app/layout.tsx`: minimal root layout (`<html lang="en"><body>{children}</body></html>`), no styling yet
 - [x] T028 [US1] Create `src/app/page.tsx`: placeholder returning `<main><p>Saouti</p></main>` (no redirect — keeps the route valid for the build step)
-- [x] T029 [US1] Create `src/app/api/health/route.ts`: `GET` Route Handler that probes (a) DB: `SELECT 1` via `db.execute(sql\`SELECT 1\`)` with 2 s timeout; (b) Queue: `saoutiQueue.client.ping()` with 2 s timeout; (c) Worker heartbeat: read Redis key `saouti:worker:heartbeat` — if value is within last 60 s, status `"ok"`, else `"unknown"`. Aggregate: `"ok"` only if all three are `"ok"`. Return `200` or `503` per `contracts/health.openapi.yaml`. Log the probe using `logger` with `requestId` from `getRequestId()`. Do NOT log sensitive headers.
+- [x] T029 [US1] Create `src/app/api/health/route.ts`: `GET` Route Handler that probes (a) DB: `SELECT 1` via `db.execute(sql\`SELECT 1\`)`with 2 s timeout; (b) Queue:`saoutiQueue.client.ping()`with 2 s timeout; (c) Worker heartbeat: read Redis key`saouti:worker:heartbeat`— if value is within last 60 s, status`"ok"`, else `"unknown"`. Aggregate: `"ok"`only if all three are`"ok"`. Return `200`or`503`per`contracts/health.openapi.yaml`. Log the probe using `logger`with`requestId`from`getRequestId()`. Do NOT log sensitive headers.
 - [x] T030 [US1] Create `src/worker/index.ts`: worker entrypoint — call `runMigrations()` first, then `createWorker()`. Enqueue a `health-check` job every 30 s using `saoutiQueue.add("health-check", {}, { repeat: { every: 30000 } })`. Log worker start with `logger`. Handle `SIGTERM`/`SIGINT` for graceful shutdown (close Worker, drain queue, close pool).
 - [x] T031 [US1] Add `pino-http` middleware to Next.js: create `src/middleware.ts` (Next.js middleware) that generates a UUID v4 request ID via `crypto.randomUUID()`, sets it as `x-request-id` response header, and seeds `requestContext` via `runWithRequestId`. Use `pino-http` in the health route handler or a shared wrapper function.
 - [x] T032 [US1] Create `docker-compose.yml` with four services: `db` (postgres:16-alpine, healthcheck `pg_isready -U saouti`, volume `pgdata`), `redis` (redis:7-alpine, healthcheck `redis-cli ping`), `app` (build target `app`, `depends_on: db/redis service_healthy`, env from `.env`, port `3000:3000`, volume mount `./src:/app/src` for hot reload), `worker` (build target `worker`, same depends_on, no public ports). Define named volumes `pgdata` and `redis-data`.
@@ -129,7 +129,7 @@ no sensitive values in plain text. Developers can trace any request end-to-end b
 
 ### Implementation for User Story 3
 
-- [x] T043 [US3] Extend `src/lib/logger.ts` with `pino-http` integration: export `httpLogger` = `pinoHttp({ logger, genReqId: () => crypto.randomUUID(), customSuccessMessage: (req, res) => \`${req.method} ${req.url} ${res.statusCode}\`, customErrorMessage: (req, res, err) => \`${req.method} ${req.url} ${res.statusCode} — ${err.message}\` })`. Ensure request ID from `genReqId` is stored into `requestContext` via `runWithRequestId` so it propagates to all downstream log calls.
+- [x] T043 [US3] Extend `src/lib/logger.ts` with `pino-http` integration: export `httpLogger` = `pinoHttp({ logger, genReqId: () => crypto.randomUUID(), customSuccessMessage: (req, res) => \`${req.method} ${req.url} ${res.statusCode}\`, customErrorMessage: (req, res, err) => \`${req.method} ${req.url} ${res.statusCode} — ${err.message}\` })`. Ensure request ID from `genReqId`is stored into`requestContext`via`runWithRequestId` so it propagates to all downstream log calls.
 - [x] T044 [US3] Update `src/app/api/health/route.ts` to attach `pino-http` / retrieve request ID: at top of handler call `getRequestId()` and add `requestId` to every `logger.info()`/`logger.error()` call in the handler. Ensure no probe error object dumps a connection string.
 - [x] T045 [US3] Extend `src/worker/index.ts` log calls: every BullMQ Worker event (`active`, `completed`, `failed`, `stalled`) MUST log `{ jobId, jobName, requestId: getRequestId() }` — with no `data` payload field. On `failed` event, log `err.message` and `err.name` but NOT `err.stack` in production (`NODE_ENV === "production"`).
 - [x] T046 [US3] Create `src/lib/logger.ts` production serialiser override: add `serializers: { err: pino.stdSerializers.err }` and a custom `req` serialiser that removes `req.headers.authorization`, `req.headers["x-api-key"]`, and `req.headers.cookie` before logging (belt-and-suspenders on top of `redact`).
@@ -144,27 +144,27 @@ no sensitive values in plain text. Developers can trace any request end-to-end b
 
 ### Security & Privacy (Principle 2)
 
-- [ ] T047 [P] Security review: grep `src/` for any `process.env.` access outside `src/lib/config.ts` — fix any found instances to import `config` instead
-- [ ] T048 [P] Security review: grep `src/` and `tests/` for `console.log` — replace all with `logger.*` calls
-- [ ] T049 Prompt-injection check: confirm `src/app/api/health/route.ts` does not include any user-supplied input in its response body (health route is safe by construction — document this)
+- [x] T047 [P] Security review: grep `src/` for any `process.env.` access outside `src/lib/config.ts` — fix any found instances to import `config` instead
+- [x] T048 [P] Security review: grep `src/` and `tests/` for `console.log` — replace all with `logger.*` calls
+- [x] T049 Prompt-injection check: confirm `src/app/api/health/route.ts` does not include any user-supplied input in its response body (health route is safe by construction — document this)
 
 ### Accessibility & Localisation (Principle 6)
 
-- [ ] T050 [P] I18N: confirm no hardcoded user-facing strings exist in `src/app/` (only the placeholder `<p>Saouti</p>` in `page.tsx` — annotate with a `// TODO(i18n)` comment for the next epic)
-- [ ] T051 [P] A11Y: the `/health` endpoint is JSON-only — document in `contracts/health.openapi.yaml` that it has no HTML surface and is therefore exempt from WCAG checks
+- [x] T050 [P] I18N: confirm no hardcoded user-facing strings exist in `src/app/` (only the placeholder `<p>Saouti</p>` in `page.tsx` — annotate with a `// TODO(i18n)` comment for the next epic)
+- [x] T051 [P] A11Y: the `/health` endpoint is JSON-only — document in `contracts/health.openapi.yaml` that it has no HTML surface and is therefore exempt from WCAG checks
 
 ### Quality Gates (Principle 8)
 
-- [ ] T052 [P] Lint — run `pnpm lint` and `pnpm exec prettier --check .` on all files; fix all violations
-- [ ] T053 [P] Type-check — run `pnpm type-check`; resolve all TS errors
-- [ ] T054 All test suites pass: `pnpm test` (unit, 80%/90% thresholds) and `pnpm test:e2e` (health + log assertions)
-- [ ] T055 Production build succeeds: `pnpm build` exits 0; `docker compose build` exits 0 for both `app` and `worker` targets
-- [ ] T056 Run quickstart.md validation: follow each step in `specs/001-project-foundation/quickstart.md` from a freshly cloned directory; record any step that fails and fix it
+- [x] T052 [P] Lint — run `pnpm lint` and `pnpm exec prettier --check .` on all files; fix all violations
+- [x] T053 [P] Type-check — run `pnpm type-check`; resolve all TS errors
+- [x] T054 All test suites pass: `pnpm test` (unit, 80%/90% thresholds) and `pnpm test:e2e` (health + log assertions)
+- [x] T055 Production build succeeds: `pnpm build` exits 0; `docker compose build` exits 0 for both `app` and `worker` targets
+- [x] T056 Run quickstart.md validation: follow each step in `specs/001-project-foundation/quickstart.md` from a freshly cloned directory; record any step that fails and fix it
 
 ### Documentation
 
-- [ ] T057 [P] Update `README.md` with actual pnpm commands confirmed working during T056 validation
-- [ ] T058 [P] Add `GEMINI.md` badge/link to `README.md` pointing to constitution and CONTRIBUTING guide
+- [x] T057 [P] Update `README.md` with actual pnpm commands confirmed working during T056 validation
+- [x] T058 [P] Add `GEMINI.md` badge/link to `README.md` pointing to constitution and CONTRIBUTING guide
 
 ---
 
@@ -236,6 +236,7 @@ T047, T048, T050, T051, T052, T053 all touch different files
 ### Parallel Team Strategy
 
 With two developers after Foundation is complete:
+
 - **Developer A**: Phase 3 (US1 — Docker, health route, config validation)
 - **Developer B**: Phase 4 (US2 — CI pipeline, Gitleaks, coverage thresholds)
 - Both merge to feature branch; then Developer A continues with Phase 5 (US3)

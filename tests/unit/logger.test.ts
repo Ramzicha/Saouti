@@ -40,7 +40,10 @@ describe('Structured & Redacted Logging (logger.ts)', () => {
         },
       });
 
-      testLogger.info({ [fieldName]: 'secret-plain-text-value-1234' }, 'Testing redaction');
+      testLogger.info(
+        { [fieldName]: 'secret-plain-text-value-1234' },
+        'Testing redaction',
+      );
 
       expect(loggedOutput.length).toBeGreaterThan(0);
       const parsed = JSON.parse(loggedOutput);
@@ -120,4 +123,3 @@ describe('Structured & Redacted Logging (logger.ts)', () => {
     }
   });
 });
-

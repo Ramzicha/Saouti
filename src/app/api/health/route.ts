@@ -8,12 +8,18 @@ import { runWithRequestId, getRequestId } from '@/lib/request-context';
 
 export const dynamic = 'force-dynamic';
 
-async function withTimeout<T>(promise: Promise<T>, timeoutMs: number, errorMessage: string): Promise<T> {
+async function withTimeout<T>(
+  promise: Promise<T>,
+  timeoutMs: number,
+  errorMessage: string,
+): Promise<T> {
   let timer: NodeJS.Timeout;
   const timeoutPromise = new Promise<never>((_, reject) => {
     timer = setTimeout(() => reject(new Error(errorMessage)), timeoutMs);
   });
-  return Promise.race([promise, timeoutPromise]).finally(() => clearTimeout(timer));
+  return Promise.race([promise, timeoutPromise]).finally(() =>
+    clearTimeout(timer),
+  );
 }
 
 async function probeHealth() {
@@ -35,21 +41,29 @@ async function probeHealth() {
   // 1. Probe Database
   const dbStart = Date.now();
   try {
-    await withTimeout(db.execute(sql`SELECT 1`), 2000, 'Database query timed out after 2000ms');
+    await withTimeout(
+      db.execute(sql`SELECT 1`),
+      2000,
+      'Database query timed out after 2000ms',
+    );
     dbLatency = Date.now() - dbStart;
-  } catch (err: any) {
+  } catch (err: unknown) {
     dbStatus = 'error';
-    dbError = err.message || 'Database probe failed';
+    dbError = err instanceof Error ? err.message : 'Database probe failed';
   }
 
   // 2. Probe Queue (Redis)
   const queueStart = Date.now();
   try {
-    await withTimeout(redisConnection.ping(), 2000, 'Redis ping timed out after 2000ms');
+    await withTimeout(
+      redisConnection.ping(),
+      2000,
+      'Redis ping timed out after 2000ms',
+    );
     queueLatency = Date.now() - queueStart;
-  } catch (err: any) {
+  } catch (err: unknown) {
     queueStatus = 'error';
-    queueError = err.message || 'Queue probe failed';
+    queueError = err instanceof Error ? err.message : 'Queue probe failed';
   }
 
   // 3. Probe Worker Heartbeat
@@ -73,12 +87,14 @@ async function probeHealth() {
     } else {
       workerStatus = 'unknown';
     }
-  } catch (err: any) {
+  } catch (err: unknown) {
     workerStatus = 'error';
-    workerError = err.message || 'Failed to read worker heartbeat';
+    workerError =
+      err instanceof Error ? err.message : 'Failed to read worker heartbeat';
   }
 
-  const isHealthy = dbStatus === 'ok' && queueStatus === 'ok' && workerStatus === 'ok';
+  const isHealthy =
+    dbStatus === 'ok' && queueStatus === 'ok' && workerStatus === 'ok';
   const overallStatus = isHealthy ? 'ok' : 'degraded';
   const statusCode = isHealthy ? 200 : 503;
   const totalDuration = Date.now() - startTime;

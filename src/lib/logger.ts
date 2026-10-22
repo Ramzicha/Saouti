@@ -36,22 +36,26 @@ const pinoOptions: pino.LoggerOptions = {
   },
   serializers: {
     err: pino.stdSerializers.err,
-    req: (req: any) => {
-      if (!req) return req;
-      const headers = { ...req.headers };
+    req: (req: unknown) => {
+      if (!req || typeof req !== 'object') return req;
+      const requestObj = req as Record<string, unknown>;
+      const rawHeaders =
+        requestObj.headers && typeof requestObj.headers === 'object'
+          ? (requestObj.headers as Record<string, unknown>)
+          : {};
+      const headers = { ...rawHeaders };
       if (headers.authorization) headers.authorization = '[REDACTED]';
       if (headers['x-api-key']) headers['x-api-key'] = '[REDACTED]';
       if (headers.cookie) headers.cookie = '[REDACTED]';
       return {
-        id: req.id,
-        method: req.method,
-        url: req.url,
+        id: requestObj.id,
+        method: requestObj.method,
+        url: requestObj.url,
         headers,
       };
     },
   },
 };
-
 
 export const logger =
   config.NODE_ENV === 'development'
@@ -70,11 +74,12 @@ export const logger =
 
 export const httpLogger = pinoHttp({
   logger,
-  genReqId: (req) => (req.headers['x-request-id'] as string) || crypto.randomUUID(),
-  customSuccessMessage: (req, res) => `${req.method} ${req.url} ${res.statusCode}`,
-  customErrorMessage: (req, res, err) => `${req.method} ${req.url} ${res.statusCode} — ${err.message}`,
-  reqIdHeader: 'x-request-id',
+  genReqId: (req) =>
+    (req.headers['x-request-id'] as string) || crypto.randomUUID(),
+  customSuccessMessage: (req, res) =>
+    `${req.method} ${req.url} ${res.statusCode}`,
+  customErrorMessage: (req, res, err) =>
+    `${req.method} ${req.url} ${res.statusCode} — ${err.message}`,
 });
 
 export default logger;
-

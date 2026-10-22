@@ -11,9 +11,10 @@ export const workerRedisConnection = new IORedis(config.REDIS_URL, {
   lazyConnect: true,
 });
 
-workerRedisConnection.on('error', (err: any) => {
+workerRedisConnection.on('error', (err: unknown) => {
   if (config.NODE_ENV !== 'test') {
-    logger.warn({ err: err.message }, 'Worker Redis connection event');
+    const message = err instanceof Error ? err.message : String(err);
+    logger.warn({ err: message }, 'Worker Redis connection event');
   }
 });
 

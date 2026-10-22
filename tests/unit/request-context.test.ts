@@ -16,7 +16,8 @@ describe('AsyncLocalStorage Request Context (request-context.ts)', () => {
   });
 
   it('isolates request IDs across concurrent asynchronous operations', async () => {
-    const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+    const sleep = (ms: number) =>
+      new Promise((resolve) => setTimeout(resolve, ms));
 
     const taskA = runWithRequestId('id-alpha', async () => {
       await sleep(15);

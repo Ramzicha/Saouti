@@ -9,9 +9,10 @@ export const redisConnection = new IORedis(config.REDIS_URL, {
   lazyConnect: true,
 });
 
-redisConnection.on('error', (err: any) => {
+redisConnection.on('error', (err: unknown) => {
   if (config.NODE_ENV !== 'test') {
-    logger.warn({ err: err.message }, 'Redis queue connection event');
+    const message = err instanceof Error ? err.message : String(err);
+    logger.warn({ err: message }, 'Redis queue connection event');
   }
 });
 

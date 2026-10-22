@@ -1,7 +1,9 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Health API Endpoint (/health)', () => {
-  test('returns 200 OK with healthy service statuses when dependencies are active', async ({ request }) => {
+  test('returns 200 OK with healthy service statuses when dependencies are active', async ({
+    request,
+  }) => {
     const response = await request.get('/health', {
       headers: {
         Authorization: 'Bearer test-secret-token-to-verify-redaction',

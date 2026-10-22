@@ -15,6 +15,7 @@ the decisions are traceable and reversible.
 **Decision**: Next.js 15 with the App Router, TypeScript in `strict` mode.
 
 **Rationale**:
+
 - App Router enables React Server Components (RSCs), streaming, and file-system-based
   routing with layouts — all relevant to Saouti's real-time SSE agent display.
 - TypeScript `strict` enforces `null` checks, `noImplicitAny`, and all narrow type
@@ -25,13 +26,14 @@ the decisions are traceable and reversible.
   stack minimal (Principle 7 — Simplicity).
 
 **Alternatives considered**:
-- *Remix*: Good SSR story and form handling. No built-in RSC streaming. Smaller
+
+- _Remix_: Good SSR story and form handling. No built-in RSC streaming. Smaller
   ecosystem. Rejected because App Router's streaming primitives are a better fit for
   the live agent timeline.
-- *SvelteKit*: Lighter bundle. Would require the team to context-switch to Svelte
+- _SvelteKit_: Lighter bundle. Would require the team to context-switch to Svelte
   syntax and a different mental model for state and reactivity. Rejected on team
   cost grounds.
-- *Plain Express + React (Vite)*: Maximum control. Rejected because it requires
+- _Plain Express + React (Vite)_: Maximum control. Rejected because it requires
   assembling SSR, routing, middleware, and build tooling manually — unnecessary
   complexity for a focused product (Principle 7).
 
@@ -42,6 +44,7 @@ the decisions are traceable and reversible.
 **Decision**: Tailwind CSS v4 (or latest stable v3 if v4 is pre-release at build time).
 
 **Rationale**:
+
 - Utility-first CSS eliminates dead styles by default (PurgeCSS built in), keeping
   the production bundle small.
 - CSS custom properties can be layered on top for the design-system tokens (light/dark
@@ -51,10 +54,11 @@ the decisions are traceable and reversible.
 - Widely used with Next.js; community examples and plugins are abundant.
 
 **Alternatives considered**:
-- *Vanilla CSS (CSS Modules)*: Maximum explicitness. Rejected because it requires
+
+- _Vanilla CSS (CSS Modules)_: Maximum explicitness. Rejected because it requires
   manually building every utility (gap, flex, grid variants) which is slower and
   produces more per-component boilerplate.
-- *CSS-in-JS (styled-components, Emotion)*: Good co-location. Rejected because
+- _CSS-in-JS (styled-components, Emotion)_: Good co-location. Rejected because
   runtime CSS-in-JS conflicts with RSC (server components cannot use React context or
   hooks at render time).
 
@@ -65,6 +69,7 @@ the decisions are traceable and reversible.
 **Decision**: Drizzle ORM with SQL migration files (Drizzle Kit).
 
 **Rationale**:
+
 - Drizzle is the only TypeScript ORM that generates plain SQL migration files as its
   primary artifact. This means migrations are readable, diffable, and auditable —
   critical for a security-conscious project.
@@ -75,13 +80,14 @@ the decisions are traceable and reversible.
 - Full PostgreSQL support including `uuid`, `pgTable`, `timestamp with time zone`.
 
 **Alternatives considered**:
-- *Prisma*: More mature, excellent DX, schema-first. Rejected because: (a) migrations
+
+- _Prisma_: More mature, excellent DX, schema-first. Rejected because: (a) migrations
   are stored as binary `.db` state — harder to audit; (b) Prisma Client adds a
   significant bundle size; (c) the Prisma runtime is a separate binary, adding a
   deployment dependency.
-- *TypeORM*: Older, decorator-based. Rejected for decorator-heavy syntax that
+- _TypeORM_: Older, decorator-based. Rejected for decorator-heavy syntax that
   conflicts with `strict` TypeScript and adds runtime complexity.
-- *Knex (query builder only)*: No type safety on results. Rejected because
+- _Knex (query builder only)_: No type safety on results. Rejected because
   type-unsafe query results are a source of runtime bugs and security issues.
 
 ---
@@ -91,6 +97,7 @@ the decisions are traceable and reversible.
 **Decision**: BullMQ backed by Redis (via `ioredis`).
 
 **Rationale**:
+
 - BullMQ provides durable, retryable, prioritised queues with built-in concurrency
   controls — exactly what a multi-agent pipeline needs to avoid quota exhaustion.
 - Job lifecycle events (waiting, active, completed, failed, stalled) map directly to
@@ -100,12 +107,13 @@ the decisions are traceable and reversible.
   minimal (Principle 7).
 
 **Alternatives considered**:
-- *PostgreSQL-backed queue (pg-boss, Graphile Worker)*: Eliminates the Redis
+
+- _PostgreSQL-backed queue (pg-boss, Graphile Worker)_: Eliminates the Redis
   dependency. Rejected at this stage because: (a) high-frequency polling creates
   unnecessary DB load; (b) BullMQ's event bus is a closer fit to the SSE streaming
   architecture; (c) Redis is already planned. May be revisited if Redis proves
   operationally costly.
-- *RabbitMQ*: More powerful routing. Rejected because it adds significant
+- _RabbitMQ_: More powerful routing. Rejected because it adds significant
   infrastructure complexity with no benefit for Saouti's simple queue topology
   (Principle 7).
 
@@ -116,6 +124,7 @@ the decisions are traceable and reversible.
 **Decision**: pnpm with a workspace root `package.json`.
 
 **Rationale**:
+
 - pnpm's hard-link store dramatically reduces `node_modules` disk usage and install
   time — important for Docker layer caching in CI.
 - Strict symlink layout prevents phantom dependency access (a package can only import
@@ -124,9 +133,10 @@ the decisions are traceable and reversible.
   types package for web and worker) without changing the package manager.
 
 **Alternatives considered**:
-- *npm*: Default. Rejected because `node_modules` hoisting allows phantom dependency
+
+- _npm_: Default. Rejected because `node_modules` hoisting allows phantom dependency
   access and installs are slower in CI.
-- *Yarn Berry (PnP)*: Similar benefits to pnpm. Rejected because Plug'n'Play
+- _Yarn Berry (PnP)_: Similar benefits to pnpm. Rejected because Plug'n'Play
   compatibility with all Next.js internal dependencies has historically been fragile.
 
 ---
@@ -136,6 +146,7 @@ the decisions are traceable and reversible.
 **Decision**: Vitest with `@vitest/coverage-v8`.
 
 **Rationale**:
+
 - Vitest uses Vite's transform pipeline, so it runs TypeScript tests natively without
   a separate `ts-jest` setup — faster cold starts in CI.
 - API-compatible with Jest (`describe`, `it`, `expect`, `vi.fn()`) so developers do
@@ -145,10 +156,11 @@ the decisions are traceable and reversible.
 - Coverage via V8 is zero-config and produces accurate branch coverage reports.
 
 **Alternatives considered**:
-- *Jest*: Mature, widely documented. Rejected because its CJS-first transformer
+
+- _Jest_: Mature, widely documented. Rejected because its CJS-first transformer
   requires extra config for ESM, and the compile step (`ts-jest` or `babel-jest`)
   adds latency.
-- *Mocha + Chai*: More composable. Rejected because it requires assembling multiple
+- _Mocha + Chai_: More composable. Rejected because it requires assembling multiple
   packages (runner, assertion, coverage) compared to Vitest's batteries-included
   approach.
 
@@ -159,6 +171,7 @@ the decisions are traceable and reversible.
 **Decision**: Playwright (`@playwright/test`) for end-to-end tests.
 
 **Rationale**:
+
 - Playwright supports Chromium, Firefox, and WebKit from a single install, and runs
   in headless mode in CI without extra display server setup.
 - Built-in support for accessibility assertions (`toHaveAccessibleName`,
@@ -169,11 +182,12 @@ the decisions are traceable and reversible.
 - Trace viewer makes debugging CI failures fast without running locally.
 
 **Alternatives considered**:
-- *Cypress*: Mature, excellent developer experience. Rejected because: (a) Firefox
+
+- _Cypress_: Mature, excellent developer experience. Rejected because: (a) Firefox
   and Safari support was added late and is not first-class; (b) Cypress runs in a
   browser iframe, complicating SSE testing; (c) its module format conflicts with
   the ESM-first project setup.
-- *Puppeteer*: Chromium only. Rejected for limited browser coverage.
+- _Puppeteer_: Chromium only. Rejected for limited browser coverage.
 
 ---
 
@@ -184,6 +198,7 @@ the decisions are traceable and reversible.
 `prettier-plugin-tailwindcss` (class sorting).
 
 **Rationale**:
+
 - ESLint with the Next.js plugin (`eslint-config-next`) catches common React, Next.js,
   and accessibility issues (via `eslint-plugin-jsx-a11y`).
 - TypeScript ESLint (`@typescript-eslint/eslint-plugin`) enforces type-aware rules
@@ -193,11 +208,12 @@ the decisions are traceable and reversible.
   and the only format in ESLint 9+.
 
 **Alternatives considered**:
-- *Biome*: Single tool for lint + format. Considered seriously. Rejected because its
+
+- _Biome_: Single tool for lint + format. Considered seriously. Rejected because its
   TypeScript type-aware rules are still maturing and it does not yet replicate all
   `@typescript-eslint` rules needed for strict safety (particularly
   `no-floating-promises` and `no-misused-promises`).
-- *Rome (legacy)*: Discontinued; irrelevant.
+- _Rome (legacy)_: Discontinued; irrelevant.
 
 ---
 
@@ -208,6 +224,7 @@ with four services: `app` (Next.js), `worker` (standalone Node.js process), `db`
 (PostgreSQL 16), `redis` (Redis 7).
 
 **Rationale**:
+
 - A single `docker-compose.yml` at the repository root starts all four services with
   one command (`docker compose up`), satisfying FR-002 and SC-001.
 - Volume mounts for `node_modules` and the pnpm store are declared explicitly to
@@ -218,9 +235,10 @@ with four services: `app` (Next.js), `worker` (standalone Node.js process), `db`
   uses `tsx watch` (or `ts-node --watch`) to reload on TypeScript changes.
 
 **Alternatives considered**:
-- *Local install (no Docker)*: Requires developers to install PostgreSQL and Redis
+
+- _Local install (no Docker)_: Requires developers to install PostgreSQL and Redis
   manually — rejected for reproducibility reasons and the Windows/WSL 2 target.
-- *Dev Containers (VS Code)*: Good DX inside VS Code. Rejected as the sole approach
+- _Dev Containers (VS Code)_: Good DX inside VS Code. Rejected as the sole approach
   because it forces VS Code as the IDE; Docker Compose works in any environment.
 
 ---
@@ -231,6 +249,7 @@ with four services: `app` (Next.js), `worker` (standalone Node.js process), `db`
 `.github/workflows/ci.yml`, using matrix jobs where possible.
 
 **Rationale**:
+
 - GitHub Actions is the natural CI for a GitHub-hosted repository. No external
   service required.
 - Service containers (`postgres`, `redis`) can be declared directly in the workflow,
@@ -240,10 +259,11 @@ with four services: `app` (Next.js), `worker` (standalone Node.js process), `db`
   step for secret scanning without a paid service.
 
 **Alternatives considered**:
-- *GitLab CI*: Excellent pipelines. Rejected because the repository is on GitHub.
-- *CircleCI / Buildkite*: Powerful. Rejected for unnecessary external service cost
+
+- _GitLab CI_: Excellent pipelines. Rejected because the repository is on GitHub.
+- _CircleCI / Buildkite_: Powerful. Rejected for unnecessary external service cost
   and setup overhead for a solo project.
-- *Pre-commit hooks only*: Insufficient — client-side hooks can be skipped. CI is
+- _Pre-commit hooks only_: Insufficient — client-side hooks can be skipped. CI is
   the required enforcement gate (Principle 8).
 
 ---
@@ -253,6 +273,7 @@ with four services: `app` (Next.js), `worker` (standalone Node.js process), `db`
 **Decision**: Zod v3 for environment variable schema validation at startup.
 
 **Rationale**:
+
 - Zod's `.parse()` throws a structured `ZodError` that lists every failing field with
   a human-readable message — satisfying FR-003 and SC-003 precisely.
 - The schema doubles as the TypeScript type for the config object (via `z.infer<>`),
@@ -263,13 +284,14 @@ with four services: `app` (Next.js), `worker` (standalone Node.js process), `db`
   variables are always strings.
 
 **Alternatives considered**:
-- *`t3-env`*: A thin wrapper around Zod for Next.js env validation. Considered.
+
+- _`t3-env`_: A thin wrapper around Zod for Next.js env validation. Considered.
   Rejected at this stage because it couples the validation to the Next.js config
   pipeline, making it harder to reuse in the standalone worker process.
-- *`envalid`*: Older, purpose-built. Rejected because the types it produces are
+- _`envalid`_: Older, purpose-built. Rejected because the types it produces are
   not as ergonomic as Zod's inferred types, and Zod is a more useful general-purpose
   tool already planned for the stack.
-- *Manual checks (`if (!process.env.FOO) throw`)*: No schema, no structured errors.
+- _Manual checks (`if (!process.env.FOO) throw`)_: No schema, no structured errors.
   Rejected.
 
 ---
@@ -280,6 +302,7 @@ with four services: `app` (Next.js), `worker` (standalone Node.js process), `db`
 middleware.
 
 **Rationale**:
+
 - Pino is the fastest Node.js logger that produces JSON output natively — no
   serialisation overhead from `JSON.stringify` calls scattered in the codebase.
 - Pino's built-in `redact` option takes a list of object-path patterns
@@ -292,12 +315,13 @@ middleware.
   development without changing production behaviour.
 
 **Alternatives considered**:
-- *Winston*: Highly configurable. Rejected because its redaction support requires
+
+- _Winston_: Highly configurable. Rejected because its redaction support requires
   a custom transport or transformer; there is no declarative redaction path that
   applies at serialisation time.
-- *Bunyan*: JSON output, similar philosophy to Pino. Rejected because it is
+- _Bunyan_: JSON output, similar philosophy to Pino. Rejected because it is
   significantly slower than Pino and its last major release was 2021 (maintenance mode).
-- *`console.log` + manual `JSON.stringify`*: No structure, no redaction, no
+- _`console.log` + manual `JSON.stringify`_: No structure, no redaction, no
   request ID propagation. Rejected.
 
 ---
@@ -308,6 +332,7 @@ middleware.
 seeded by `pino-http`'s `genReqId` option (UUID v4).
 
 **Rationale**:
+
 - `AsyncLocalStorage` propagates context through `await`, callbacks, and event
   emitters without passing an explicit context argument through every function.
 - No additional library needed — built into Node.js 16+.
@@ -315,9 +340,10 @@ seeded by `pino-http`'s `genReqId` option (UUID v4).
   the async chain, satisfying FR-009 and US3 acceptance scenario 1.
 
 **Alternatives considered**:
-- *`cls-hooked`*: Older zone-based approach. Deprecated in favour of
+
+- _`cls-hooked`_: Older zone-based approach. Deprecated in favour of
   `AsyncLocalStorage`. Rejected.
-- *Explicit context threading*: Passing `ctx.requestId` to every function. Rejected
+- _Explicit context threading_: Passing `ctx.requestId` to every function. Rejected
   because it pollutes every function signature and is easy to miss.
 
 ---
@@ -329,6 +355,7 @@ Next.js routes, `src/worker/` for the worker entrypoint, `src/lib/` for shared
 utilities (logger, config, db, queue adapters).
 
 **Rationale**:
+
 - Shared TypeScript types, the Drizzle schema, the config module, and the logger are
   used by both the web app and the worker. A single root package avoids duplication
   and keeps `import` paths simple.
@@ -338,11 +365,12 @@ utilities (logger, config, db, queue adapters).
   separate `tsx` entrypoint. Both share `src/lib/**` at the source level.
 
 **Alternatives considered**:
-- *pnpm workspace with `packages/web` and `packages/worker`*: Clean separation.
+
+- _pnpm workspace with `packages/web` and `packages/worker`_: Clean separation.
   Rejected at this stage as premature complexity when there is a single developer
   and the codebase is small. Can be extracted later without breaking external
   consumers.
-- *Two separate repositories*: Maximum isolation. Rejected because it makes atomic
+- _Two separate repositories_: Maximum isolation. Rejected because it makes atomic
   changes to shared types require coordinated PRs across repos.
 
 ---
@@ -352,6 +380,7 @@ utilities (logger, config, db, queue adapters).
 **Decision**: `gitleaks` (open-source, MIT licence) via GitHub Actions step.
 
 **Rationale**:
+
 - Gitleaks detects secrets in commits and diffs using a built-in ruleset covering
   AWS keys, Google API keys, generic tokens, private keys, and JWT patterns.
 - Runs as a Docker container in CI — no installation step needed.
@@ -360,11 +389,12 @@ utilities (logger, config, db, queue adapters).
 - Free and open-source (Principle 7).
 
 **Alternatives considered**:
-- *TruffleHog (OSS)*: Also a good option, entropy-based and regex-based. Equivalent
+
+- _TruffleHog (OSS)_: Also a good option, entropy-based and regex-based. Equivalent
   capability to Gitleaks for this use case. Either would satisfy the requirement.
   Gitleaks chosen for its simpler GitHub Actions integration (`gitleaks/gitleaks-action`).
-- *GitHub Advanced Security (secret scanning)*: Native, no config needed. Rejected
+- _GitHub Advanced Security (secret scanning)_: Native, no config needed. Rejected
   because it is not available on private repositories without GitHub Enterprise or a
   paid plan.
-- *`detect-secrets` (Yelp)*: Python-based, requires pip in CI. Rejected for adding
+- _`detect-secrets` (Yelp)_: Python-based, requires pip in CI. Rejected for adding
   a Python runtime dependency to a Node.js project.

@@ -20,12 +20,16 @@ function validateCiConfig() {
 
   // Check coverage flag in test job
   if (!content.includes('test:coverage') && !content.includes('--coverage')) {
-    throw new Error("CI 'test' job does not enforce coverage (missing test:coverage or --coverage)");
+    throw new Error(
+      "CI 'test' job does not enforce coverage (missing test:coverage or --coverage)",
+    );
   }
 
   // Check secret scan uses gitleaks
   if (!content.includes('gitleaks/gitleaks-action')) {
-    throw new Error("CI 'secret-scan' job does not use gitleaks/gitleaks-action");
+    throw new Error(
+      "CI 'secret-scan' job does not use gitleaks/gitleaks-action",
+    );
   }
 
   // Check pnpm setup / cache
@@ -33,7 +37,9 @@ function validateCiConfig() {
     throw new Error('CI workflow is missing pnpm setup or caching');
   }
 
-  console.log('✅ CI workflow validation passed: all 5 jobs and security checks verified.');
+  console.log(
+    '✅ CI workflow validation passed: all 5 jobs and security checks verified.',
+  );
 }
 
 try {

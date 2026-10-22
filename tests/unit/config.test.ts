@@ -1,11 +1,20 @@
-import { describe, it, expect, vi, beforeEach, afterEach, type MockInstance } from 'vitest';
+import {
+  describe,
+  it,
+  expect,
+  vi,
+  beforeEach,
+  afterEach,
+  type MockInstance,
+} from 'vitest';
 import { parseConfig, configSchema } from '@/lib/config';
 
 describe('Configuration Validation (config.ts)', () => {
   const validEnv = {
     DATABASE_URL: 'postgresql://saouti:secret@localhost:5432/saouti',
     REDIS_URL: 'redis://localhost:6379',
-    ENCRYPTION_KEY: '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef',
+    ENCRYPTION_KEY:
+      '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef',
     SESSION_SECRET: 'a_very_long_session_secret_for_testing_purposes_only',
     PORT: '3000',
     NODE_ENV: 'test',
@@ -17,7 +26,9 @@ describe('Configuration Validation (config.ts)', () => {
 
   beforeEach(() => {
     exitMock = vi.spyOn(process, 'exit').mockImplementation((() => {}) as any);
-    stderrMock = vi.spyOn(process.stderr, 'write').mockImplementation((() => true) as any);
+    stderrMock = vi
+      .spyOn(process.stderr, 'write')
+      .mockImplementation((() => true) as any);
   });
 
   afterEach(() => {
@@ -48,19 +59,17 @@ describe('Configuration Validation (config.ts)', () => {
     expect(config.LOG_LEVEL).toBe('info');
   });
 
-  it.each([
-    'DATABASE_URL',
-    'REDIS_URL',
-    'ENCRYPTION_KEY',
-    'SESSION_SECRET',
-  ])('calls process.exit(1) when required field %s is missing', (field) => {
-    const invalidEnv = { ...validEnv };
-    delete (invalidEnv as any)[field];
+  it.each(['DATABASE_URL', 'REDIS_URL', 'ENCRYPTION_KEY', 'SESSION_SECRET'])(
+    'calls process.exit(1) when required field %s is missing',
+    (field) => {
+      const invalidEnv = { ...validEnv };
+      delete (invalidEnv as any)[field];
 
-    parseConfig(invalidEnv, true);
-    expect(exitMock).toHaveBeenCalledWith(1);
-    expect(stderrMock).toHaveBeenCalled();
-  });
+      parseConfig(invalidEnv, true);
+      expect(exitMock).toHaveBeenCalledWith(1);
+      expect(stderrMock).toHaveBeenCalled();
+    },
+  );
 
   it('fails with descriptive error message when ENCRYPTION_KEY is too short', () => {
     const invalidEnv = {
@@ -70,7 +79,9 @@ describe('Configuration Validation (config.ts)', () => {
     const result = configSchema.safeParse(invalidEnv);
     expect(result.success).toBe(false);
     if (!result.success) {
-      const issue = result.error.issues.find((i) => i.path[0] === 'ENCRYPTION_KEY');
+      const issue = result.error.issues.find(
+        (i) => i.path[0] === 'ENCRYPTION_KEY',
+      );
       expect(issue?.message).toContain('64-character hexadecimal string');
     }
   });
@@ -83,7 +94,9 @@ describe('Configuration Validation (config.ts)', () => {
     const result = configSchema.safeParse(invalidEnv);
     expect(result.success).toBe(false);
     if (!result.success) {
-      const issue = result.error.issues.find((i) => i.path[0] === 'ENCRYPTION_KEY');
+      const issue = result.error.issues.find(
+        (i) => i.path[0] === 'ENCRYPTION_KEY',
+      );
       expect(issue?.message).toContain('64-character hexadecimal string');
     }
   });
@@ -96,7 +109,9 @@ describe('Configuration Validation (config.ts)', () => {
     const result = configSchema.safeParse(invalidEnv);
     expect(result.success).toBe(false);
     if (!result.success) {
-      const issue = result.error.issues.find((i) => i.path[0] === 'SESSION_SECRET');
+      const issue = result.error.issues.find(
+        (i) => i.path[0] === 'SESSION_SECRET',
+      );
       expect(issue?.message).toContain('at least 32 characters');
     }
   });
@@ -106,4 +121,3 @@ describe('Configuration Validation (config.ts)', () => {
     expect(() => parseConfig(invalidEnv, false)).toThrow();
   });
 });
-
