@@ -33,6 +33,7 @@ export function parseConfig(
         process.stderr.write(`  - ${issue.path.join('.')}: ${issue.message}\n`);
       }
       process.exit(1);
+      return undefined as unknown as Config;
     }
     throw result.error;
   }
@@ -40,10 +41,20 @@ export function parseConfig(
   return Object.freeze(result.data);
 }
 
-// In test environment, do not automatically exit process if env vars are being mocked by tests
-const isTestEnv = process.env.NODE_ENV === 'test' || process.env.VITEST;
+// In test environment, do not automatically exit process or throw if env vars are being mocked by tests
+const isTestEnv = process.env.NODE_ENV === 'test' || Boolean(process.env.VITEST);
+
+const fallbackTestEnv: Record<string, string> = {
+  DATABASE_URL: 'postgresql://saouti:secret@localhost:5432/saouti',
+  REDIS_URL: 'redis://localhost:6379',
+  ENCRYPTION_KEY: '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef',
+  SESSION_SECRET: 'test_session_secret_at_least_32_characters_long_for_safety',
+  PORT: '3000',
+  NODE_ENV: 'test',
+  LOG_LEVEL: 'info',
+};
 
 export const config: Config = parseConfig(
-  process.env,
+  isTestEnv ? { ...fallbackTestEnv, ...process.env } : process.env,
   !isTestEnv,
 );
