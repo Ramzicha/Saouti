@@ -1,4 +1,5 @@
 import pino from 'pino';
+import pinoHttp from 'pino-http';
 import { config } from '@/lib/config';
 
 export const REDACT_KEYS = [
@@ -51,6 +52,7 @@ const pinoOptions: pino.LoggerOptions = {
   },
 };
 
+
 export const logger =
   config.NODE_ENV === 'development'
     ? pino(
@@ -66,4 +68,13 @@ export const logger =
       )
     : pino(pinoOptions);
 
+export const httpLogger = pinoHttp({
+  logger,
+  genReqId: (req) => (req.headers['x-request-id'] as string) || crypto.randomUUID(),
+  customSuccessMessage: (req, res) => `${req.method} ${req.url} ${res.statusCode}`,
+  customErrorMessage: (req, res, err) => `${req.method} ${req.url} ${res.statusCode} — ${err.message}`,
+  reqIdHeader: 'x-request-id',
+});
+
 export default logger;
+

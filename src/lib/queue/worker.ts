@@ -8,6 +8,13 @@ export const WORKER_HEARTBEAT_KEY = 'saouti:worker:heartbeat';
 
 export const workerRedisConnection = new IORedis(config.REDIS_URL, {
   maxRetriesPerRequest: null,
+  lazyConnect: true,
+});
+
+workerRedisConnection.on('error', (err: any) => {
+  if (config.NODE_ENV !== 'test') {
+    logger.warn({ err: err.message }, 'Worker Redis connection event');
+  }
 });
 
 export async function recordHeartbeat(): Promise<void> {

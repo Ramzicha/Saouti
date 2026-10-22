@@ -100,4 +100,10 @@ describe('Configuration Validation (config.ts)', () => {
       expect(issue?.message).toContain('at least 32 characters');
     }
   });
+
+  it('throws ZodError when exitOnError is false', () => {
+    const invalidEnv = { ...validEnv, DATABASE_URL: 'not-a-valid-url' };
+    expect(() => parseConfig(invalidEnv, false)).toThrow();
+  });
 });
+
