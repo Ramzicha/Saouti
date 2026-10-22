@@ -41,6 +41,7 @@ Every feature or epic MUST complete the speckit pipeline before writing producti
 ## 4. Test Coverage & Quality Gates
 
 Per **Principle 3 (Test Discipline)** and **Principle 8 (Quality Gates)**:
+
 - **TDD Requirement**: Write test tasks before or alongside implementation tasks.
 - **Thresholds**:
   - Global line coverage: **≥ 80%**
@@ -61,13 +62,17 @@ Per **Principle 3 (Test Discipline)** and **Principle 8 (Quality Gates)**:
   3. Linear commit history (no merge commits, squash & merge or rebase).
 
 ### Re-running Failed Checks
+
 If a transient failure occurs in GitHub Actions:
+
 - Navigate to the **Actions** tab on GitHub.
 - Select the failed workflow run.
 - Click **Re-run all jobs** or select **Re-run failed jobs**.
 
 ### Handling Secret Scan Failures
+
 If Gitleaks detects a leaked credential:
+
 ```text
 Finding:     ghp_1234567890abcdefghijklmnopqrstuvwxyz
 Secret:      ghp_1234567890abcdefghijklmnopqrstuvwxyz
@@ -75,6 +80,7 @@ RuleID:      github-pat
 File:        src/lib/temp.ts
 Line:        12
 ```
+
 1. **Never commit real secrets**. Replace with an environment variable (`process.env.MY_SECRET`) documented in `.env.example`.
 2. Remove the secret from code and amend/rebase your commit history:
    ```bash
@@ -90,9 +96,9 @@ Line:        12
 ## 6. Pull Request Checklist
 
 Before submitting a PR:
+
 - [ ] PR title references the feature branch (e.g., `001-project-foundation: Implement core setup`)
 - [ ] All tests pass locally (`pnpm test:coverage`)
 - [ ] Type check passes (`pnpm type-check`)
 - [ ] Linting and formatting pass (`pnpm lint && pnpm format:check`)
 - [ ] No secrets or personal API keys are committed or present in log statements
-

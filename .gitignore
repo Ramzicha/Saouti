@@ -12,6 +12,8 @@ node_modules/
 out/
 build/
 dist/
+*.tsbuildinfo
+tsconfig.tsbuildinfo
 
 # Testing and coverage
 coverage/

@@ -1,7 +1,7 @@
-import { dirname } from "path";
-import { fileURLToPath } from "url";
-import { FlatCompat } from "@eslint/eslintrc";
-import prettierConfig from "eslint-config-prettier";
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
+import { FlatCompat } from '@eslint/eslintrc';
+import prettierConfig from 'eslint-config-prettier';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -11,22 +11,22 @@ const compat = new FlatCompat({
 });
 
 const eslintConfig = [
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
+  ...compat.extends('next/core-web-vitals', 'next/typescript'),
   prettierConfig,
   {
     rules: {
-      "no-console": ["warn", { allow: ["warn", "error"] }],
+      'no-console': ['warn', { allow: ['warn', 'error'] }],
     },
   },
   {
     ignores: [
-      ".next/*",
-      "dist/*",
-      "coverage/*",
-      "playwright-report/*",
-      "test-results/*",
-      "node_modules/*",
-      "src/lib/db/migrations/*",
+      '.next/*',
+      'dist/*',
+      'coverage/*',
+      'playwright-report/*',
+      'test-results/*',
+      'node_modules/*',
+      'src/lib/db/migrations/*',
     ],
   },
 ];
