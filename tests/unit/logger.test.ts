@@ -93,7 +93,7 @@ describe('Structured & Redacted Logging (logger.ts)', () => {
     expect(parsed.password).toBe('[REDACTED]');
   });
 
-  it('exercises default logger export and custom request serializers', async () => {
+  it('exercises default logger export, req serializer branches, and httpLogger hooks', async () => {
     const { logger, httpLogger } = await import('@/lib/logger');
     expect(logger).toBeDefined();
     expect(httpLogger).toBeDefined();
@@ -102,7 +102,15 @@ describe('Structured & Redacted Logging (logger.ts)', () => {
     const reqSerializer = (logger as any)[pino.symbols.serializersSym]?.req;
     if (reqSerializer) {
       expect(reqSerializer(null)).toBeNull();
+      expect(reqSerializer(undefined)).toBeUndefined();
+      expect(reqSerializer('not-an-object')).toBe('not-an-object');
 
+      // Request without headers
+      const mockReqNoHeaders = { id: 'req-0', method: 'GET', url: '/health' };
+      const resNoHeaders = reqSerializer(mockReqNoHeaders);
+      expect(resNoHeaders.headers).toEqual({});
+
+      // Request with sensitive headers
       const mockReq = {
         id: 'req-1',
         method: 'POST',
@@ -120,6 +128,32 @@ describe('Structured & Redacted Logging (logger.ts)', () => {
       expect(serialized.headers['x-api-key']).toBe('[REDACTED]');
       expect(serialized.headers.cookie).toBe('[REDACTED]');
       expect(serialized.headers['content-type']).toBe('application/json');
+    }
+
+    // Exercise httpLogger message generators directly if accessible
+    const options = (httpLogger as any).opts;
+    if (options?.customSuccessMessage) {
+      const msg = options.customSuccessMessage(
+        { method: 'GET', url: '/api/health' },
+        { statusCode: 200 },
+      );
+      expect(msg).toBe('GET /api/health 200');
+    }
+    if (options?.customErrorMessage) {
+      const msg = options.customErrorMessage(
+        { method: 'GET', url: '/api/health' },
+        { statusCode: 500 },
+        new Error('Failed'),
+      );
+      expect(msg).toBe('GET /api/health 500 — Failed');
+    }
+    if (options?.genReqId) {
+      const id1 = options.genReqId({
+        headers: { 'x-request-id': 'custom-id-999' },
+      });
+      expect(id1).toBe('custom-id-999');
+      const id2 = options.genReqId({ headers: {} });
+      expect(typeof id2).toBe('string');
     }
   });
 });

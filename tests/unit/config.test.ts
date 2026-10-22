@@ -59,6 +59,15 @@ describe('Configuration Validation (config.ts)', () => {
     expect(config.LOG_LEVEL).toBe('info');
   });
 
+  it('exercises default parameters of parseConfig with valid environment', () => {
+    const oldEnv = { ...process.env };
+    Object.assign(process.env, validEnv);
+    const result = parseConfig();
+    expect(result).toBeDefined();
+    expect(result.DATABASE_URL).toBe(validEnv.DATABASE_URL);
+    process.env = oldEnv;
+  });
+
   it.each(['DATABASE_URL', 'REDIS_URL', 'ENCRYPTION_KEY', 'SESSION_SECRET'])(
     'calls process.exit(1) when required field %s is missing',
     (field) => {

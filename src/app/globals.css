@@ -1,0 +1,106 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 
+ * Saouti Design System Color Tokens (Version 0.2)
+ * Source of truth: docs/design-system/design.md
+ */
+
+:root[data-theme='dark'] {
+  --bg: #0b0b0c;
+  --surface: #131314;
+  --surface-raised: #1b1b1d;
+  --border: #2a2a2d;
+  --text: #f3f3f1;
+  --muted: #a0a0a6;
+  --accent: #ff6b9d;
+  --accent-soft: #3a1626;
+  --on-accent: #1a0a10;
+  --button: #f3f3f1;
+  --on-button: #0b0b0c;
+  --success: #4ade80;
+  --danger: #ff7a7a;
+  --agent-writer: #ff6b9d;
+  --agent-critic: #f5b73d;
+  --agent-art: #6db2ff;
+  --agent-profiler: #4ade80;
+  --agent-strategist: #b69cff;
+}
+
+:root[data-theme='light'] {
+  --bg: #fafaf8;
+  --surface: #ffffff;
+  --surface-raised: #f2f1ed;
+  --border: #e3e1db;
+  --text: #141415;
+  --muted: #5c5c62;
+  --accent: #c21858;
+  --accent-soft: #fce4ee;
+  --on-accent: #ffffff;
+  --button: #141415;
+  --on-button: #fafaf8;
+  --success: #15803d;
+  --danger: #b42318;
+  --agent-writer: #c21858;
+  --agent-critic: #92580a;
+  --agent-art: #1d4ed8;
+  --agent-profiler: #15803d;
+  --agent-strategist: #6d28d9;
+}
+
+/* Base resets & typography */
+html {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-inter), var(--font-arabic), system-ui, sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 
+ * Accessibility: Global Focus Ring
+ * Principle 6 & Design System §8: 2px --accent outline with 2px offset on :focus-visible.
+ */
+:focus-visible {
+  outline: 2px solid var(--accent) !important;
+  outline-offset: 2px !important;
+}
+
+/* Continuous pulse animation for active working-agent */
+@keyframes agentPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.35);
+    opacity: 0.45;
+  }
+}
+
+.animate-agent-pulse {
+  animation: agentPulse 1.2s ease-in-out infinite;
+}
+
+/* 
+ * Accessibility: Motion Compliance
+ * Design System §7: Everything animated stops under prefers-reduced-motion: reduce
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .animate-agent-pulse {
+    animation: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}

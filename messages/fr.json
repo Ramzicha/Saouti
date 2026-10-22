@@ -1,0 +1,51 @@
+{
+  "App": {
+    "title": "Saouti",
+    "description": "Plateforme de rédaction professionnelle assistée par IA"
+  },
+  "Nav": {
+    "newRun": "Nouvelle publication",
+    "drafts": "Brouillons",
+    "settings": "Paramètres",
+    "recentRuns": "Publications récentes",
+    "emptyRecent": "Aucune publication récente."
+  },
+  "Composer": {
+    "placeholder": "Que souhaitez-vous partager aujourd'hui ?",
+    "send": "Envoyer la publication",
+    "disclaimer": "Saouti rédige avec l'IA. Relisez chaque publication avant de la publier."
+  },
+  "Theme": {
+    "switcher": "Sélecteur de thème",
+    "light": "Thème clair",
+    "dark": "Thème sombre",
+    "system": "Thème système"
+  },
+  "Locale": {
+    "switcher": "Sélecteur de langue",
+    "en": "English",
+    "fr": "Français",
+    "ar": "العربية"
+  },
+  "Agent": {
+    "writer": "Rédacteur",
+    "critic": "Critique",
+    "art": "Directeur artistique",
+    "profiler": "Profileur",
+    "strategist": "Stratège",
+    "working": "En cours",
+    "next": "Suivant",
+    "paused": "En pause, nouvel essai dans {seconds} s",
+    "failed": "Échoué"
+  },
+  "Design": {
+    "title": "Galerie du Design System Saouti",
+    "tokens": "Jetons de design",
+    "typography": "Échelle typographique",
+    "buttons": "Boutons",
+    "chips": "Puces & Étiquettes",
+    "composer": "Zone de composition",
+    "agentPresence": "Présence de l'agent & Chronologie",
+    "cards": "Cartes & Aperçu de publication"
+  }
+}

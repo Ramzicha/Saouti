@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SaoutiAgentTimelineEvent",
+  "description": "Schema for events that feed the Agent Presence Chip and Activity Timeline",
+  "type": "object",
+  "required": ["id", "agent", "action", "state"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for this execution step"
+    },
+    "agent": {
+      "type": "string",
+      "enum": ["writer", "critic", "art", "profiler", "strategist"],
+      "description": "The active AI agent assigned to this step"
+    },
+    "action": {
+      "type": "string",
+      "description": "Lowercase action description (e.g. 'drafting the LinkedIn version')"
+    },
+    "state": {
+      "type": "string",
+      "enum": ["done", "working", "waiting", "paused", "failed"],
+      "description": "Current lifecycle status of the step"
+    },
+    "durationSeconds": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Duration in seconds for steps in 'done' state"
+    },
+    "pauseCountdownSeconds": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Countdown seconds remaining for steps in 'paused' state"
+    },
+    "failureReason": {
+      "type": "string",
+      "description": "Plain-language failure explanation for steps in 'failed' state"
+    },
+    "sourceAgent": {
+      "type": "string",
+      "enum": ["writer", "critic", "art", "profiler", "strategist"],
+      "description": "Originating agent in case of feedback/revisions (e.g. Critic to Writer)"
+    }
+  },
+  "additionalProperties": false
+}

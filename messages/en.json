@@ -1,0 +1,51 @@
+{
+  "App": {
+    "title": "Saouti",
+    "description": "AI-assisted professional voice generation platform"
+  },
+  "Nav": {
+    "newRun": "New run",
+    "drafts": "Drafts",
+    "settings": "Settings",
+    "recentRuns": "Recent runs",
+    "emptyRecent": "No recent runs yet."
+  },
+  "Composer": {
+    "placeholder": "What would you like to share today?",
+    "send": "Send post",
+    "disclaimer": "Saouti drafts with AI. Review every post before you publish."
+  },
+  "Theme": {
+    "switcher": "Theme switcher",
+    "light": "Light theme",
+    "dark": "Dark theme",
+    "system": "System theme"
+  },
+  "Locale": {
+    "switcher": "Language switcher",
+    "en": "English",
+    "fr": "Français",
+    "ar": "العربية"
+  },
+  "Agent": {
+    "writer": "Writer",
+    "critic": "Critic",
+    "art": "Art Director",
+    "profiler": "Profiler",
+    "strategist": "Strategist",
+    "working": "Working",
+    "next": "Next",
+    "paused": "Paused, retrying in {seconds} s",
+    "failed": "Failed"
+  },
+  "Design": {
+    "title": "Saouti Design System Gallery",
+    "tokens": "Design Tokens",
+    "typography": "Typography Scale",
+    "buttons": "Buttons",
+    "chips": "Chips & Tags",
+    "composer": "Composer",
+    "agentPresence": "Agent Presence & Timeline",
+    "cards": "Cards & Post Preview"
+  }
+}

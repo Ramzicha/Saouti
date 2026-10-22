@@ -4,6 +4,9 @@ Auto-generated from all feature plans. Last updated: 2026-10-22
 
 ## Active Technologies
 
+- TypeScript 5.7+ (strict mode, noImplicitAny, strictNullChecks, no `any`) + Next.js 15 (App Router), React 19, Tailwind CSS 3.4, `next-intl` 3.x, `@tabler/icons-react` (or `lucide-react`) for SVG icons, `clsx` + `tailwind-merge` (002-visual-foundation)
+- Client cookies (`saouti-theme`, `saouti-locale`) for zero-flash SSR persistence; no database entities needed for Epic 1 (002-visual-foundation)
+
 - TypeScript 5.x (strict) + Node.js 20 LTS (001-project-foundation)
 - Next.js 15 App Router, Tailwind CSS, Drizzle ORM, BullMQ, Pino, Zod (001-project-foundation)
 - PostgreSQL 16, Redis 7 (001-project-foundation)
@@ -106,6 +109,8 @@ redaction list catches them, but prefer not creating the field in the first plac
 Always import `config` from `src/lib/config.ts`.
 
 ## Recent Changes
+
+- 002-visual-foundation: Added TypeScript 5.7+ (strict mode, noImplicitAny, strictNullChecks, no `any`) + Next.js 15 (App Router), React 19, Tailwind CSS 3.4, `next-intl` 3.x, `@tabler/icons-react` (or `lucide-react`) for SVG icons, `clsx` + `tailwind-merge`
 
 - 001-project-foundation: Added TypeScript 5.x + Node.js 20 LTS + Next.js 15 + Drizzle + BullMQ + Pino + Zod
 
