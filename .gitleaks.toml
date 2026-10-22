@@ -1,0 +1,7 @@
+[allowlist]
+description = "Global allowlist for safe templates and tests"
+paths = [
+  '''.env.example''',
+  '''specs/001-project-foundation/quickstart.md''',
+  '''tests/unit/config.test.ts'''
+]

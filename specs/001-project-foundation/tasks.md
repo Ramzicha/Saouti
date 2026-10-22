@@ -101,14 +101,14 @@ is automatically blocked. Each failure category produces a distinct, named CI fa
 
 ### Tests for User Story 2 ⚠️ Write first — verify they FAIL before T040
 
-- [ ] T035 [P] [US2] Write CI validation script `tests/ci/validate-ci-config.ts` (run via `tsx`): parse `.github/workflows/ci.yml` and assert all 5 job names exist (`lint`, `type-check`, `test`, `build`, `secret-scan`); assert `test` job has `coverage` flag; assert `secret-scan` uses `gitleaks/gitleaks-action`; assert `pnpm` cache step present in at least one job
+- [x] T035 [P] [US2] Write CI validation script `tests/ci/validate-ci-config.ts` (run via `tsx`): parse `.github/workflows/ci.yml` and assert all 5 job names exist (`lint`, `type-check`, `test`, `build`, `secret-scan`); assert `test` job has `coverage` flag; assert `secret-scan` uses `gitleaks/gitleaks-action`; assert `pnpm` cache step present in at least one job
 
 ### Implementation for User Story 2
 
-- [ ] T036 [US2] Create `.github/workflows/ci.yml`: job `lint` — `pnpm lint` + `pnpm exec prettier --check .`; job `type-check` — `pnpm type-check`; job `test` — `pnpm test:coverage` with `postgres:16` and `redis:7` service containers (env vars from GitHub secrets); job `build` — `pnpm build`; job `secret-scan` — `gitleaks/gitleaks-action@v2` with `fail: true`. All jobs use `ubuntu-latest`, `pnpm/action-setup@v4`, `actions/setup-node@v4` with Node 20, `actions/cache` for pnpm store.
-- [ ] T037 [US2] Add `vitest.config.ts` coverage enforcement: set `coverage.thresholds.lines: 80`, `coverage.thresholds.branches: 80`. Add security-path override in `vitest.config.ts`: files matching `src/lib/config.ts` and `src/lib/logger.ts` MUST reach `branches: 90` (use `coverage.thresholds["src/lib/config.ts"]` and `coverage.thresholds["src/lib/logger.ts"]` per-file thresholds).
-- [ ] T038 [US2] Create `.gitleaks.toml` config: extend the default ruleset; add allowlist for `.env.example` (contains safe placeholder values, not real secrets); set `verbose: true` so CI output names the exact file and line on failure.
-- [ ] T039 [US2] Add branch protection documentation to `CONTRIBUTING.md`: note that `main` branch requires all CI checks to pass and at least 1 approval; document how to re-run failed checks; add example of a failing secret-scan output and how to fix it.
+- [x] T036 [US2] Create `.github/workflows/ci.yml`: job `lint` — `pnpm lint` + `pnpm exec prettier --check .`; job `type-check` — `pnpm type-check`; job `test` — `pnpm test:coverage` with `postgres:16` and `redis:7` service containers (env vars from GitHub secrets); job `build` — `pnpm build`; job `secret-scan` — `gitleaks/gitleaks-action@v2` with `fail: true`. All jobs use `ubuntu-latest`, `pnpm/action-setup@v4`, `actions/setup-node@v4` with Node 20, `actions/cache` for pnpm store.
+- [x] T037 [US2] Add `vitest.config.ts` coverage enforcement: set `coverage.thresholds.lines: 80`, `coverage.thresholds.branches: 80`. Add security-path override in `vitest.config.ts`: files matching `src/lib/config.ts` and `src/lib/logger.ts` MUST reach `branches: 90` (use `coverage.thresholds["src/lib/config.ts"]` and `coverage.thresholds["src/lib/logger.ts"]` per-file thresholds).
+- [x] T038 [US2] Create `.gitleaks.toml` config: extend the default ruleset; add allowlist for `.env.example` (contains safe placeholder values, not real secrets); set `verbose: true` so CI output names the exact file and line on failure.
+- [x] T039 [US2] Add branch protection documentation to `CONTRIBUTING.md`: note that `main` branch requires all CI checks to pass and at least 1 approval; document how to re-run failed checks; add example of a failing secret-scan output and how to fix it.
 
 **Checkpoint**: Open a test PR with a deliberate ESLint error → `lint` job fails. Revert and add a `process.env.PASSWORD = "s3cr3t"` string → `secret-scan` fails. Revert → all checks green.
 
