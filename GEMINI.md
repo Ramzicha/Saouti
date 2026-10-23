@@ -4,6 +4,9 @@ Auto-generated from all feature plans. Last updated: 2026-10-22
 
 ## Active Technologies
 
+- TypeScript 5.7+ (strict mode, noImplicitAny, strictNullChecks, no `any`) + Next.js 15 (App Router), `@google/genai` (or `@google/generative-ai`), Drizzle ORM, Zod, Node.js `crypto` (AES-256-GCM) (004-ai-provider-keys)
+- PostgreSQL 16 (`api_keys`, `usage_counters`) (004-ai-provider-keys)
+
 - TypeScript 5.7+ (strict mode, noImplicitAny, strictNullChecks, no `any`) + Next.js 15 (App Router), Drizzle ORM 0.38+, `@node-rs/argon2`, `ioredis`, `zod`, `next-intl`, `@tabler/icons-react` (003-accounts-auth)
 - PostgreSQL 16 (`users`, `sessions`, `verification_tokens`, `password_reset_tokens`), Redis 7 (sliding-window rate limiting) (003-accounts-auth)
 
@@ -112,6 +115,8 @@ redaction list catches them, but prefer not creating the field in the first plac
 Always import `config` from `src/lib/config.ts`.
 
 ## Recent Changes
+
+- 004-ai-provider-keys: Added TypeScript 5.7+ (strict mode, noImplicitAny, strictNullChecks, no `any`) + Next.js 15 (App Router), `@google/genai`, Drizzle ORM, Zod, AES-256-GCM crypto
 
 - 003-accounts-auth: Added TypeScript 5.7+ (strict mode, noImplicitAny, strictNullChecks, no `any`) + Next.js 15 (App Router), Drizzle ORM 0.38+, `@node-rs/argon2`, `ioredis`, `zod`, `next-intl`, `@tabler/icons-react`
 

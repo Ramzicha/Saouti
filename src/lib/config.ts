@@ -11,6 +11,13 @@ export const configSchema = z.object({
     message:
       'ENCRYPTION_KEY must be a 64-character hexadecimal string (32 bytes)',
   }),
+  AI_KEY_ENCRYPTION_SECRET: z
+    .string()
+    .regex(/^[0-9a-f]{64}$/, {
+      message:
+        'AI_KEY_ENCRYPTION_SECRET must be a 64-character hexadecimal string (32 bytes)',
+    })
+    .optional(),
   SESSION_SECRET: z
     .string()
     .min(32, { message: 'SESSION_SECRET must be at least 32 characters long' }),
@@ -43,7 +50,13 @@ export function parseConfig(
     throw result.error;
   }
 
-  return Object.freeze(result.data);
+  const resolvedData: Config = {
+    ...result.data,
+    AI_KEY_ENCRYPTION_SECRET:
+      result.data.AI_KEY_ENCRYPTION_SECRET || result.data.ENCRYPTION_KEY,
+  };
+
+  return Object.freeze(resolvedData);
 }
 
 // In test environment, do not automatically exit process or throw if env vars are being mocked by tests
@@ -54,6 +67,8 @@ const fallbackTestEnv: Record<string, string> = {
   DATABASE_URL: 'postgresql://saouti:secret@localhost:5432/saouti',
   REDIS_URL: 'redis://localhost:6379',
   ENCRYPTION_KEY:
+    '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef',
+  AI_KEY_ENCRYPTION_SECRET:
     '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef',
   SESSION_SECRET: 'test_session_secret_at_least_32_characters_long_for_safety',
   PORT: '3000',

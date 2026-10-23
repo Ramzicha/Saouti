@@ -4,6 +4,9 @@ import {
   varchar,
   timestamp,
   boolean,
+  text,
+  integer,
+  uniqueIndex,
 } from 'drizzle-orm/pg-core';
 import { sql, type InferSelectModel, type InferInsertModel } from 'drizzle-orm';
 
@@ -93,3 +96,76 @@ export type PasswordResetToken = InferSelectModel<typeof passwordResetTokens>;
 export type NewPasswordResetToken = InferInsertModel<
   typeof passwordResetTokens
 >;
+
+/**
+ * API Keys Table
+ * Stores encrypted AI provider credentials.
+ */
+export const apiKeys = pgTable(
+  'api_keys',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    provider: text('provider').notNull().default('gemini'),
+    encryptedKey: text('encrypted_key').notNull(),
+    nonce: text('nonce').notNull(),
+    authTag: text('auth_tag').notNull(),
+    lastFour: text('last_four').notNull(),
+    status: text('status').notNull().default('active'), // 'active' | 'invalid' | 'quota_exceeded'
+    lastValidatedAt: timestamp('last_validated_at', { withTimezone: true }),
+    createdAt: timestamp('created_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    uniqueIndex('user_provider_idx').on(table.userId, table.provider),
+  ],
+);
+
+export type ApiKey = InferSelectModel<typeof apiKeys>;
+export type NewApiKey = InferInsertModel<typeof apiKeys>;
+
+/**
+ * Usage Counters Table
+ * Aggregates daily usage statistics per user and provider.
+ */
+export const usageCounters = pgTable(
+  'usage_counters',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    provider: text('provider').notNull().default('gemini'),
+    date: text('date').notNull(), // YYYY-MM-DD
+    requestCount: integer('request_count').notNull().default(0),
+    errorCount: integer('error_count').notNull().default(0),
+    quotaErrorCount: integer('quota_error_count').notNull().default(0),
+    estimatedTokens: integer('estimated_tokens').notNull().default(0),
+    createdAt: timestamp('created_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    uniqueIndex('user_provider_date_idx').on(
+      table.userId,
+      table.provider,
+      table.date,
+    ),
+  ],
+);
+
+export type UsageCounter = InferSelectModel<typeof usageCounters>;
+export type NewUsageCounter = InferInsertModel<typeof usageCounters>;

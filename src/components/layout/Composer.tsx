@@ -8,15 +8,19 @@ import { AgentChip } from '@/components/agent/AgentChip';
 import { IconArrowUp } from '@tabler/icons-react';
 
 export interface ComposerProps {
-  initialValue?: string;
-  onSend?: (text: string, platform: string) => void;
-  className?: string;
+  initialValue?: string | undefined;
+  onSend?: ((text: string, platform: string) => void) | undefined;
+  className?: string | undefined;
+  disabled?: boolean | undefined;
+  disabledMessage?: string | undefined;
 }
 
 export function Composer({
   initialValue = '',
   onSend,
   className,
+  disabled = false,
+  disabledMessage,
 }: ComposerProps) {
   const t = useTranslations('Composer');
   const [content, setContent] = useState(initialValue);
@@ -44,9 +48,10 @@ export function Composer({
           dir="auto"
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          placeholder={t('placeholder')}
+          placeholder={disabledMessage || t('placeholder')}
           rows={3}
-          className="w-full resize-none border-none bg-transparent text-sm leading-relaxed text-text placeholder:text-muted focus:outline-none"
+          disabled={disabled}
+          className="w-full resize-none border-none bg-transparent text-sm leading-relaxed text-text placeholder:text-muted focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
         />
 
         {/* Action Row: Agent chip, platform selection chips, send button */}
@@ -63,7 +68,7 @@ export function Composer({
                 <Chip
                   key={p}
                   selected={selectedPlatform === p}
-                  onClick={() => setSelectedPlatform(p)}
+                  onClick={() => !disabled && setSelectedPlatform(p)}
                   className="min-h-[30px] px-2.5 text-xs"
                 >
                   {p}
@@ -77,7 +82,7 @@ export function Composer({
             type="submit"
             variant="icon"
             ariaLabel={t('send')}
-            disabled={!content.trim()}
+            disabled={disabled || !content.trim()}
           >
             <IconArrowUp size={20} stroke={2.5} aria-hidden="true" />
           </Button>

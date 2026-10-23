@@ -8,6 +8,7 @@ export default defineConfig({
     include: [
       'tests/unit/**/*.{test,spec}.{ts,tsx}',
       'tests/integration/**/*.{test,spec}.{ts,tsx}',
+      'tests/contract/**/*.{test,spec}.{ts,tsx}',
     ],
     setupFiles: ['./tests/unit/setup.ts'],
     coverage: {

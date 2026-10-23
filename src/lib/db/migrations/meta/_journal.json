@@ -15,6 +15,13 @@
       "when": 1792714256653,
       "tag": "0001_conscious_korvac",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792755025334,
+      "tag": "0002_simple_sinister_six",
+      "breakpoints": true
     }
   ]
 }

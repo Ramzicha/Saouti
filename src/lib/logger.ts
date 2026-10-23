@@ -25,6 +25,20 @@ export const REDACT_KEYS = [
   '*.credential',
   'databaseUrl',
   '*.databaseUrl',
+  'encryptedKey',
+  '*.encryptedKey',
+  'encrypted_key',
+  '*.encrypted_key',
+  'geminiKey',
+  '*.geminiKey',
+  'gemini_key',
+  '*.gemini_key',
+  'authTag',
+  '*.authTag',
+  'auth_tag',
+  '*.auth_tag',
+  'nonce',
+  '*.nonce',
 ];
 
 const pinoOptions: pino.LoggerOptions = {
