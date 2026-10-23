@@ -44,6 +44,16 @@ describe('AI Key Security & Validation Rules (ai-keys.test.ts)', () => {
     expect(parsed.apiKey).toBe('AIzaSyD-1234567890abcdefGhIjKlMnOpQrStU');
   });
 
+  it('strips enclosing quotes, prefixes and zero-width characters', () => {
+    const quoted = {
+      provider: 'gemini',
+      apiKey: 'GEMINI_API_KEY="AIzaSyD-1234567890abcdefGhIjKlMnOpQrStU"\u200B',
+      acknowledgedTerms: true,
+    };
+    const parsed = SaveApiKeySchema.parse(quoted);
+    expect(parsed.apiKey).toBe('AIzaSyD-1234567890abcdefGhIjKlMnOpQrStU');
+  });
+
   it('masks keys to only display last 4 characters', () => {
     const masked = maskApiKey('AIzaSyD-1234567890abcdefGhIjKlMnOpQrStU');
     expect(masked).toBe('••••••••••••••rStU');

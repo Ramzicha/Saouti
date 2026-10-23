@@ -7,9 +7,15 @@ import { AppHeader } from '@/components/layout/AppHeader';
 import { Composer } from '@/components/layout/Composer';
 import { ActivityTimeline } from '@/components/agent/ActivityTimeline';
 import { PostCard } from '@/components/ui/Card';
-import { MOCK_TIMELINE_STEPS } from '@/lib/agent-events';
 import { useRunEvents } from '@/hooks/useRunEvents';
-import { IconKey, IconChevronRight, IconUser, IconAlertTriangle } from '@tabler/icons-react';
+import {
+  IconKey,
+  IconChevronRight,
+  IconUser,
+  IconAlertTriangle,
+  IconCheck,
+  IconSparkles,
+} from '@tabler/icons-react';
 import Link from 'next/link';
 import type { GeneratedPost } from '@/../specs/006-agent-engine/contracts/agent-engine.contract';
 
@@ -164,48 +170,6 @@ export default function WorkspacePage() {
         {/* Central Workspace Canvas */}
         <main className="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
           <div className="mx-auto flex max-w-workspace flex-col gap-6 pb-12">
-            {/* Key Gatekeeper Banner */}
-            {hasKey === false && (
-              <div
-                role="alert"
-                className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-xl border border-primary/30 bg-primary/10 p-4 text-sm text-foreground"
-              >
-                <div className="flex items-center gap-2.5">
-                  <IconKey className="w-5 h-5 text-primary shrink-0" aria-hidden="true" />
-                  <span className="font-medium">{tKeys('noKeyBanner')}</span>
-                </div>
-                <Link
-                  href={`/${locale}/settings/keys`}
-                  className="inline-flex items-center gap-1 font-semibold text-xs text-primary bg-primary/15 hover:bg-primary/25 px-3 py-1.5 rounded-lg transition-colors w-fit"
-                >
-                  <span>{tKeys('addKey')}</span>
-                  <IconChevronRight className="w-3.5 h-3.5" aria-hidden="true" />
-                </Link>
-              </div>
-            )}
-
-            {/* Profile Gatekeeper Banner */}
-            {hasProfile === false && (
-              <div
-                role="alert"
-                className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-xl border border-primary/30 bg-primary/10 p-4 text-sm text-foreground"
-              >
-                <div className="flex items-center gap-2.5">
-                  <IconUser className="w-5 h-5 text-primary shrink-0" aria-hidden="true" />
-                  <span className="font-medium">
-                    Complete your Voice Profile to unlock personalized post generation.
-                  </span>
-                </div>
-                <Link
-                  href={`/${locale}/onboarding`}
-                  className="inline-flex items-center gap-1 font-semibold text-xs text-primary bg-primary/15 hover:bg-primary/25 px-3 py-1.5 rounded-lg transition-colors w-fit"
-                >
-                  <span>Start Onboarding</span>
-                  <IconChevronRight className="w-3.5 h-3.5" aria-hidden="true" />
-                </Link>
-              </div>
-            )}
-
             {/* Error Notification */}
             {runError && (
               <div
@@ -231,31 +195,119 @@ export default function WorkspacePage() {
               </p>
             </div>
 
-            {/* Live Agent Activity Timeline */}
-            <section
-              aria-labelledby="timeline-heading"
-              className="flex flex-col gap-3"
-            >
-              <div className="flex items-center justify-between">
-                <h3
-                  id="timeline-heading"
-                  className="text-xs font-medium uppercase tracking-wider text-muted"
-                >
-                  {tEngine('activityTitle')}
-                </h3>
-                {activeAgent && (
-                  <span className="text-xs font-medium text-accent">
-                    {statusText}
-                  </span>
-                )}
-              </div>
+            {/* Active Live Agent Activity Timeline (Only displayed during a generation run) */}
+            {activeRunId && events.length > 0 && (
+              <section
+                aria-labelledby="timeline-heading"
+                className="flex flex-col gap-3 rounded-2xl border border-border bg-card p-5 shadow-sm"
+              >
+                <div className="flex items-center justify-between">
+                  <h3
+                    id="timeline-heading"
+                    className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+                  >
+                    {tEngine('activityTitle')}
+                  </h3>
+                  {activeAgent && (
+                    <span className="text-xs font-medium text-primary animate-pulse">
+                      {statusText}
+                    </span>
+                  )}
+                </div>
 
-              {activeRunId && events.length > 0 ? (
                 <ActivityTimeline events={events} />
-              ) : (
-                <ActivityTimeline steps={MOCK_TIMELINE_STEPS} />
-              )}
-            </section>
+              </section>
+            )}
+
+            {/* Focus on Setup: Gemini Key & Voice Profile Cards (When idle) */}
+            {!activeRunId && (hasKey === false || hasProfile === false) && (
+              <section aria-label="Setup Steps" className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                {/* Card 1: Gemini API Key */}
+                <div className="flex flex-col justify-between rounded-2xl border border-border bg-card p-5 shadow-sm hover:border-primary/40 transition-colors">
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                        <IconKey size={20} />
+                      </div>
+                      {hasKey ? (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-xs font-medium text-emerald-600 dark:text-emerald-400">
+                          <IconCheck size={12} />
+                          Connected
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/10 px-2.5 py-0.5 text-xs font-medium text-amber-600 dark:text-amber-400">
+                          Action Required
+                        </span>
+                      )}
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-base text-foreground">1. Gemini API Key</h3>
+                      <p className="text-xs text-muted-foreground pt-1 leading-relaxed">
+                        Saouti is 100% BYOK. Add your free or paid Google Gemini key to enable autonomous writing, critique, and Imagen 3 generation.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="pt-4">
+                    <Link
+                      href={`/${locale}/settings/keys`}
+                      className="inline-flex items-center justify-center gap-1.5 w-full rounded-xl bg-primary px-4 py-2.5 text-xs font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 transition-all"
+                    >
+                      <span>{hasKey ? 'Manage Gemini Key' : 'Add Gemini API Key'}</span>
+                      <IconChevronRight size={14} />
+                    </Link>
+                  </div>
+                </div>
+
+                {/* Card 2: Voice Profile */}
+                <div className="flex flex-col justify-between rounded-2xl border border-border bg-card p-5 shadow-sm hover:border-primary/40 transition-colors">
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                        <IconUser size={20} />
+                      </div>
+                      {hasProfile ? (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-xs font-medium text-emerald-600 dark:text-emerald-400">
+                          <IconCheck size={12} />
+                          Active
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/10 px-2.5 py-0.5 text-xs font-medium text-amber-600 dark:text-amber-400">
+                          Action Required
+                        </span>
+                      )}
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-base text-foreground">2. Voice Profile</h3>
+                      <p className="text-xs text-muted-foreground pt-1 leading-relaxed">
+                        Define your target audience, core principles, vocabulary, and authentic voice samples so your posts truly sound like you.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="pt-4">
+                    <Link
+                      href={hasProfile ? `/${locale}/settings/profile` : `/${locale}/onboarding`}
+                      className="inline-flex items-center justify-center gap-1.5 w-full rounded-xl bg-primary/10 hover:bg-primary/20 text-primary px-4 py-2.5 text-xs font-semibold transition-all"
+                    >
+                      <span>{hasProfile ? 'View Voice Profile' : 'Complete Onboarding'}</span>
+                      <IconChevronRight size={14} />
+                    </Link>
+                  </div>
+                </div>
+              </section>
+            )}
+
+            {/* Ready State (When both Key and Profile are completed and idle) */}
+            {!activeRunId && hasKey === true && hasProfile === true && generatedPosts.length === 0 && (
+              <div className="rounded-2xl border border-dashed border-border bg-card/50 p-6 text-center space-y-2">
+                <div className="w-10 h-10 rounded-2xl bg-primary/10 text-primary mx-auto flex items-center justify-center">
+                  <IconSparkles size={20} />
+                </div>
+                <h3 className="font-semibold text-sm text-foreground">Your Agent Engine is Ready</h3>
+                <p className="text-xs text-muted-foreground max-w-md mx-auto">
+                  Type any topic, angle, or rough thoughts into the composer below. Your Profiler, Strategist, Writer, Critic, and Art Director will draft tailored posts.
+                </p>
+              </div>
+            )}
 
             {/* Generated Posts Section */}
             {generatedPosts.length > 0 && (
