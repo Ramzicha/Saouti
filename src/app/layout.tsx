@@ -45,8 +45,10 @@ export default async function RootLayout({
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
-      </head>
-      <body className="min-h-screen bg-bg text-text antialiased selection:bg-accent-soft selection:text-accent">
+      <body
+        className="min-h-screen bg-bg text-text antialiased selection:bg-accent-soft selection:text-accent"
+        suppressHydrationWarning
+      >
         {children}
       </body>
     </html>
