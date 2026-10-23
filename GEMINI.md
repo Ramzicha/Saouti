@@ -4,6 +4,9 @@ Auto-generated from all feature plans. Last updated: 2026-10-22
 
 ## Active Technologies
 
+- TypeScript 5.7+ (strict mode, noImplicitAny, strictNullChecks, no `any`, exactOptionalPropertyTypes) + Next.js 15 (App Router), React 19, `react-hook-form`, `@hookform/resolvers`, Drizzle ORM, Zod, `@tabler/icons-react`, `next-intl` (005-voice-profile)
+- PostgreSQL 16 (`profiles`, `voice_samples`, `platform_preferences`, `voice_profile_versions`, `profiler_sessions`) (005-voice-profile)
+
 - TypeScript 5.7+ (strict mode, noImplicitAny, strictNullChecks, no `any`) + Next.js 15 (App Router), `@google/genai` (or `@google/generative-ai`), Drizzle ORM, Zod, Node.js `crypto` (AES-256-GCM) (004-ai-provider-keys)
 - PostgreSQL 16 (`api_keys`, `usage_counters`) (004-ai-provider-keys)
 
@@ -115,6 +118,8 @@ redaction list catches them, but prefer not creating the field in the first plac
 Always import `config` from `src/lib/config.ts`.
 
 ## Recent Changes
+
+- 005-voice-profile: Added TypeScript 5.7+ (strict mode, noImplicitAny, strictNullChecks, no `any`, exactOptionalPropertyTypes) + Next.js 15 (App Router), React 19, `react-hook-form`, `@hookform/resolvers`, Drizzle ORM, Zod, typed JSON section storage, snapshot summary builder, multi-turn AI Profiler agent, and multilingual onboarding E2E tests
 
 - 004-ai-provider-keys: Added TypeScript 5.7+ (strict mode, noImplicitAny, strictNullChecks, no `any`) + Next.js 15 (App Router), `@google/genai`, Drizzle ORM, Zod, AES-256-GCM crypto
 

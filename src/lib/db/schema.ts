@@ -6,6 +6,8 @@ import {
   boolean,
   text,
   integer,
+  jsonb,
+  index,
   uniqueIndex,
 } from 'drizzle-orm/pg-core';
 import { sql, type InferSelectModel, type InferInsertModel } from 'drizzle-orm';
@@ -169,3 +171,218 @@ export const usageCounters = pgTable(
 
 export type UsageCounter = InferSelectModel<typeof usageCounters>;
 export type NewUsageCounter = InferInsertModel<typeof usageCounters>;
+
+/**
+ * Profiles Table
+ * Represents the primary voice profile for a user.
+ */
+export const profiles = pgTable(
+  'profiles',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' })
+      .unique(),
+    status: text('status').notNull().default('draft'), // 'draft' | 'active'
+    currentStep: integer('current_step').notNull().default(1),
+    currentVersion: integer('current_version').notNull().default(1),
+
+    primaryLanguage: varchar('primary_language', { length: 10 })
+      .notNull()
+      .default('en'),
+    arabicDialect: varchar('arabic_dialect', { length: 20 })
+      .notNull()
+      .default('none'),
+
+    identityData: jsonb('identity_data').$type<{
+      role?: string | undefined;
+      industry?: string | undefined;
+      expertise?: string[] | undefined;
+      positioning?: string | undefined;
+    }>(),
+
+    principlesData: jsonb('principles_data').$type<{
+      values?: string[] | undefined;
+      topicsToAvoid?: string[] | undefined;
+      toneRedLines?: string[] | undefined;
+    }>(),
+
+    audienceData: jsonb('audience_data').$type<{
+      persona?: string | undefined;
+      expertiseLevel?: ('beginner' | 'intermediate' | 'expert' | 'general') | undefined;
+      interests?: string[] | undefined;
+    }>(),
+
+    objectivesData: jsonb('objectives_data').$type<{
+      primaryObjective?: ('authority' | 'leads' | 'hiring' | 'community' | 'sales') | undefined;
+      platformRankings?: Record<
+        string,
+        ('authority' | 'leads' | 'hiring' | 'community' | 'sales')[]
+      > | undefined;
+    }>(),
+
+    styleData: jsonb('style_data').$type<{
+      formality?: number | undefined;
+      length?: ('short' | 'medium' | 'long') | undefined;
+      emoji?: ('none' | 'minimal' | 'frequent') | undefined;
+      hookStyle?: ('bold_statement' | 'question' | 'story' | 'statistic') | undefined;
+    }>(),
+
+    completenessScore: integer('completeness_score').notNull().default(0),
+    createdAt: timestamp('created_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    index('profiles_user_id_idx').on(table.userId),
+    index('profiles_status_idx').on(table.status),
+  ],
+);
+
+export type Profile = InferSelectModel<typeof profiles>;
+export type NewProfile = InferInsertModel<typeof profiles>;
+
+/**
+ * Voice Samples Table
+ * Stores 1 to 5 pasted writing samples per voice profile.
+ */
+export const voiceSamples = pgTable(
+  'voice_samples',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    profileId: uuid('profile_id')
+      .notNull()
+      .references(() => profiles.id, { onDelete: 'cascade' }),
+    title: varchar('title', { length: 255 }).notNull().default('Voice Sample'),
+    content: text('content').notNull(),
+    orderIndex: integer('order_index').notNull().default(0),
+    createdAt: timestamp('created_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [index('voice_samples_profile_id_idx').on(table.profileId)],
+);
+
+export type VoiceSample = InferSelectModel<typeof voiceSamples>;
+export type NewVoiceSample = InferInsertModel<typeof voiceSamples>;
+
+/**
+ * Platform Preferences Table
+ * Platform objectives and Reddit rules.
+ */
+export const platformPreferences = pgTable(
+  'platform_preferences',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    profileId: uuid('profile_id')
+      .notNull()
+      .references(() => profiles.id, { onDelete: 'cascade' }),
+    platform: varchar('platform', { length: 50 }).notNull(),
+    primaryObjective: varchar('primary_objective', { length: 50 })
+      .notNull()
+      .default('authority'),
+    subreddits: jsonb('subreddits').$type<
+      Array<{
+        name: string;
+        rulesSummary?: string | undefined;
+      }>
+    >(),
+    customInstructions: text('custom_instructions'),
+    createdAt: timestamp('created_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    uniqueIndex('profile_platform_idx').on(table.profileId, table.platform),
+  ],
+);
+
+export type PlatformPreference = InferSelectModel<typeof platformPreferences>;
+export type NewPlatformPreference = InferInsertModel<typeof platformPreferences>;
+
+/**
+ * Voice Profile Versions Table
+ * Immutable snapshots for rollback and history inspection.
+ */
+export const voiceProfileVersions = pgTable(
+  'voice_profile_versions',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    profileId: uuid('profile_id')
+      .notNull()
+      .references(() => profiles.id, { onDelete: 'cascade' }),
+    versionNumber: integer('version_number').notNull(),
+    snapshot: jsonb('snapshot').$type<Record<string, unknown>>().notNull(),
+    changeSummary: text('change_summary'),
+    createdAt: timestamp('created_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    index('voice_profile_versions_profile_idx').on(table.profileId),
+    uniqueIndex('voice_profile_versions_num_idx').on(
+      table.profileId,
+      table.versionNumber,
+    ),
+  ],
+);
+
+export type VoiceProfileVersion = InferSelectModel<typeof voiceProfileVersions>;
+export type NewVoiceProfileVersion = InferInsertModel<typeof voiceProfileVersions>;
+
+/**
+ * Profiler Sessions Table
+ * Manages conversational transcripts for AI Profiler interview mode.
+ */
+export const profilerSessions = pgTable(
+  'profiler_sessions',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    status: text('status').notNull().default('in_progress'), // 'in_progress' | 'completed' | 'abandoned'
+    messages: jsonb('messages')
+      .$type<
+        Array<{
+          role: 'assistant' | 'user';
+          content: string;
+          timestamp?: string | undefined;
+        }>
+      >()
+      .notNull()
+      .default([]),
+    proposedProfile: jsonb('proposed_profile').$type<Record<string, unknown>>(),
+    createdAt: timestamp('created_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [index('profiler_sessions_user_id_idx').on(table.userId)],
+);
+
+export type ProfilerSession = InferSelectModel<typeof profilerSessions>;
+export type NewProfilerSession = InferInsertModel<typeof profilerSessions>;
+

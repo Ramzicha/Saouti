@@ -8,7 +8,7 @@ import { Composer } from '@/components/layout/Composer';
 import { ActivityTimeline } from '@/components/agent/ActivityTimeline';
 import { PostCard } from '@/components/ui/Card';
 import { MOCK_TIMELINE_STEPS } from '@/lib/agent-events';
-import { IconKey, IconChevronRight } from '@tabler/icons-react';
+import { IconKey, IconChevronRight, IconUser } from '@tabler/icons-react';
 import Link from 'next/link';
 
 export default function WorkspacePage() {
@@ -17,6 +17,7 @@ export default function WorkspacePage() {
   const locale = useLocale();
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [hasKey, setHasKey] = useState<boolean | null>(null);
+  const [hasProfile, setHasProfile] = useState<boolean | null>(null);
 
   useEffect(() => {
     fetch('/api/settings/keys')
@@ -25,6 +26,15 @@ export default function WorkspacePage() {
         if (data) setHasKey(Boolean(data.hasKey));
       })
       .catch(() => setHasKey(false));
+
+    fetch('/api/profile/draft')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data) {
+          setHasProfile(data.profile?.status === 'active');
+        }
+      })
+      .catch(() => setHasProfile(false));
   }, []);
 
   const samplePost = {
@@ -70,6 +80,28 @@ export default function WorkspacePage() {
                   className="inline-flex items-center gap-1 font-semibold text-xs text-primary bg-primary/15 hover:bg-primary/25 px-3 py-1.5 rounded-lg transition-colors w-fit"
                 >
                   <span>{tKeys('addKey')}</span>
+                  <IconChevronRight className="w-3.5 h-3.5" aria-hidden="true" />
+                </Link>
+              </div>
+            )}
+
+            {/* Profile Gatekeeper Banner */}
+            {hasProfile === false && (
+              <div
+                role="alert"
+                className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-xl border border-primary/30 bg-primary/10 p-4 text-sm text-foreground"
+              >
+                <div className="flex items-center gap-2.5">
+                  <IconUser className="w-5 h-5 text-primary shrink-0" aria-hidden="true" />
+                  <span className="font-medium">
+                    Complete your Voice Profile to unlock personalized post generation.
+                  </span>
+                </div>
+                <Link
+                  href={`/${locale}/onboarding`}
+                  className="inline-flex items-center gap-1 font-semibold text-xs text-primary bg-primary/15 hover:bg-primary/25 px-3 py-1.5 rounded-lg transition-colors w-fit"
+                >
+                  <span>Start Onboarding</span>
                   <IconChevronRight className="w-3.5 h-3.5" aria-hidden="true" />
                 </Link>
               </div>
@@ -133,8 +165,14 @@ export default function WorkspacePage() {
         {/* Bottom Pinned Composer */}
         <footer className="w-full flex-shrink-0">
           <Composer
-            disabled={hasKey === false}
-            disabledMessage={hasKey === false ? tKeys('noKeyBanner') : undefined}
+            disabled={hasKey === false || hasProfile === false}
+            disabledMessage={
+              hasKey === false
+                ? tKeys('noKeyBanner')
+                : hasProfile === false
+                  ? 'Complete your Voice Profile onboarding to generate posts.'
+                  : undefined
+            }
           />
         </footer>
       </div>

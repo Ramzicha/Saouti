@@ -1,0 +1,40 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Voice Profile Summary Builder > builds deterministic XML structure matching snapshot 1`] = `
+"<voice_profile version="1.0">
+  <identity>
+    <role>Staff Cloud Architect</role>
+    <industry>Cloud Infrastructure</industry>
+    <expertise>Kubernetes, Serverless, eBPF</expertise>
+    <positioning>Practical insights for enterprise cloud migrations</positioning>
+  </identity>
+  <principles>
+    <values>Simplicity, Measurable ROI</values>
+    <topics_to_avoid>Politics, Unverified vendor hype</topics_to_avoid>
+    <tone_red_lines>Never condescending, No buzzword soup</tone_red_lines>
+  </principles>
+  <audience>
+    <persona>Senior engineers and team leads</persona>
+    <expertise_level>expert</expertise_level>
+    <interests>Distributed systems, Observability</interests>
+  </audience>
+  <objectives>
+    <primary_objective>authority</primary_objective>
+  </objectives>
+  <style formality="4" length="medium" emoji="minimal" hook="bold_statement" />
+  <languages primary="en" arabic_dialect="none" />
+  <platform_guidelines>
+    <platform name="linkedin" objective="authority" />
+    <platform name="reddit" objective="community">
+      <subreddits>
+        <subreddit name="r/devops" rules="Deep technical discussion only, no vendor promotion" />
+      </subreddits>
+    </platform>
+  </platform_guidelines>
+  <voice_samples>
+    <sample index="1" label="Post on Microservices Fallacies">
+      When designing distributed systems, team boundaries dictate architecture far more than network topologies ever will.
+    </sample>
+  </voice_samples>
+</voice_profile>"
+`;
