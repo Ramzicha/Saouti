@@ -627,3 +627,44 @@ export const postTags = pgTable(
 export type PostTag = InferSelectModel<typeof postTags>;
 export type NewPostTag = InferInsertModel<typeof postTags>;
 
+/**
+ * Images Table
+ * Generated visual assets attached to posts with cascade deletion.
+ */
+export const images = pgTable(
+  'images',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    postId: uuid('post_id')
+      .notNull()
+      .references(() => posts.id, { onDelete: 'cascade' }),
+    storageKey: varchar('storage_key', { length: 512 }).notNull(),
+    mimeType: varchar('mime_type', { length: 64 }).notNull().default('image/png'),
+    fileSizeBytes: integer('file_size_bytes').notNull(),
+    width: integer('width'),
+    height: integer('height'),
+    aspectRatio: varchar('aspect_ratio', { length: 16 }).notNull().default('16:9'),
+    prompt: text('prompt').notNull(),
+    altText: text('alt_text'),
+    refinementInstruction: text('refinement_instruction'),
+    versionNumber: integer('version_number').notNull().default(1),
+    isPrimary: boolean('is_primary').notNull().default(true),
+    createdAt: timestamp('created_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    index('images_user_id_idx').on(table.userId),
+    index('images_post_id_idx').on(table.postId),
+    index('images_post_id_primary_idx').on(table.postId, table.isPrimary),
+  ],
+);
+
+export type Image = InferSelectModel<typeof images>;
+export type NewImage = InferInsertModel<typeof images>;
+

@@ -74,4 +74,22 @@ describe('Database Schema (schema.ts)', () => {
     expect(postTagCols.postId).toBeDefined();
     expect(postTagCols.tagId).toBeDefined();
   });
+
+  it('defines images table with cascade foreign keys, storage key, and aspect ratio', async () => {
+    const { images } = await import('@/lib/db/schema');
+    const cols = getTableColumns(images);
+    expect(cols.id).toBeDefined();
+    expect(cols.userId).toBeDefined();
+    expect(cols.postId).toBeDefined();
+    expect(cols.storageKey).toBeDefined();
+    expect(cols.mimeType).toBeDefined();
+    expect(cols.fileSizeBytes).toBeDefined();
+    expect(cols.aspectRatio).toBeDefined();
+    expect(cols.prompt).toBeDefined();
+    expect(cols.altText).toBeDefined();
+    expect(cols.refinementInstruction).toBeDefined();
+    expect(cols.versionNumber).toBeDefined();
+    expect(cols.isPrimary).toBeDefined();
+    expect(cols.createdAt).toBeDefined();
+  });
 });

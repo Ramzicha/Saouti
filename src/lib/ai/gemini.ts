@@ -6,6 +6,8 @@ import {
   TextGenerationResult,
   StructuredGenerationResult,
   ImageGenerationResult,
+  ImageCapabilityStatus,
+  GenerateImageOptions,
   TokenUsage,
 } from './provider';
 import {
@@ -14,6 +16,7 @@ import {
   ContentSafetyBlockedError,
   ProviderUnavailableError,
   RequestTimeoutError,
+  AiUnsupportedCapabilityError,
   AiError,
 } from './errors';
 import { aiConfig } from './config';
@@ -94,6 +97,22 @@ export function normalizeGeminiError(error: unknown): AiError {
   // Timeouts
   if (lowerMsg.includes('timeout') || lowerMsg.includes('aborted')) {
     return new RequestTimeoutError('Gemini request timed out', error);
+  }
+
+  // Capability not supported / model not found for image generation
+  if (
+    lowerMsg.includes('not found') ||
+    lowerMsg.includes('not supported') ||
+    lowerMsg.includes('unsupported model') ||
+    lowerMsg.includes('method not allowed') ||
+    lowerMsg.includes('has not used the model') ||
+    lowerMsg.includes('is not available for this project')
+  ) {
+    return new AiUnsupportedCapabilityError(
+      'Configured AI provider key does not support direct image generation',
+      'image_generation',
+      error,
+    );
   }
 
   // Default fallback to ProviderUnavailableError
@@ -252,21 +271,83 @@ export class GeminiAdapter implements AiProviderAdapter {
     }
   }
 
+  async checkImageCapability(): Promise<ImageCapabilityStatus> {
+    try {
+      const isValid = await this.validateKey(this.apiKey);
+      if (!isValid) {
+        return {
+          supported: false,
+          model: aiConfig.models.image,
+          providerId: this.providerId,
+          reason: 'Invalid or revoked API key',
+        };
+      }
+      return {
+        supported: true,
+        model: aiConfig.models.image,
+        providerId: this.providerId,
+      };
+    } catch (err) {
+      return {
+        supported: false,
+        model: aiConfig.models.image,
+        providerId: this.providerId,
+        reason: err instanceof Error ? err.message : 'Capability check failed',
+      };
+    }
+  }
+
   async generateImage(
     prompt: string,
+    options?: GenerateImageOptions,
   ): Promise<ImageGenerationResult> {
     try {
-      // If user model supports Imagen or image generation
-      // Notice: For standard Gemini API keys without Vertex AI image generation enablement,
-      // this returns a structured image prompt result and fallbacks gracefully
+      const model = options?.model || aiConfig.models.image;
+      const aspectRatio = options?.aspectRatio || '16:9';
+
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:predict?key=${encodeURIComponent(
+        this.apiKey,
+      )}`;
+
+      const fetchInit: RequestInit = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          instances: [{ prompt }],
+          parameters: {
+            sampleCount: 1,
+            aspectRatio,
+            outputMimeType: 'image/png',
+          },
+        }),
+      };
+      if (options?.signal) {
+        fetchInit.signal = options.signal;
+      }
+
+      const res = await fetch(url, fetchInit);
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(`Google Imagen API error (${res.status}): ${errorText}`);
+      }
+
+      const json = await res.json();
+      const b64 = json.predictions?.[0]?.bytesBase64Encoded;
+
+      if (!b64) {
+        throw new Error('No image bytes returned in Imagen response');
+      }
+
+      const buffer = Buffer.from(b64, 'base64');
+
       return {
-        imageUrls: [
-          `https://placehold.co/1200x675/1e1e24/FFF?text=${encodeURIComponent(
-            prompt.slice(0, 40),
-          )}`,
-        ],
+        imageBuffer: buffer,
+        base64Data: b64,
         mimeType: 'image/png',
         prompt,
+        width: 1200,
+        height: 675,
       };
     } catch (err) {
       throw normalizeGeminiError(err);

@@ -59,7 +59,7 @@ export function runProviderContractTests(
       });
 
       expect(result.imageUrls).toBeInstanceOf(Array);
-      expect(result.imageUrls.length).toBeGreaterThan(0);
+      expect(result.imageUrls?.length).toBeGreaterThan(0);
       expect(result.mimeType).toContain('image/');
       expect(result.prompt).toBe('Minimalist architectural workspace');
     });

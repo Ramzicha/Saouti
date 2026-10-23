@@ -18,6 +18,7 @@ export const UpdatePostSchema = z.object({
     .default([]),
   imagePrompt: z.string().max(2000).optional(),
   imageAltText: z.string().max(1000).optional(),
+  imageAspectRatio: z.string().max(20).optional(),
   status: PostStatusSchema.optional(),
   changeSummary: z.string().max(255).optional(),
 });

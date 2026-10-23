@@ -13,6 +13,8 @@ describe('Post Validation Schemas', () => {
         content: 'Updated post content with high value insight.',
         hashtags: ['#ai', '#startup', 'tech'],
         imagePrompt: 'A sleek minimal workspace at dusk',
+        imageAltText: 'Minimal workspace at dusk',
+        imageAspectRatio: '16:9',
         status: 'ready',
       };
       const parsed = UpdatePostSchema.safeParse(valid);

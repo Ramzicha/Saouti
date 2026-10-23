@@ -92,3 +92,26 @@ export class RequestTimeoutError extends AiError {
     super(message, originalError);
   }
 }
+
+/**
+ * Thrown when the configured provider key does not support a requested capability
+ * (e.g. image generation not enabled on free Gemini tier).
+ */
+export class AiUnsupportedCapabilityError extends AiError {
+  readonly code = 'UNSUPPORTED_CAPABILITY';
+  readonly isRetryable = false;
+
+  constructor(
+    message = 'Configured AI provider key does not support direct image generation',
+    public readonly capability: string = 'image_generation',
+    originalError?: unknown,
+  ) {
+    super(message, originalError);
+  }
+}
+
+/**
+ * Alias for ContentSafetyBlockedError for image generation safety filtering.
+ */
+export class AiSafetyBlockError extends ContentSafetyBlockedError {}
+

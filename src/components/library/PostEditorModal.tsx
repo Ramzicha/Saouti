@@ -13,6 +13,8 @@ interface PostEditorModalProps {
     content: string;
     hashtags: string[];
     imagePrompt?: string | undefined;
+    imageAltText?: string | undefined;
+    imageAspectRatio?: string | undefined;
     status: 'draft' | 'ready' | 'posted';
   }) => Promise<void>;
 }
@@ -27,6 +29,8 @@ export function PostEditorModal({
   const [content, setContent] = useState('');
   const [hashtagsStr, setHashtagsStr] = useState('');
   const [imagePrompt, setImagePrompt] = useState('');
+  const [imageAltText, setImageAltText] = useState('');
+  const [imageAspectRatio, setImageAspectRatio] = useState('16:9');
   const [status, setStatus] = useState<'draft' | 'ready' | 'posted'>('draft');
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -36,6 +40,8 @@ export function PostEditorModal({
       setContent(post.content || '');
       setHashtagsStr((post.hashtags || []).join(' '));
       setImagePrompt(post.imagePrompt || '');
+      setImageAltText(post.imageAltText || '');
+      setImageAspectRatio(post.imageAspectRatio || '16:9');
       setStatus((post.status as 'draft' | 'ready' | 'posted') || 'draft');
       setError(null);
     }
@@ -64,6 +70,8 @@ export function PostEditorModal({
         content: content.trim(),
         hashtags: parsedHashtags,
         imagePrompt: imagePrompt.trim() || undefined,
+        imageAltText: imageAltText.trim() || undefined,
+        imageAspectRatio: imageAspectRatio || undefined,
         status,
       });
 
@@ -133,17 +141,54 @@ export function PostEditorModal({
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-foreground mb-1">
+          <div className="rounded-xl border border-border/80 bg-surface-elevated/40 p-3.5 space-y-3">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               {t('imagePrompt')}
-            </label>
-            <textarea
-              value={imagePrompt}
-              onChange={(e) => setImagePrompt(e.target.value)}
-              rows={3}
-              className="w-full px-3 py-2 text-sm bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
-              placeholder="Visual description for image generation..."
-            />
+            </h3>
+
+            <div>
+              <label className="block text-xs font-medium text-foreground mb-1">
+                {t('imagePrompt')}
+              </label>
+              <textarea
+                value={imagePrompt}
+                onChange={(e) => setImagePrompt(e.target.value)}
+                rows={3}
+                className="w-full px-3 py-2 text-sm bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+                placeholder="Visual description for image generation..."
+              />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs font-medium text-foreground mb-1">
+                  {t('imageAspectRatio')}
+                </label>
+                <select
+                  value={imageAspectRatio}
+                  onChange={(e) => setImageAspectRatio(e.target.value)}
+                  className="w-full px-3 py-2 text-sm bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+                >
+                  <option value="16:9">16:9 (Landscape)</option>
+                  <option value="1:1">1:1 (Square)</option>
+                  <option value="4:5">4:5 (Portrait)</option>
+                  <option value="9:16">9:16 (Story)</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-foreground mb-1">
+                  {t('imageAltText')}
+                </label>
+                <input
+                  type="text"
+                  value={imageAltText}
+                  onChange={(e) => setImageAltText(e.target.value)}
+                  className="w-full px-3 py-2 text-sm bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+                  placeholder="Accessibility alt description..."
+                />
+              </div>
+            </div>
           </div>
 
           <div>

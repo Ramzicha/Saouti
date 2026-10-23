@@ -39,9 +39,21 @@ export interface StructuredGenerationResult<T> {
 }
 
 export interface ImageGenerationResult {
-  imageUrls: string[];
+  imageBuffer?: Buffer | undefined;
+  imageUrls?: string[] | undefined;
+  base64Data?: string | undefined;
   mimeType: string;
   prompt: string;
+  altText?: string | undefined;
+  width?: number | undefined;
+  height?: number | undefined;
+}
+
+export interface ImageCapabilityStatus {
+  supported: boolean;
+  model: string;
+  providerId: string;
+  reason?: string | undefined;
 }
 
 /**
@@ -79,4 +91,9 @@ export interface AiProviderAdapter {
     prompt: string,
     options?: GenerateImageOptions,
   ): Promise<ImageGenerationResult>;
+
+  /**
+   * Checks whether the configured provider key supports direct image generation.
+   */
+  checkImageCapability?(): Promise<ImageCapabilityStatus>;
 }

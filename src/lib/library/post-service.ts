@@ -139,6 +139,7 @@ export async function updatePost(
     hashtags?: string[] | undefined;
     imagePrompt?: string | undefined;
     imageAltText?: string | undefined;
+    imageAspectRatio?: string | undefined;
     status?: 'draft' | 'ready' | 'posted' | undefined;
     changeSummary?: string | undefined;
   },
@@ -169,6 +170,8 @@ export async function updatePost(
         data.imagePrompt !== undefined ? data.imagePrompt : existing.imagePrompt,
       imageAltText:
         data.imageAltText !== undefined ? data.imageAltText : existing.imageAltText,
+      imageAspectRatio:
+        data.imageAspectRatio !== undefined ? data.imageAspectRatio : existing.imageAspectRatio,
       status: data.status !== undefined ? data.status : existing.status,
       updatedAt: new Date(),
     })
@@ -259,12 +262,21 @@ export async function restoreFromTrash(
 }
 
 /**
- * Permanently removes a post from the database.
+ * Permanently removes a post from the database and cleans up stored image binaries.
  */
 export async function permanentlyDeletePost(
   userId: string,
   postId: string,
 ): Promise<boolean> {
+  // 1. Clean up attached image files from disk storage
+  try {
+    const { ImageService } = await import('@/lib/library/image-service');
+    await ImageService.purgeAllPostImages(postId);
+  } catch {
+    // Continue even if storage files were already removed
+  }
+
+  // 2. Cascade delete database records
   const result = await db
     .delete(posts)
     .where(and(eq(posts.id, postId), eq(posts.userId, userId)));

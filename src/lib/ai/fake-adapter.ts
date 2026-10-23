@@ -4,7 +4,16 @@ import {
   TextGenerationResult,
   StructuredGenerationResult,
   ImageGenerationResult,
+  ImageCapabilityStatus,
+  GenerateImageOptions,
 } from './provider';
+import {
+  AiUnsupportedCapabilityError,
+  QuotaExhaustedError,
+  AiSafetyBlockError,
+} from './errors';
+
+export type FakeImageBehavior = 'success' | 'unsupported_tier' | 'rate_limit' | 'safety_block';
 
 export interface FakeProviderOptions {
   simulatedDelayMs?: number;
@@ -12,6 +21,7 @@ export interface FakeProviderOptions {
   mockStructuredData?: unknown;
   mockImageUrls?: string[];
   validKeys?: string[];
+  imageBehavior?: FakeImageBehavior;
 }
 
 /**
@@ -25,6 +35,7 @@ export class FakeProviderAdapter implements AiProviderAdapter {
   private mockStructuredData?: unknown;
   private mockImageUrls: string[];
   private validKeys: Set<string>;
+  private imageBehavior: FakeImageBehavior;
 
   constructor(options: FakeProviderOptions = {}) {
     this.simulatedDelayMs = options.simulatedDelayMs ?? 0;
@@ -35,6 +46,11 @@ export class FakeProviderAdapter implements AiProviderAdapter {
       'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800',
     ];
     this.validKeys = new Set(options.validKeys ?? []);
+    this.imageBehavior = options.imageBehavior ?? 'success';
+  }
+
+  setImageGenerationBehavior(behavior: FakeImageBehavior): void {
+    this.imageBehavior = behavior;
   }
 
   /**
@@ -122,14 +138,55 @@ export class FakeProviderAdapter implements AiProviderAdapter {
     };
   }
 
+  async checkImageCapability(): Promise<ImageCapabilityStatus> {
+    await this.simulateExecution();
+    if (this.imageBehavior === 'unsupported_tier') {
+      return {
+        supported: false,
+        model: 'imagen-3.0-generate-002',
+        providerId: 'fake',
+        reason: 'Provider key does not have image generation entitlement',
+      };
+    }
+    return {
+      supported: true,
+      model: 'imagen-3.0-generate-002',
+      providerId: 'fake',
+    };
+  }
+
   async generateImage(
     prompt: string,
+    options?: GenerateImageOptions,
   ): Promise<ImageGenerationResult> {
     await this.simulateExecution();
+
+    if (this.imageBehavior === 'unsupported_tier') {
+      throw new AiUnsupportedCapabilityError(
+        'Configured AI provider key does not support direct image generation',
+      );
+    }
+
+    if (this.imageBehavior === 'rate_limit') {
+      throw new QuotaExhaustedError('AI provider image rate limit exceeded', 20);
+    }
+
+    if (this.imageBehavior === 'safety_block') {
+      throw new AiSafetyBlockError('Image generation blocked by content safety policy');
+    }
+
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450"><rect width="100%" height="100%" fill="#6366f1"/><text x="50%" y="50%" fill="#ffffff" font-size="24" text-anchor="middle">Generated Image (${options?.aspectRatio || '16:9'})</text></svg>`;
+    const buffer = Buffer.from(svg);
+
     return {
+      imageBuffer: buffer,
       imageUrls: [...this.mockImageUrls],
-      mimeType: 'image/jpeg',
+      base64Data: buffer.toString('base64'),
+      mimeType: 'image/svg+xml',
       prompt,
+      altText: 'Mock generated visual asset',
+      width: 800,
+      height: 450,
     };
   }
 }
