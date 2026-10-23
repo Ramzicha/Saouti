@@ -1,6 +1,7 @@
 import { generateUserStructured } from '@/lib/ai/service';
 import { ArtDirectorOutputSchema, type ArtDirectorOutput } from '../schemas';
 import { assembleAgentPrompt } from '../prompt-builder';
+import { aiConfig } from '@/lib/ai/config';
 
 import type { z } from 'zod';
 
@@ -31,6 +32,7 @@ export async function executeArtDirectorStep(
   });
 
   const result = await generateUserStructured<ArtDirectorOutput>(input.userId, prompt, {
+    model: aiConfig.models.artDirector,
     schema: ArtDirectorOutputSchema as unknown as z.ZodType<ArtDirectorOutput>,
     schemaName: 'ArtDirectorOutput',
     schemaDescription: 'Visual concept image prompts, aspect ratios, and accessibility alt text.',

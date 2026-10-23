@@ -3,6 +3,7 @@ import { profiles, voiceSamples, platformPreferences } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { logger } from '@/lib/logger';
 import { QuotaExhaustedError } from '@/lib/ai/errors';
+import { aiConfig } from '@/lib/ai/config';
 import { buildVoiceProfileSummary } from '@/lib/profile/summary-builder';
 import { executeWriterStep, WRITER_PROMPT_VERSION } from './agents/writer';
 import { executeCriticStep, CRITIC_PROMPT_VERSION } from './agents/critic';
@@ -133,7 +134,7 @@ export async function executeAgentPipeline(options: RunOrchestratorOptions): Pro
         runId,
         agentId: 'writer',
         taskLabel: 'Draft initial posts for selected platforms',
-        model: 'gemini-2.0-flash',
+        model: aiConfig.models.writer,
         promptVersion: WRITER_PROMPT_VERSION,
         status: 'running',
       })) || runId;
@@ -162,7 +163,7 @@ export async function executeAgentPipeline(options: RunOrchestratorOptions): Pro
       runId,
       agentId: 'writer',
       taskLabel: 'Draft initial posts for selected platforms',
-      model: 'gemini-2.0-flash',
+      model: aiConfig.models.writer,
       promptVersion: WRITER_PROMPT_VERSION,
       status: 'completed',
       durationMs: Date.now() - writerStepStart,
@@ -205,7 +206,7 @@ export async function executeAgentPipeline(options: RunOrchestratorOptions): Pro
           runId,
           agentId: 'critic',
           taskLabel: 'Evaluate posts against voice, safety, and platforms',
-          model: 'gemini-2.0-flash',
+          model: aiConfig.models.critic,
           promptVersion: CRITIC_PROMPT_VERSION,
           status: 'running',
         })) || runId;
@@ -240,7 +241,7 @@ export async function executeAgentPipeline(options: RunOrchestratorOptions): Pro
         runId,
         agentId: 'critic',
         taskLabel: 'Evaluate posts against voice, safety, and platforms',
-        model: 'gemini-2.0-flash',
+        model: aiConfig.models.critic,
         promptVersion: CRITIC_PROMPT_VERSION,
         status: 'completed',
         durationMs: Date.now() - criticStepStart,
@@ -282,7 +283,7 @@ export async function executeAgentPipeline(options: RunOrchestratorOptions): Pro
           runId,
           agentId: 'writer',
           taskLabel: 'Revise posts based on Critic feedback',
-          model: 'gemini-2.0-flash',
+          model: aiConfig.models.writer,
           promptVersion: WRITER_PROMPT_VERSION,
           status: 'running',
         });
@@ -319,7 +320,7 @@ export async function executeAgentPipeline(options: RunOrchestratorOptions): Pro
           runId,
           agentId: 'writer',
           taskLabel: 'Revise posts based on Critic feedback',
-          model: 'gemini-2.0-flash',
+          model: aiConfig.models.writer,
           promptVersion: WRITER_PROMPT_VERSION,
           status: 'completed',
           durationMs: Date.now() - revisionStepStart,
@@ -355,7 +356,7 @@ export async function executeAgentPipeline(options: RunOrchestratorOptions): Pro
         runId,
         agentId: 'art_director',
         taskLabel: 'Formulate visual prompts and alt text',
-        model: 'gemini-2.0-flash',
+        model: aiConfig.models.artDirector,
         promptVersion: ART_DIRECTOR_PROMPT_VERSION,
         status: 'running',
       })) || runId;
@@ -387,7 +388,7 @@ export async function executeAgentPipeline(options: RunOrchestratorOptions): Pro
       runId,
       agentId: 'art_director',
       taskLabel: 'Formulate visual prompts and alt text',
-      model: 'gemini-2.0-flash',
+      model: aiConfig.models.artDirector,
       promptVersion: ART_DIRECTOR_PROMPT_VERSION,
       status: 'completed',
       durationMs: Date.now() - artStepStart,

@@ -7,6 +7,7 @@ import {
   type CriticIssue,
 } from '../schemas';
 import { assembleAgentPrompt } from '../prompt-builder';
+import { aiConfig } from '@/lib/ai/config';
 
 import type { z } from 'zod';
 
@@ -48,6 +49,7 @@ export async function executeCriticStep(input: CriticStepInput): Promise<Evaluat
   });
 
   const result = await generateUserStructured<CriticOutput>(input.userId, prompt, {
+    model: aiConfig.models.critic,
     schema: CriticOutputSchema as unknown as z.ZodType<CriticOutput>,
     schemaName: 'CriticOutput',
     schemaDescription: 'Rigorous 6-dimensional evaluation and quality verdict for drafted posts.',

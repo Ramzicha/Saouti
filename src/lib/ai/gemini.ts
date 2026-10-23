@@ -101,16 +101,31 @@ export function normalizeGeminiError(error: unknown): AiError {
 
   // Capability not supported / model not found for image generation
   if (
+    lowerMsg.includes('imagen') ||
+    (lowerMsg.includes('image') &&
+      (lowerMsg.includes('not supported') ||
+        lowerMsg.includes('not found') ||
+        lowerMsg.includes('unsupported') ||
+        lowerMsg.includes('not available')))
+  ) {
+    return new AiUnsupportedCapabilityError(
+      'Configured AI provider key does not support direct image generation',
+      'image_generation',
+      error,
+    );
+  }
+
+  // Model not found or unavailable for text
+  if (
     lowerMsg.includes('not found') ||
     lowerMsg.includes('not supported') ||
     lowerMsg.includes('unsupported model') ||
     lowerMsg.includes('method not allowed') ||
     lowerMsg.includes('has not used the model') ||
-    lowerMsg.includes('is not available for this project')
+    lowerMsg.includes('is not available')
   ) {
-    return new AiUnsupportedCapabilityError(
-      'Configured AI provider key does not support direct image generation',
-      'image_generation',
+    return new ProviderUnavailableError(
+      `AI model error: ${message}`,
       error,
     );
   }

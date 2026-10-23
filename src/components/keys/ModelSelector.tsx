@@ -11,25 +11,25 @@ interface ModelOption {
 
 const SUPPORTED_MODELS: ModelOption[] = [
   {
-    id: 'gemini-2.0-flash',
-    displayName: 'Gemini 2.0 Flash (Recommended)',
-    description: 'Ultra-fast inference with next-gen multimodal reasoning.',
-  },
-  {
     id: 'gemini-1.5-flash',
-    displayName: 'Gemini 1.5 Flash',
-    description: 'Fast, lightweight model with high free-tier quotas.',
+    displayName: 'Gemini 1.5 Flash (Recommended)',
+    description: 'Fast, lightweight model with high free-tier quotas and universal support.',
   },
   {
     id: 'gemini-1.5-pro',
     displayName: 'Gemini 1.5 Pro',
     description: 'Complex reasoning and deep stylistic voice matching.',
   },
+  {
+    id: 'gemini-2.0-flash',
+    displayName: 'Gemini 2.0 Flash',
+    description: 'Experimental next-gen speed (requires AI Studio preview access).',
+  },
 ];
 
 export function ModelSelector() {
-  const [writerModel, setWriterModel] = useState('gemini-2.0-flash');
-  const [criticModel, setCriticModel] = useState('gemini-2.0-flash');
+  const [writerModel, setWriterModel] = useState('gemini-1.5-flash');
+  const [criticModel, setCriticModel] = useState('gemini-1.5-flash');
 
   return (
     <div className="rounded-xl border border-border bg-card p-6 space-y-4">

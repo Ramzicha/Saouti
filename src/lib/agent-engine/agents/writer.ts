@@ -1,6 +1,7 @@
 import { generateUserStructured } from '@/lib/ai/service';
 import { WriterOutputSchema, type WriterOutput } from '../schemas';
 import { assembleAgentPrompt } from '../prompt-builder';
+import { aiConfig } from '@/lib/ai/config';
 
 import type { z } from 'zod';
 
@@ -35,6 +36,7 @@ export async function executeWriterStep(input: WriterStepInput): Promise<WriterO
   });
 
   const result = await generateUserStructured<WriterOutput>(input.userId, prompt, {
+    model: aiConfig.models.writer,
     schema: WriterOutputSchema as unknown as z.ZodType<WriterOutput>,
     schemaName: 'WriterOutput',
     schemaDescription: 'Multi-platform social media post drafts formatted for target networks.',
