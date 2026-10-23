@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { FreeTierNotice } from './FreeTierNotice';
+import { sanitizeApiKey } from '@/lib/ai/schemas';
 import {
   IconKey,
   IconCheck,
@@ -54,7 +55,9 @@ export function KeySetupDialog({
       return;
     }
 
-    if (apiKeyInput.trim().length < 10) {
+    const cleanedKey = sanitizeApiKey(apiKeyInput);
+
+    if (cleanedKey.length < 10) {
       setErrorMessage('API key must be at least 10 characters');
       return;
     }
@@ -66,7 +69,7 @@ export function KeySetupDialog({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           provider: 'gemini',
-          apiKey: apiKeyInput.trim(),
+          apiKey: cleanedKey,
           acknowledgedTerms: true,
         }),
       });
