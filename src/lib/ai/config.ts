@@ -34,10 +34,10 @@ export interface AiConfiguration {
 export const aiConfig: AiConfiguration = {
   defaultProvider: 'gemini',
   models: {
-    validation: process.env.AI_VALIDATION_MODEL || 'gemini-2.0-flash',
-    writer: process.env.AI_WRITER_MODEL || 'gemini-2.0-flash',
-    critic: process.env.AI_CRITIC_MODEL || 'gemini-2.0-flash',
-    artDirector: process.env.AI_ART_DIRECTOR_MODEL || 'gemini-2.0-flash',
+    validation: process.env.AI_VALIDATION_MODEL || 'gemini-1.5-flash',
+    writer: process.env.AI_WRITER_MODEL || 'gemini-1.5-flash',
+    critic: process.env.AI_CRITIC_MODEL || 'gemini-1.5-flash',
+    artDirector: process.env.AI_ART_DIRECTOR_MODEL || 'gemini-1.5-flash',
     image: process.env.AI_IMAGE_MODEL || 'imagen-3.0-generate-002',
   },
   supportedModels: {

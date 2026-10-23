@@ -139,11 +139,26 @@ export class GeminiAdapter implements AiProviderAdapter {
   }
 
   /**
-   * Performs a minimal, 1-token test call to confirm key validity and quota.
+   * Performs a validation test to confirm key validity and quota with Google.
    */
   async validateKey(apiKeyToValidate?: string): Promise<boolean> {
     const key = apiKeyToValidate || this.apiKey;
     try {
+      // 1. Direct validation via Google's models endpoint (zero token cost, model-independent)
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(key)}`,
+      );
+
+      if (res.ok) {
+        return true;
+      }
+
+      // If Google explicitly rejected the key (e.g. 400 API_KEY_INVALID or 403 Forbidden)
+      if (res.status === 400 || res.status === 403) {
+        return false;
+      }
+
+      // 2. Fallback: try minimal token generation with configured model
       const client = new GoogleGenerativeAI(key);
       const model = client.getGenerativeModel({
         model: aiConfig.models.validation,
