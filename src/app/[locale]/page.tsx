@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { AppHeader } from '@/components/layout/AppHeader';
@@ -15,11 +15,27 @@ import {
   IconAlertTriangle,
   IconCheck,
   IconSparkles,
+  IconBolt,
+  IconRobot,
+  IconMessageCircle,
 } from '@tabler/icons-react';
 import Link from 'next/link';
 import type { GeneratedPost } from '@/../specs/006-agent-engine/contracts/agent-engine.contract';
 
 const ACTIVE_RUN_STORAGE_KEY = 'saouti_active_run_id';
+
+export interface RunThreadItem {
+  id: string;
+  topicBrief: string;
+  selectedPlatforms: string[];
+  targetLanguage: string;
+  arabicDialect?: string | undefined;
+  status: 'pending' | 'running' | 'completed' | 'cancelled' | 'failed' | 'timed_out';
+  skipCritic?: boolean | undefined;
+  posts: GeneratedPost[];
+  errorMessage?: string | undefined;
+  createdAt: string;
+}
 
 export default function WorkspacePage() {
   const t = useTranslations('App');
@@ -31,10 +47,13 @@ export default function WorkspacePage() {
   const [hasKey, setHasKey] = useState<boolean | null>(null);
   const [hasProfile, setHasProfile] = useState<boolean | null>(null);
 
+  const [runsList, setRunsList] = useState<RunThreadItem[]>([]);
   const [activeRunId, setActiveRunId] = useState<string | null>(null);
-  const [generatedPosts, setGeneratedPosts] = useState<GeneratedPost[]>([]);
   const [runError, setRunError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [copiedKey, setCopiedKey] = useState<string | null>(null);
+
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const {
     events,
@@ -44,7 +63,12 @@ export default function WorkspacePage() {
     isCancelled,
   } = useRunEvents(activeRunId);
 
-  // Check key and profile status on mount
+  // Auto-scroll when messages or live events update
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [runsList.length, events.length, isCompleted]);
+
+  // Check key and profile status on mount & load existing runs history
   useEffect(() => {
     fetch('/api/settings/keys')
       .then((res) => (res.ok ? res.json() : null))
@@ -62,45 +86,77 @@ export default function WorkspacePage() {
       })
       .catch(() => setHasProfile(false));
 
-    // Rehydrate active run from localStorage on page refresh / reload
-    const storedRunId = localStorage.getItem(ACTIVE_RUN_STORAGE_KEY);
-    if (storedRunId) {
-      fetch(`/api/runs/${storedRunId}`)
+    // Load full runs history from database
+    fetch('/api/runs')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.runs) {
+          setRunsList(data.runs);
+
+          // Check if there is an active running job stored or in the fetched list
+          const storedRunId = localStorage.getItem(ACTIVE_RUN_STORAGE_KEY);
+          if (storedRunId) {
+            const found = data.runs.find((r: RunThreadItem) => r.id === storedRunId);
+            if (found && ['pending', 'running'].includes(found.status)) {
+              setActiveRunId(storedRunId);
+            } else {
+              localStorage.removeItem(ACTIVE_RUN_STORAGE_KEY);
+            }
+          } else {
+            // Find if any run is currently pending or running
+            const active = data.runs.find((r: RunThreadItem) =>
+              ['pending', 'running'].includes(r.status),
+            );
+            if (active) {
+              setActiveRunId(active.id);
+            }
+          }
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  // Update run in runsList when generation completes
+  useEffect(() => {
+    if (isCompleted && activeRunId) {
+      const runIdToFetch = activeRunId;
+      fetch(`/api/runs/${runIdToFetch}`)
         .then((res) => (res.ok ? res.json() : null))
         .then((data) => {
           if (data) {
-            if (['pending', 'running'].includes(data.status)) {
-              setActiveRunId(storedRunId);
-            } else {
-              if (data.posts && data.posts.length > 0) {
-                setGeneratedPosts(data.posts);
-              }
-              localStorage.removeItem(ACTIVE_RUN_STORAGE_KEY);
-            }
+            setRunsList((prev) =>
+              prev.map((r) =>
+                r.id === runIdToFetch
+                  ? {
+                      ...r,
+                      status: data.status,
+                      posts: data.posts || [],
+                      errorMessage: data.errorMessage,
+                    }
+                  : r,
+              ),
+            );
           }
+          localStorage.removeItem(ACTIVE_RUN_STORAGE_KEY);
+          setActiveRunId(null);
         })
         .catch(() => {
           localStorage.removeItem(ACTIVE_RUN_STORAGE_KEY);
-        });
-    }
-  }, []);
-
-  // Fetch final generated posts when run completes
-  useEffect(() => {
-    if (isCompleted && activeRunId) {
-      fetch(`/api/runs/${activeRunId}`)
-        .then((res) => (res.ok ? res.json() : null))
-        .then((data) => {
-          if (data?.posts) {
-            setGeneratedPosts(data.posts);
-          }
-          localStorage.removeItem(ACTIVE_RUN_STORAGE_KEY);
-        })
-        .catch(() => {
-          localStorage.removeItem(ACTIVE_RUN_STORAGE_KEY);
+          setActiveRunId(null);
         });
     }
   }, [isCompleted, activeRunId]);
+
+  // Update run in runsList when cancelled
+  useEffect(() => {
+    if (isCancelled && activeRunId) {
+      setRunsList((prev) =>
+        prev.map((r) => (r.id === activeRunId ? { ...r, status: 'cancelled' } : r)),
+      );
+      localStorage.removeItem(ACTIVE_RUN_STORAGE_KEY);
+      setActiveRunId(null);
+    }
+  }, [isCancelled, activeRunId]);
 
   const handleSendRun = async (
     topicBrief: string,
@@ -109,11 +165,25 @@ export default function WorkspacePage() {
   ) => {
     setIsSubmitting(true);
     setRunError(null);
-    setGeneratedPosts([]);
 
     const platformsArray = Array.isArray(selectedPlatforms)
       ? selectedPlatforms
       : [selectedPlatforms];
+
+    const tempId = `temp-${Date.now()}`;
+    const pendingItem: RunThreadItem = {
+      id: tempId,
+      topicBrief,
+      selectedPlatforms: platformsArray,
+      targetLanguage: locale,
+      status: 'pending',
+      skipCritic,
+      posts: [],
+      createdAt: new Date().toISOString(),
+    };
+
+    // Optimistically append new message/run to the continuous thread
+    setRunsList((prev) => [...prev, pendingItem]);
 
     try {
       const res = await fetch('/api/runs', {
@@ -122,6 +192,7 @@ export default function WorkspacePage() {
         body: JSON.stringify({
           topicBrief,
           selectedPlatforms: platformsArray,
+          targetLanguage: locale,
           skipCritic,
         }),
       });
@@ -132,10 +203,17 @@ export default function WorkspacePage() {
       }
 
       const data = await res.json();
+      setRunsList((prev) =>
+        prev.map((r) => (r.id === tempId ? { ...r, id: data.runId, status: 'running' } : r)),
+      );
       setActiveRunId(data.runId);
       localStorage.setItem(ACTIVE_RUN_STORAGE_KEY, data.runId);
     } catch (err) {
-      setRunError(err instanceof Error ? err.message : 'Unknown generation error');
+      const message = err instanceof Error ? err.message : 'Unknown generation error';
+      setRunError(message);
+      setRunsList((prev) =>
+        prev.map((r) => (r.id === tempId ? { ...r, status: 'failed', errorMessage: message } : r)),
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -150,6 +228,12 @@ export default function WorkspacePage() {
       // Ignore network errors on cancel
     }
   }, [activeRunId]);
+
+  const handleCopy = (postId: string, text: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedKey(postId);
+    setTimeout(() => setCopiedKey(null), 2500);
+  };
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-bg text-text">
@@ -170,7 +254,7 @@ export default function WorkspacePage() {
         {/* Central Workspace Canvas */}
         <main className="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
           <div className="mx-auto flex max-w-workspace flex-col gap-6 pb-12">
-            {/* Error Notification */}
+            {/* Error Notification Banner */}
             {runError && (
               <div
                 role="alert"
@@ -195,32 +279,8 @@ export default function WorkspacePage() {
               </p>
             </div>
 
-            {/* Active Live Agent Activity Timeline (Only displayed during a generation run) */}
-            {activeRunId && events.length > 0 && (
-              <section
-                aria-labelledby="timeline-heading"
-                className="flex flex-col gap-3 rounded-2xl border border-border bg-card p-5 shadow-sm"
-              >
-                <div className="flex items-center justify-between">
-                  <h3
-                    id="timeline-heading"
-                    className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
-                  >
-                    {tEngine('activityTitle')}
-                  </h3>
-                  {activeAgent && (
-                    <span className="text-xs font-medium text-primary animate-pulse">
-                      {statusText}
-                    </span>
-                  )}
-                </div>
-
-                <ActivityTimeline events={events} />
-              </section>
-            )}
-
-            {/* Focus on Setup: Gemini Key & Voice Profile Cards (When idle) */}
-            {!activeRunId && (hasKey === false || hasProfile === false) && (
+            {/* Setup Cards (When key or profile is missing and thread is empty) */}
+            {runsList.length === 0 && !activeRunId && (hasKey === false || hasProfile === false) && (
               <section aria-label="Setup Steps" className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
                 {/* Card 1: Gemini API Key */}
                 <div className="flex flex-col justify-between rounded-2xl border border-border bg-card p-5 shadow-sm hover:border-primary/40 transition-colors">
@@ -296,8 +356,8 @@ export default function WorkspacePage() {
               </section>
             )}
 
-            {/* Ready State (When both Key and Profile are completed and idle) */}
-            {!activeRunId && hasKey === true && hasProfile === true && generatedPosts.length === 0 && (
+            {/* Ready State Empty Banner */}
+            {runsList.length === 0 && !activeRunId && hasKey === true && hasProfile === true && (
               <div className="rounded-2xl border border-dashed border-border bg-card/50 p-6 text-center space-y-2">
                 <div className="w-10 h-10 rounded-2xl bg-primary/10 text-primary mx-auto flex items-center justify-center">
                   <IconSparkles size={20} />
@@ -309,45 +369,143 @@ export default function WorkspacePage() {
               </div>
             )}
 
-            {/* Generated Posts Section */}
-            {generatedPosts.length > 0 && (
-              <section
-                aria-labelledby="output-heading"
-                className="flex flex-col gap-3"
-              >
-                <div className="flex items-center justify-between">
-                  <h3
-                    id="output-heading"
-                    className="text-xs font-medium uppercase tracking-wider text-muted"
-                  >
-                    {tEngine('postsGenerated', { count: generatedPosts.length })}
-                  </h3>
-                </div>
+            {/* Continuous Conversation & Run Thread */}
+            {runsList.map((run, runIndex) => {
+              const isRunActive = run.id === activeRunId;
 
-                {/* Safety placeholders notice */}
-                <div className="flex items-center gap-2 rounded-lg border border-border bg-surface p-3 text-xs text-muted">
-                  <IconAlertTriangle size={16} className="text-accent shrink-0" />
-                  <span>{tEngine('placeholdersNotice')}</span>
-                </div>
+              return (
+                <div key={run.id} className="flex flex-col gap-4 border-b border-border/50 pb-8 last:border-b-0">
+                  {/* User Message Bubble */}
+                  <div className="flex items-start gap-3 justify-end">
+                    <div className="max-w-[85%] sm:max-w-[75%] rounded-2xl rounded-tr-sm bg-primary/10 border border-primary/20 px-4 py-3 shadow-xs">
+                      <div className="flex items-center gap-2 pb-1.5 flex-wrap">
+                        <span className="text-[11px] font-semibold text-primary uppercase tracking-wider">
+                          Topic Brief
+                        </span>
+                        <div className="flex items-center gap-1">
+                          {run.selectedPlatforms.map((platform) => (
+                            <span
+                              key={platform}
+                              className="rounded-md bg-background/80 px-1.5 py-0.5 text-[10px] font-medium text-foreground capitalize"
+                            >
+                              {platform}
+                            </span>
+                          ))}
+                        </div>
+                        {run.skipCritic && (
+                          <span className="inline-flex items-center gap-0.5 text-[10px] text-amber-600 dark:text-amber-400 font-medium">
+                            <IconBolt size={12} />
+                            Fast Draft
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">
+                        {run.topicBrief}
+                      </p>
+                    </div>
+                    <div className="w-8 h-8 rounded-full bg-primary/20 text-primary flex items-center justify-center shrink-0 mt-0.5">
+                      <IconUser size={16} />
+                    </div>
+                  </div>
 
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                  {generatedPosts.map((post, idx) => (
-                    <PostCard
-                      key={`${post.platform}-${idx}`}
-                      platform={post.platform}
-                      status="ready"
-                      content={post.text}
-                      imagePrompt={post.imagePrompt}
-                      onCopy={() => {
-                        navigator.clipboard.writeText(post.text);
-                      }}
-                      onEdit={() => {}}
-                      onRegenerate={() => {}}
-                    />
-                  ))}
+                  {/* Agent Response Block */}
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 rounded-full bg-card border border-border text-primary flex items-center justify-center shrink-0 mt-0.5 shadow-xs">
+                      <IconRobot size={16} />
+                    </div>
+
+                    <div className="flex-1 space-y-4 min-w-0">
+                      {/* Active Run: Live Activity Timeline */}
+                      {isRunActive && (
+                        <section
+                          aria-labelledby={`timeline-heading-${run.id}`}
+                          className="flex flex-col gap-3 rounded-2xl border border-border bg-card p-5 shadow-sm"
+                        >
+                          <div className="flex items-center justify-between">
+                            <h3
+                              id={`timeline-heading-${run.id}`}
+                              className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+                            >
+                              {tEngine('activityTitle')}
+                            </h3>
+                            {activeAgent && (
+                              <span className="text-xs font-medium text-primary animate-pulse">
+                                {statusText}
+                              </span>
+                            )}
+                          </div>
+                          <ActivityTimeline events={events} />
+                        </section>
+                      )}
+
+                      {/* Completed Run: Generated Post Cards */}
+                      {run.posts && run.posts.length > 0 && (
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-medium uppercase tracking-wider text-muted">
+                              {tEngine('postsGenerated', { count: run.posts.length })}
+                            </span>
+                            <span className="text-[11px] text-muted">
+                              {new Date(run.createdAt).toLocaleTimeString([], {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                              })}
+                            </span>
+                          </div>
+
+                          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                            {run.posts.map((post, postIdx) => {
+                              const cardKey = `${run.id}-${post.platform}-${postIdx}`;
+                              const isCopied = copiedKey === cardKey;
+
+                              return (
+                                <div key={cardKey} className="relative">
+                                  <PostCard
+                                    platform={post.platform}
+                                    status="ready"
+                                    content={post.text}
+                                    imagePrompt={post.imagePrompt}
+                                    onCopy={() => handleCopy(cardKey, post.text)}
+                                    onEdit={() => {}}
+                                    onRegenerate={() => {}}
+                                  />
+                                  {isCopied && (
+                                    <div className="absolute top-3 right-16 rounded-md bg-emerald-500 px-2 py-0.5 text-[11px] font-medium text-white shadow-sm transition-all">
+                                      Copied!
+                                    </div>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Failed Run Status Card */}
+                      {run.status === 'failed' && (
+                        <div className="rounded-xl border border-danger/30 bg-danger/10 p-4 text-xs text-danger space-y-1">
+                          <div className="font-semibold flex items-center gap-1.5">
+                            <IconAlertTriangle size={15} />
+                            Generation Failed
+                          </div>
+                          <p>{run.errorMessage || 'An error occurred during multi-agent drafting.'}</p>
+                        </div>
+                      )}
+
+                      {/* Cancelled Run Status Card */}
+                      {run.status === 'cancelled' && (
+                        <div className="rounded-xl border border-border bg-card/60 p-3 text-xs text-muted">
+                          Generation was cancelled.
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
-              </section>
-            )}
+              );
+            })}
+
+            {/* Scroll Anchor */}
+            <div ref={messagesEndRef} />
           </div>
         </main>
 

@@ -53,7 +53,9 @@ export function Composer({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!content.trim() || isGenerating) return;
-    onSend?.(content, selectedPlatforms, skipCritic);
+    const textToSend = content;
+    setContent('');
+    onSend?.(textToSend, selectedPlatforms, skipCritic);
   };
 
   return (

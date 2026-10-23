@@ -43,8 +43,17 @@ export function useRunEvents(runId?: string | null): UseRunEventsReturn {
   }, []);
 
   useEffect(() => {
+    disconnect();
+    setEvents([]);
+    setActiveAgent(null);
+    setStatusText('');
+    setIsCompleted(false);
+    setIsCancelled(false);
+    setIsRateLimited(false);
+    setRetryCountdownSeconds(null);
+    setHandoffReason(null);
+
     if (!runId) {
-      disconnect();
       return;
     }
 
