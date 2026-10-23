@@ -17,9 +17,9 @@
 
 **Purpose**: Add internationalized dictionary keys for post library features, statuses, filter labels, actions, undo toasts, and export dialogs.
 
-- [ ] T001 [P] Add English translations for Post Library (card actions, filter labels, search placeholder, copy feedback, versions, undo toast, trash bin, export) in `messages/en.json`
-- [ ] T002 [P] Add French translations for Post Library in `messages/fr.json`
-- [ ] T003 [P] Add Arabic translations for Post Library with RTL terms in `messages/ar.json`
+- [x] T001 [P] Add English translations for Post Library (card actions, filter labels, search placeholder, copy feedback, versions, undo toast, trash bin, export) in `messages/en.json`
+- [x] T002 [P] Add French translations for Post Library in `messages/fr.json`
+- [x] T003 [P] Add Arabic translations for Post Library with RTL terms in `messages/ar.json`
 
 ---
 
@@ -29,13 +29,13 @@
 
 **⚠️ CRITICAL**: Must be completed before API endpoints and UI components are implemented.
 
-- [ ] T004 [P] Update Drizzle database schema with `posts`, `post_versions`, `tags`, and `post_tags` tables in `src/lib/db/schema.ts`
-- [ ] T005 Generate and apply Drizzle database migration for `posts`, `post_versions`, `tags`, `post_tags`, Arabic normalization function `normalize_arabic`, and `search_vector` GIN index in `src/lib/db/migrations/`
-- [ ] T006 [P] Implement pure Arabic text normalization utility `normalizeArabicText` (handling Alef variants, Taa Marbuta, and Tashkeel stripping) in `src/lib/search/arabic-normalizer.ts`
-- [ ] T007 [P] Create unit tests for Arabic text normalization covering Alef forms, Taa Marbuta, and Tashkeel stripping in `tests/unit/arabic-normalizer.test.ts`
-- [ ] T008 [P] Implement resilient clipboard utility `copyToClipboard` with `<textarea>` fallback and blank line/emoji formatting preservation in `src/lib/clipboard.ts`
-- [ ] T009 [P] Create unit tests for clipboard text serialization and formatting preservation in `tests/unit/clipboard-formatter.test.ts`
-- [ ] T010 [P] Implement cursor-based keyset pagination encoder/decoder helper in `src/lib/db/cursor-pagination.ts`
+- [x] T004 [P] Update Drizzle database schema with `posts`, `post_versions`, `tags`, and `post_tags` tables in `src/lib/db/schema.ts`
+- [x] T005 Generate and apply Drizzle database migration for `posts`, `post_versions`, `tags`, `post_tags`, Arabic normalization function `normalize_arabic`, and `search_vector` GIN index in `src/lib/db/migrations/`
+- [x] T006 [P] Implement pure Arabic text normalization utility `normalizeArabicText` (handling Alef variants, Taa Marbuta, and Tashkeel stripping) in `src/lib/search/arabic-normalizer.ts`
+- [x] T007 [P] Create unit tests for Arabic text normalization covering Alef forms, Taa Marbuta, and Tashkeel stripping in `tests/unit/arabic-normalizer.test.ts`
+- [x] T008 [P] Implement resilient clipboard utility `copyToClipboard` with `<textarea>` fallback and blank line/emoji formatting preservation in `src/lib/clipboard.ts`
+- [x] T009 [P] Create unit tests for clipboard text serialization and formatting preservation in `tests/unit/clipboard-formatter.test.ts`
+- [x] T010 [P] Implement cursor-based keyset pagination encoder/decoder helper in `src/lib/db/cursor-pagination.ts`
 
 **Checkpoint**: Foundation ready — Relational schemas, database migrations, search indexes, Arabic normalizer, and clipboard utilities active and tested.
 
@@ -49,17 +49,17 @@
 
 ### Tests for User Story 1
 
-- [ ] T011 [P] [US1] Create unit tests for post validation and edit Zod schemas in `tests/unit/post-schemas.test.ts`
-- [ ] T012 [P] [US1] Create Playwright end-to-end test for one-click copy preserving blank lines, emojis, and hashtags with 2s confirmation badge in `tests/e2e/post-copy.spec.ts`
+- [x] T011 [P] [US1] Create unit tests for post validation and edit Zod schemas in `tests/unit/post-schemas.test.ts`
+- [x] T012 [P] [US1] Create Playwright end-to-end test for one-click copy preserving blank lines, emojis, and hashtags with 2s confirmation badge in `tests/e2e/post-copy.spec.ts`
 
 ### Implementation for User Story 1
 
-- [ ] T013 [US1] Connect BullMQ generation run completion in `src/worker/processors/agent-engine.ts` to auto-insert generated platform posts into `posts` with status `draft` and seed initial Version 1 snapshot records
-- [ ] T014 [US1] Implement single post retrieval and update endpoint `GET /api/posts/[id]` and `PATCH /api/posts/[id]` (recording new version snapshot) in `src/app/api/posts/[id]/route.ts`
-- [ ] T015 [US1] Implement accessible `CopyButton` component with `aria-live="polite"` screen reader announcement and 2-second visual confirmation badge in `src/components/library/CopyButton.tsx`
-- [ ] T016 [US1] Implement `PostEditorModal` component for live editing post text, hashtags, and image prompt in `src/components/library/PostEditorModal.tsx`
-- [ ] T017 [US1] Implement `PostCard` component displaying platform badge, status chip, post content, and copy trigger in `src/components/library/PostCard.tsx`
-- [ ] T018 [US1] Implement Post Library dashboard page in `src/app/[locale]/(dashboard)/library/page.tsx`
+- [x] T013 [US1] Connect BullMQ generation run completion in `src/worker/processors/agent-engine.ts` to auto-insert generated platform posts into `posts` with status `draft` and seed initial Version 1 snapshot records
+- [x] T014 [US1] Implement single post retrieval and update endpoint `GET /api/posts/[id]` and `PATCH /api/posts/[id]` (recording new version snapshot) in `src/app/api/posts/[id]/route.ts`
+- [x] T015 [US1] Implement accessible `CopyButton` component with `aria-live="polite"` screen reader announcement and 2-second visual confirmation badge in `src/components/library/CopyButton.tsx`
+- [x] T016 [US1] Implement `PostEditorModal` component for live editing post text, hashtags, and image prompt in `src/components/library/PostEditorModal.tsx`
+- [x] T017 [US1] Implement `PostCard` component displaying platform badge, status chip, post content, and copy trigger in `src/components/library/PostCard.tsx`
+- [x] T018 [US1] Implement Post Library dashboard page in `src/app/[locale]/(dashboard)/library/page.tsx`
 
 **Checkpoint**: User Story 1 complete — Generated posts are automatically saved to the library, editable in-place, and copyable in one click with exact formatting.
 
@@ -73,16 +73,16 @@
 
 ### Tests for User Story 2
 
-- [ ] T019 [P] [US2] Create integration tests for combined filtering and PostgreSQL multilingual search with Arabic normalization against test database in `tests/integration/post-search-filter.test.ts`
+- [x] T019 [P] [US2] Create integration tests for combined filtering and PostgreSQL multilingual search with Arabic normalization against test database in `tests/integration/post-search-filter.test.ts`
 
 ### Implementation for User Story 2
 
-- [ ] T020 [US2] Implement tag management endpoints `GET /api/tags`, `POST /api/tags`, and post association `POST /api/posts/[id]/tags` and `DELETE /api/posts/[id]/tags/[tagId]` (enforcing max 5 tags per post and max 30 chars per tag) in `src/app/api/tags/route.ts` and `src/app/api/posts/[id]/tags/route.ts`
-- [ ] T021 [US2] Implement filtered post list query with cursor-based keyset pagination and PostgreSQL GIN full-text search in `src/app/api/posts/route.ts`
-- [ ] T022 [US2] Implement `TagChip` and tag selection component in `src/components/library/TagChip.tsx`
-- [ ] T023 [US2] Implement `PostFilters` component for platform, status, date range, and tag filtering in `src/components/library/PostFilters.tsx`
-- [ ] T024 [US2] Implement debounced multilingual `SearchInput` component with RTL direction support for Arabic queries in `src/components/library/SearchInput.tsx`
-- [ ] T025 [US2] Integrate filter toolbar, search bar, and infinite cursor pagination loading into `src/app/[locale]/(dashboard)/library/page.tsx`
+- [x] T020 [US2] Implement tag management endpoints `GET /api/tags`, `POST /api/tags`, and post association `POST /api/posts/[id]/tags` and `DELETE /api/posts/[id]/tags/[tagId]` (enforcing max 5 tags per post and max 30 chars per tag) in `src/app/api/tags/route.ts` and `src/app/api/posts/[id]/tags/route.ts`
+- [x] T021 [US2] Implement filtered post list query with cursor-based keyset pagination and PostgreSQL GIN full-text search in `src/app/api/posts/route.ts`
+- [x] T022 [US2] Implement `TagChip` and tag selection component in `src/components/library/TagChip.tsx`
+- [x] T023 [US2] Implement `PostFilters` component for platform, status, date range, and tag filtering in `src/components/library/PostFilters.tsx`
+- [x] T024 [US2] Implement debounced multilingual `SearchInput` component with RTL direction support for Arabic queries in `src/components/library/SearchInput.tsx`
+- [x] T025 [US2] Integrate filter toolbar, search bar, and infinite cursor pagination loading into `src/app/[locale]/(dashboard)/library/page.tsx`
 
 **Checkpoint**: User Story 2 complete — Combined multi-attribute filtering, tagging, and multilingual Arabic search fully operational with cursor pagination.
 
@@ -96,13 +96,13 @@
 
 ### Tests for User Story 3
 
-- [ ] T026 [P] [US3] Create integration test for post version snapshotting, 20-version pruning rule, and version restoration in `tests/integration/post-versioning.test.ts`
+- [x] T026 [P] [US3] Create integration test for post version snapshotting, 20-version pruning rule, and version restoration in `tests/integration/post-versioning.test.ts`
 
 ### Implementation for User Story 3
 
-- [ ] T027 [US3] Implement version history listing endpoint `GET /api/posts/[id]/versions` and restore endpoint `POST /api/posts/[id]/versions/[versionId]/restore` in `src/app/api/posts/[id]/versions/route.ts` and `src/app/api/posts/[id]/versions/[versionId]/restore/route.ts`
-- [ ] T028 [US3] Implement `VersionHistoryDrawer` component displaying chronological snapshots, timestamps, word counts, and restore action in `src/components/library/VersionHistoryDrawer.tsx`
-- [ ] T029 [US3] Wire version history drawer trigger and restore flow into `src/components/library/PostCard.tsx` and library view
+- [x] T027 [US3] Implement version history listing endpoint `GET /api/posts/[id]/versions` and restore endpoint `POST /api/posts/[id]/versions/[versionId]/restore` in `src/app/api/posts/[id]/versions/route.ts` and `src/app/api/posts/[id]/versions/[versionId]/restore/route.ts`
+- [x] T028 [US3] Implement `VersionHistoryDrawer` component displaying chronological snapshots, timestamps, word counts, and restore action in `src/components/library/VersionHistoryDrawer.tsx`
+- [x] T029 [US3] Wire version history drawer trigger and restore flow into `src/components/library/PostCard.tsx` and library view
 
 **Checkpoint**: User Story 3 complete — Version history drawer allows inspecting past snapshots and rolling back with automated 20-version pruning.
 
@@ -116,16 +116,16 @@
 
 ### Tests for User Story 4
 
-- [ ] T030 [P] [US4] Create Playwright end-to-end test for marking post as posted with published URL validation and badge update in `tests/e2e/post-mark-posted.spec.ts`
-- [ ] T031 [P] [US4] Create integration test for soft-deletion, 10s undo window cancellation, trash retrieval, and 30-day expiration cleanup in `tests/integration/post-trash-lifecycle.test.ts`
+- [x] T030 [P] [US4] Create Playwright end-to-end test for marking post as posted with published URL validation and badge update in `tests/e2e/post-mark-posted.spec.ts`
+- [x] T031 [P] [US4] Create integration test for soft-deletion, 10s undo window cancellation, trash retrieval, and 30-day expiration cleanup in `tests/integration/post-trash-lifecycle.test.ts`
 
 ### Implementation for User Story 4
 
-- [ ] T032 [US4] Implement mark-as-posted endpoint `POST /api/posts/[id]/mark-posted` with URL HTTPS validation and publication date recording in `src/app/api/posts/[id]/mark-posted/route.ts`
-- [ ] T033 [US4] Implement soft-delete `POST /api/posts/[id]/trash`, restore `POST /api/posts/[id]/restore`, and permanent delete `DELETE /api/posts/[id]` in `src/app/api/posts/[id]/route.ts`
-- [ ] T034 [US4] Implement `MarkPostedModal` component for entering published link and publication date in `src/components/library/MarkPostedModal.tsx`
-- [ ] T035 [US4] Implement `UndoToast` floating notification with 10-second animated countdown progress bar, accessible `aria-live` announcement, and "Undo" trigger in `src/components/library/UndoToast.tsx`
-- [ ] T036 [US4] Implement 30-day Trash bin page with recover and permanent delete actions in `src/app/[locale]/(dashboard)/library/trash/page.tsx`
+- [x] T032 [US4] Implement mark-as-posted endpoint `POST /api/posts/[id]/mark-posted` with URL HTTPS validation and publication date recording in `src/app/api/posts/[id]/mark-posted/route.ts`
+- [x] T033 [US4] Implement soft-delete `POST /api/posts/[id]/trash`, restore `POST /api/posts/[id]/restore`, and permanent delete `DELETE /api/posts/[id]` in `src/app/api/posts/[id]/route.ts`
+- [x] T034 [US4] Implement `MarkPostedModal` component for entering published link and publication date in `src/components/library/MarkPostedModal.tsx`
+- [x] T035 [US4] Implement `UndoToast` floating notification with 10-second animated countdown progress bar, accessible `aria-live` announcement, and "Undo" trigger in `src/components/library/UndoToast.tsx`
+- [x] T036 [US4] Implement 30-day Trash bin page with recover and permanent delete actions in `src/app/[locale]/(dashboard)/library/trash/page.tsx`
 
 **Checkpoint**: User Story 4 complete — Status tracking and two-tier deletion lifecycle (10-second undo toast + 30-day Trash bin) fully implemented and tested.
 
@@ -139,13 +139,13 @@
 
 ### Tests for User Story 5
 
-- [ ] T037 [P] [US5] Create unit tests for Markdown and plain-text export generation in `tests/unit/post-exporter.test.ts`
+- [x] T037 [P] [US5] Create unit tests for Markdown and plain-text export generation in `tests/unit/post-exporter.test.ts`
 
 ### Implementation for User Story 5
 
-- [ ] T038 [US5] Implement Markdown and plain-text export serializers in `src/lib/export/post-exporter.ts`
-- [ ] T039 [US5] Implement export API endpoint `GET /api/posts/export` supporting format selection (`markdown` | `text`) and post selection / active filters in `src/app/api/posts/export/route.ts`
-- [ ] T040 [US5] Implement `ExportMenu` dropdown component with multi-select action in `src/components/library/ExportMenu.tsx` and connect to library header
+- [x] T038 [US5] Implement Markdown and plain-text export serializers in `src/lib/export/post-exporter.ts`
+- [x] T039 [US5] Implement export API endpoint `GET /api/posts/export` supporting format selection (`markdown` | `text`) and post selection / active filters in `src/app/api/posts/export/route.ts`
+- [x] T040 [US5] Implement `ExportMenu` dropdown component with multi-select action in `src/components/library/ExportMenu.tsx` and connect to library header
 
 **Checkpoint**: User Story 5 complete — Markdown and plain-text export functional for selected and filtered posts.
 
@@ -155,9 +155,9 @@
 
 **Purpose**: Accessibility validation, RTL verification, and CI quality gates.
 
-- [ ] T041 [P] Automated WCAG 2.1 AA accessibility audit (axe-core) for library views, post cards, modals, and undo toast in `tests/e2e/library-a11y.spec.ts`
-- [ ] T042 [P] Verify full RTL layout for Arabic in Post Library (mirrored filters, search inputs, card buttons) in `tests/e2e/library-rtl.spec.ts`
-- [ ] T043 Execute full quality gate pipeline (`pnpm lint`, `pnpm type-check`, `pnpm test`, `pnpm test:e2e`, and `pnpm build`) and verify zero errors
+- [x] T041 [P] Automated WCAG 2.1 AA accessibility audit (axe-core) for library views, post cards, modals, and undo toast in `tests/e2e/library-a11y.spec.ts`
+- [x] T042 [P] Verify full RTL layout for Arabic in Post Library (mirrored filters, search inputs, card buttons) in `tests/e2e/library-rtl.spec.ts`
+- [x] T043 Execute full quality gate pipeline (`pnpm lint`, `pnpm type-check`, `pnpm test`, `pnpm test:e2e`, and `pnpm build`) and verify zero errors
 
 ---
 

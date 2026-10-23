@@ -12,6 +12,7 @@ import { publishRunEvent, isRunCancelled } from './event-stream';
 import type { AgentEngineEvent } from './events';
 import type { GeneratedPost } from '@/../specs/006-agent-engine/contracts/agent-engine.contract';
 import type { CriticScores } from './schemas';
+import { autoSaveRunPosts } from '@/lib/library/post-service';
 
 export interface RunOrchestratorOptions {
   runId: string;
@@ -425,6 +426,16 @@ export async function executeAgentPipeline(options: RunOrchestratorOptions): Pro
       posts: finalPosts,
       totalDurationMs,
     });
+
+    try {
+      await autoSaveRunPosts({
+        userId,
+        runId,
+        posts: finalPosts,
+      });
+    } catch (saveError) {
+      logger.error({ err: saveError, runId }, 'Failed to auto-save generated posts to library');
+    }
 
     await emit({
       event: 'run.completed',

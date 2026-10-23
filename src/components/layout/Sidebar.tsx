@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { Link, usePathname } from '@/i18n/routing';
 import {
   IconPlus,
+  IconFolders,
   IconFileText,
   IconSettings,
   IconPalette,
@@ -42,6 +43,7 @@ export function Sidebar({
 
   const navItems = [
     { label: t('newRun'), href: '/', icon: IconPlus },
+    { label: t('library'), href: '/library', icon: IconFolders },
     { label: t('drafts'), href: '/drafts', icon: IconFileText },
     { label: 'Design Gallery', href: '/design', icon: IconPalette },
     { label: t('settings'), href: '/settings', icon: IconSettings },

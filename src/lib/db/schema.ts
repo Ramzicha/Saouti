@@ -9,8 +9,19 @@ import {
   jsonb,
   index,
   uniqueIndex,
+  primaryKey,
+  customType,
 } from 'drizzle-orm/pg-core';
 import { sql, type InferSelectModel, type InferInsertModel } from 'drizzle-orm';
+
+/**
+ * Custom tsvector type for PostgreSQL full-text search
+ */
+export const tsvector = customType<{ data: string }>({
+  dataType() {
+    return 'tsvector';
+  },
+});
 
 /**
  * Users Table
@@ -484,4 +495,135 @@ export const agentSteps = pgTable(
 
 export type AgentStep = InferSelectModel<typeof agentSteps>;
 export type NewAgentStep = InferInsertModel<typeof agentSteps>;
+
+/**
+ * Posts Table
+ * Social media posts in user library with publishing status and soft-delete support.
+ */
+export const posts = pgTable(
+  'posts',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    runId: uuid('run_id').references(() => runs.id, { onDelete: 'set null' }),
+    platform: varchar('platform', { length: 50 }).notNull(), // 'linkedin' | 'x' | 'reddit' | 'instagram' | 'facebook'
+    language: varchar('language', { length: 10 }).notNull().default('en'),
+    status: varchar('status', { length: 20 }).notNull().default('draft'), // 'draft' | 'ready' | 'posted'
+    content: text('content').notNull(),
+    hashtags: jsonb('hashtags').$type<string[]>().notNull().default([]),
+    imagePrompt: text('image_prompt'),
+    imageAltText: text('image_alt_text'),
+    imageAspectRatio: varchar('image_aspect_ratio', { length: 20 }),
+    publishedUrl: text('published_url'),
+    publishedAt: timestamp('published_at', { withTimezone: true }),
+    deletedAt: timestamp('deleted_at', { withTimezone: true }),
+    searchVector: tsvector('search_vector'),
+    createdAt: timestamp('created_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    index('posts_user_status_created_idx').on(
+      table.userId,
+      table.deletedAt,
+      table.createdAt,
+    ),
+    index('posts_user_platform_idx').on(table.userId, table.platform),
+    index('posts_run_id_idx').on(table.runId),
+  ],
+);
+
+export type Post = InferSelectModel<typeof posts>;
+export type NewPost = InferInsertModel<typeof posts>;
+
+/**
+ * Post Versions Table
+ * Immutable snapshots capturing post history up to 20 versions per post.
+ */
+export const postVersions = pgTable(
+  'post_versions',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    postId: uuid('post_id')
+      .notNull()
+      .references(() => posts.id, { onDelete: 'cascade' }),
+    versionNumber: integer('version_number').notNull(),
+    content: text('content').notNull(),
+    hashtags: jsonb('hashtags').$type<string[]>().notNull().default([]),
+    imagePrompt: text('image_prompt'),
+    changeSummary: text('change_summary'),
+    createdAt: timestamp('created_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    uniqueIndex('post_version_num_idx').on(table.postId, table.versionNumber),
+    index('post_versions_post_id_idx').on(table.postId),
+  ],
+);
+
+export type PostVersion = InferSelectModel<typeof postVersions>;
+export type NewPostVersion = InferInsertModel<typeof postVersions>;
+
+/**
+ * Tags Table
+ * User-created freeform categorization tags.
+ */
+export const tags = pgTable(
+  'tags',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    name: varchar('name', { length: 30 }).notNull(),
+    color: varchar('color', { length: 30 }).notNull().default('#6366f1'),
+    createdAt: timestamp('created_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    uniqueIndex('tags_user_name_idx').on(table.userId, table.name),
+  ],
+);
+
+export type Tag = InferSelectModel<typeof tags>;
+export type NewTag = InferInsertModel<typeof tags>;
+
+/**
+ * Post Tags Associative Table
+ * Links posts with up to 5 tags.
+ */
+export const postTags = pgTable(
+  'post_tags',
+  {
+    postId: uuid('post_id')
+      .notNull()
+      .references(() => posts.id, { onDelete: 'cascade' }),
+    tagId: uuid('tag_id')
+      .notNull()
+      .references(() => tags.id, { onDelete: 'cascade' }),
+    createdAt: timestamp('created_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    primaryKey({ columns: [table.postId, table.tagId] }),
+    index('post_tags_tag_id_idx').on(table.tagId),
+  ],
+);
+
+export type PostTag = InferSelectModel<typeof postTags>;
+export type NewPostTag = InferInsertModel<typeof postTags>;
 

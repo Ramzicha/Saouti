@@ -45,4 +45,33 @@ describe('Database Schema (schema.ts)', () => {
     expect(stepCols.promptVersion).toBeDefined();
     expect(stepCols.durationMs).toBeDefined();
   });
+
+  it('defines posts, post_versions, tags, and post_tags tables for Post Library', async () => {
+    const { posts, postVersions, tags, postTags } = await import('@/lib/db/schema');
+    const postCols = getTableColumns(posts);
+    expect(postCols.id).toBeDefined();
+    expect(postCols.userId).toBeDefined();
+    expect(postCols.runId).toBeDefined();
+    expect(postCols.platform).toBeDefined();
+    expect(postCols.status).toBeDefined();
+    expect(postCols.content).toBeDefined();
+    expect(postCols.hashtags).toBeDefined();
+    expect(postCols.deletedAt).toBeDefined();
+
+    const versionCols = getTableColumns(postVersions);
+    expect(versionCols.id).toBeDefined();
+    expect(versionCols.postId).toBeDefined();
+    expect(versionCols.versionNumber).toBeDefined();
+    expect(versionCols.content).toBeDefined();
+
+    const tagCols = getTableColumns(tags);
+    expect(tagCols.id).toBeDefined();
+    expect(tagCols.userId).toBeDefined();
+    expect(tagCols.name).toBeDefined();
+    expect(tagCols.color).toBeDefined();
+
+    const postTagCols = getTableColumns(postTags);
+    expect(postTagCols.postId).toBeDefined();
+    expect(postTagCols.tagId).toBeDefined();
+  });
 });

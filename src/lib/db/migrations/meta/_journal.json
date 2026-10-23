@@ -36,6 +36,13 @@
       "when": 1792773587629,
       "tag": "0004_first_hellcat",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1792777215223,
+      "tag": "0005_uneven_hellion",
+      "breakpoints": true
     }
   ]
 }
