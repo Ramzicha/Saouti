@@ -232,5 +232,29 @@
     "proposalSubtitle": "Based on your conversation, here is your proposed voice profile. Review the details below:",
     "acceptSave": "Accept & Activate Profile",
     "editInForm": "Edit in Guided Form First"
+  },
+  "AgentEngine": {
+    "activityTitle": "Agent Activity Timeline",
+    "statusRunning": "Pipeline running",
+    "statusCompleted": "Generation completed",
+    "statusFailed": "Generation failed",
+    "statusCancelled": "Generation cancelled",
+    "cancelRun": "Cancel Run",
+    "cancelling": "Cancelling...",
+    "cancelledSuccess": "Run cancelled successfully.",
+    "fastDraft": "Fast Draft (Skip Critic)",
+    "fastDraftBadge": "Fast Draft (Uncritiqued)",
+    "rateLimited": "Rate limited, retrying in {seconds}s",
+    "quotaExceeded": "AI quota exhausted. Please check your API key in Settings.",
+    "stepWriter": "Writer drafting posts",
+    "stepCritic": "Critic reviewing drafts",
+    "stepWriterRevision": "Writer revising drafts",
+    "stepArtDirector": "Art Director creating visual concepts",
+    "handoffRevision": "Revision requested: {reason}",
+    "handoffApproved": "Passed quality threshold. Handing off to Art Director",
+    "postsGenerated": "{count} posts generated",
+    "duration": "Completed in {seconds}s",
+    "placeholdersNotice": "Placeholders like [YOUR NUMBER] were preserved for safety. Replace them before publishing.",
+    "reloadResumed": "Resumed active run."
   }
 }

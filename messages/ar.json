@@ -232,5 +232,29 @@
     "proposalSubtitle": "بناءً على محادثتنا، إليك ملخص ملف نبرتك المقترح. راجع التفاصيل التالية:",
     "acceptSave": "قبول وتفعيل الملف المهني",
     "editInForm": "التعديل عبر النموذج الموجه أولاً"
+  },
+  "AgentEngine": {
+    "activityTitle": "المخطط الزمني لنشاط الوكلاء",
+    "statusRunning": "عملية التوليد جارية",
+    "statusCompleted": "اكتمل التوليد بنجاح",
+    "statusFailed": "فشلت عملية التوليد",
+    "statusCancelled": "تم إلغاء الجلسة",
+    "cancelRun": "إلغاء الجلسة",
+    "cancelling": "جارٍ الإلغاء...",
+    "cancelledSuccess": "تم إلغاء الجلسة بنجاح.",
+    "fastDraft": "مسودة سريعة (تخطي الناقد)",
+    "fastDraftBadge": "مسودة سريعة (دون نقد)",
+    "rateLimited": "تم بلوغ حد الطلبات، إعادة المحاولة خلال {seconds} ث",
+    "quotaExceeded": "تم استنفاد حصة الذكاء الاصطناعي. يرجى التحقق من مفتاح API في الإعدادات.",
+    "stepWriter": "الكاتب يصيغ المسودات للمنصات",
+    "stepCritic": "الناقد يفحص المسودات",
+    "stepWriterRevision": "الكاتب ينقح المسودات",
+    "stepArtDirector": "المخرج الفني يصمم الأفكار البصرية",
+    "handoffRevision": "مطلوب مراجعة: {reason}",
+    "handoffApproved": "تم اجتياز معايير الجودة. التحويل إلى المخرج الفني",
+    "postsGenerated": "تم توليد {count} منشورات",
+    "duration": "اكتمل خلال {seconds} ثانية",
+    "placeholdersNotice": "تم الحفاظ على علامات مثل [YOUR NUMBER] لأمانك. يرجى استبدالها ببياناتك الحقيقية قبل النشر.",
+    "reloadResumed": "تمت استعادة الجلسة النشطة."
   }
 }

@@ -386,3 +386,102 @@ export const profilerSessions = pgTable(
 export type ProfilerSession = InferSelectModel<typeof profilerSessions>;
 export type NewProfilerSession = InferInsertModel<typeof profilerSessions>;
 
+/**
+ * Runs Table
+ * Stores post generation requests and resulting platform outputs.
+ */
+export const runs = pgTable(
+  'runs',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    topicBrief: text('topic_brief').notNull(),
+    selectedPlatforms: jsonb('selected_platforms')
+      .$type<string[]>()
+      .notNull(),
+    targetLanguage: varchar('target_language', { length: 10 })
+      .notNull()
+      .default('en'),
+    arabicDialect: varchar('arabic_dialect', { length: 20 })
+      .notNull()
+      .default('none'),
+    status: varchar('status', { length: 20 })
+      .notNull()
+      .default('pending'), // 'pending' | 'running' | 'completed' | 'cancelled' | 'failed' | 'timed_out'
+    skipCritic: boolean('skip_critic').notNull().default(false),
+    posts: jsonb('posts').$type<
+      Array<{
+        platform: string;
+        language: string;
+        text: string;
+        hashtags: string[];
+        imagePrompt?: string | undefined;
+        imageAltText?: string | undefined;
+        imageAspectRatio?: string | undefined;
+        criticVerdict?: 'pass' | 'revise' | undefined;
+        criticScores?: Record<string, number> | undefined;
+        criticIssues?: Array<{
+          exactPhrase: string;
+          problem: string;
+          suggestedFix: string;
+        }> | undefined;
+      }>
+    >(),
+    totalDurationMs: integer('total_duration_ms').default(0),
+    errorMessage: text('error_message'),
+    createdAt: timestamp('created_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    index('runs_user_id_idx').on(table.userId),
+    index('runs_status_idx').on(table.status),
+    index('runs_created_at_idx').on(table.createdAt),
+  ],
+);
+
+export type Run = InferSelectModel<typeof runs>;
+export type NewRun = InferInsertModel<typeof runs>;
+
+/**
+ * Agent Steps Table
+ * Granular audit trail for each model invocation within a run.
+ */
+export const agentSteps = pgTable(
+  'agent_steps',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    runId: uuid('run_id')
+      .notNull()
+      .references(() => runs.id, { onDelete: 'cascade' }),
+    agentId: varchar('agent_id', { length: 20 }).notNull(), // 'writer' | 'critic' | 'art_director'
+    taskLabel: varchar('task_label', { length: 100 }).notNull(),
+    model: varchar('model', { length: 100 }).notNull(),
+    promptVersion: varchar('prompt_version', { length: 20 }).notNull(),
+    status: varchar('status', { length: 20 }).notNull(), // 'running' | 'completed' | 'failed' | 'skipped'
+    durationMs: integer('duration_ms').default(0),
+    inputPayload: jsonb('input_payload').$type<Record<string, unknown>>(),
+    outputPayload: jsonb('output_payload').$type<Record<string, unknown>>(),
+    errorCode: varchar('error_code', { length: 50 }),
+    createdAt: timestamp('created_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    index('agent_steps_run_id_idx').on(table.runId),
+    index('agent_steps_agent_id_idx').on(table.agentId),
+  ],
+);
+
+export type AgentStep = InferSelectModel<typeof agentSteps>;
+export type NewAgentStep = InferInsertModel<typeof agentSteps>;
+

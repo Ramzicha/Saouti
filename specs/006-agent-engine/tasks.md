@@ -17,9 +17,9 @@
 
 **Purpose**: Add internationalized dictionary keys for agent activities, statuses, hand-off reasons, and pipeline controls.
 
-- [ ] T001 [P] Add English translations for Agent Engine (activity timeline, agent statuses, hand-off labels, cancel, fast draft) in `messages/en.json`
-- [ ] T002 [P] Add French translations for Agent Engine in `messages/fr.json`
-- [ ] T003 [P] Add Arabic translations for Agent Engine in `messages/ar.json`
+- [x] T001 [P] Add English translations for Agent Engine (activity timeline, agent statuses, hand-off labels, cancel, fast draft) in `messages/en.json`
+- [x] T002 [P] Add French translations for Agent Engine in `messages/fr.json`
+- [x] T003 [P] Add Arabic translations for Agent Engine in `messages/ar.json`
 
 ---
 
@@ -29,8 +29,8 @@
 
 **⚠️ CRITICAL**: Must be completed before pipeline orchestrator and endpoints are implemented.
 
-- [ ] T004 [P] Update Drizzle database schema with `runs` and `agent_steps` tables in `src/lib/db/schema.ts`
-- [ ] T005 Generate and apply Drizzle database migration for `runs` and `agent_steps` in `src/lib/db/migrations/`
+- [x] T004 [P] Update Drizzle database schema with `runs` and `agent_steps` tables in `src/lib/db/schema.ts`
+- [x] T005 Generate and apply Drizzle database migration for `runs` and `agent_steps` in `src/lib/db/migrations/`
 - [ ] T006 [P] Create versioned role prompt template for Writer in `src/lib/agent-engine/prompts/writer.v1.md`
 - [ ] T007 [P] Create versioned role prompt template for Critic in `src/lib/agent-engine/prompts/critic.v1.md`
 - [ ] T008 [P] Create versioned role prompt template for Art Director in `src/lib/agent-engine/prompts/art-director.v1.md`

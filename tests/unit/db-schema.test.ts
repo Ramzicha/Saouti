@@ -25,4 +25,24 @@ describe('Database Schema (schema.ts)', () => {
     expect(columns.updatedAt.name).toBe('updated_at');
     expect(columns.updatedAt.notNull).toBe(true);
   });
+
+  it('defines runs and agent_steps tables with proper columns and relationships', async () => {
+    const { runs, agentSteps } = await import('@/lib/db/schema');
+    const runCols = getTableColumns(runs);
+    expect(runCols.id).toBeDefined();
+    expect(runCols.userId).toBeDefined();
+    expect(runCols.topicBrief).toBeDefined();
+    expect(runCols.selectedPlatforms).toBeDefined();
+    expect(runCols.status).toBeDefined();
+    expect(runCols.skipCritic).toBeDefined();
+    expect(runCols.posts).toBeDefined();
+
+    const stepCols = getTableColumns(agentSteps);
+    expect(stepCols.id).toBeDefined();
+    expect(stepCols.runId).toBeDefined();
+    expect(stepCols.agentId).toBeDefined();
+    expect(stepCols.taskLabel).toBeDefined();
+    expect(stepCols.promptVersion).toBeDefined();
+    expect(stepCols.durationMs).toBeDefined();
+  });
 });

@@ -232,5 +232,29 @@
     "proposalSubtitle": "Voici la synthèse structurée issue de notre échange. Vérifiez les détails ci-dessous :",
     "acceptSave": "Accepter et activer le profil",
     "editInForm": "Modifier dans le formulaire avant validation"
+  },
+  "AgentEngine": {
+    "activityTitle": "Chronologie d'activité des agents",
+    "statusRunning": "Génération en cours",
+    "statusCompleted": "Génération terminée",
+    "statusFailed": "Échec de la génération",
+    "statusCancelled": "Génération annulée",
+    "cancelRun": "Annuler la génération",
+    "cancelling": "Annulation en cours...",
+    "cancelledSuccess": "Génération annulée avec succès.",
+    "fastDraft": "Premier jet rapide (sans critique)",
+    "fastDraftBadge": "Premier jet rapide (non critiqué)",
+    "rateLimited": "Limite de débit atteinte, réessai dans {seconds}s",
+    "quotaExceeded": "Quota IA épuisé. Veuillez vérifier votre clé API dans les Paramètres.",
+    "stepWriter": "Le Rédacteur compose les publications",
+    "stepCritic": "Le Critique analyse les brouillons",
+    "stepWriterRevision": "Le Rédacteur révise les publications",
+    "stepArtDirector": "Le Directeur artistique conçoit les visuels",
+    "handoffRevision": "Révision demandée : {reason}",
+    "handoffApproved": "Seuil de qualité validé. Transmission au Directeur artistique",
+    "postsGenerated": "{count} publications générées",
+    "duration": "Terminé en {seconds}s",
+    "placeholdersNotice": "Les balises d'espace réservé comme [VOTRE CHIFFRE] ont été préservées pour votre sécurité. Remplissez-les avant publication.",
+    "reloadResumed": "Session active reprise."
   }
 }
