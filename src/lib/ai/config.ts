@@ -34,31 +34,25 @@ export interface AiConfiguration {
 export const aiConfig: AiConfiguration = {
   defaultProvider: 'gemini',
   models: {
-    validation: process.env.AI_VALIDATION_MODEL || 'gemini-1.5-flash',
-    writer: process.env.AI_WRITER_MODEL || 'gemini-1.5-flash',
-    critic: process.env.AI_CRITIC_MODEL || 'gemini-1.5-flash',
-    artDirector: process.env.AI_ART_DIRECTOR_MODEL || 'gemini-1.5-flash',
+    validation: process.env.AI_VALIDATION_MODEL || 'gemini-3.5-flash',
+    writer: process.env.AI_WRITER_MODEL || 'gemini-3.5-flash',
+    critic: process.env.AI_CRITIC_MODEL || 'gemini-3.5-flash',
+    artDirector: process.env.AI_ART_DIRECTOR_MODEL || 'gemini-3.5-flash',
     image: process.env.AI_IMAGE_MODEL || 'imagen-3.0-generate-002',
   },
   supportedModels: {
     text: [
       {
-        id: 'gemini-2.0-flash',
-        displayName: 'Gemini 2.0 Flash',
+        id: 'gemini-3.5-flash',
+        displayName: 'Gemini 3.5 Flash',
         description: 'Next-generation speed and quality, recommended default.',
         contextWindow: 1048576,
       },
       {
-        id: 'gemini-1.5-flash',
-        displayName: 'Gemini 1.5 Flash',
+        id: 'gemini-3.1-flash-lite',
+        displayName: 'Gemini 3.1 Flash Lite',
         description: 'Fast, lightweight model with high free-tier quotas.',
         contextWindow: 1048576,
-      },
-      {
-        id: 'gemini-1.5-pro',
-        displayName: 'Gemini 1.5 Pro',
-        description: 'Deep reasoning and nuanced creative voice matching.',
-        contextWindow: 2097152,
       },
     ],
     image: [
