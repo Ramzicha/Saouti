@@ -31,14 +31,14 @@
 
 - [x] T004 [P] Update Drizzle database schema with `runs` and `agent_steps` tables in `src/lib/db/schema.ts`
 - [x] T005 Generate and apply Drizzle database migration for `runs` and `agent_steps` in `src/lib/db/migrations/`
-- [ ] T006 [P] Create versioned role prompt template for Writer in `src/lib/agent-engine/prompts/writer.v1.md`
-- [ ] T007 [P] Create versioned role prompt template for Critic in `src/lib/agent-engine/prompts/critic.v1.md`
-- [ ] T008 [P] Create versioned role prompt template for Art Director in `src/lib/agent-engine/prompts/art-director.v1.md`
-- [ ] T009 [P] Implement platform formatting guidelines and community norms configuration in `src/lib/agent-engine/platform-rules.ts`
-- [ ] T010 [P] Implement Zod validation schemas for Writer, Critic, and Art Director structured outputs with placeholder checks in `src/lib/agent-engine/schemas.ts`
-- [ ] T011 [P] Create unit tests for Zod output schemas and validation retry helpers in `tests/unit/agent-engine-schemas.test.ts`
-- [ ] T012 [P] Implement pure 5-layer prompt assembler with XML delimiter tags and entity escaping in `src/lib/agent-engine/prompt-builder.ts`
-- [ ] T013 [P] Create unit tests for prompt assembler verifying layer stacking and XML sanitization in `tests/unit/agent-engine-prompts.test.ts`
+- [x] T006 [P] Create versioned role prompt template for Writer in `src/lib/agent-engine/prompts/writer.v1.md`
+- [x] T007 [P] Create versioned role prompt template for Critic in `src/lib/agent-engine/prompts/critic.v1.md`
+- [x] T008 [P] Create versioned role prompt template for Art Director in `src/lib/agent-engine/prompts/art-director.v1.md`
+- [x] T009 [P] Implement platform formatting guidelines and community norms configuration in `src/lib/agent-engine/platform-rules.ts`
+- [x] T010 [P] Implement Zod validation schemas for Writer, Critic, and Art Director structured outputs with placeholder checks in `src/lib/agent-engine/schemas.ts`
+- [x] T011 [P] Create unit tests for Zod output schemas and validation retry helpers in `tests/unit/agent-engine-schemas.test.ts`
+- [x] T012 [P] Implement pure 5-layer prompt assembler with XML delimiter tags and entity escaping in `src/lib/agent-engine/prompt-builder.ts`
+- [x] T013 [P] Create unit tests for prompt assembler verifying layer stacking and XML sanitization in `tests/unit/agent-engine-prompts.test.ts`
 
 **Checkpoint**: Foundation ready — Schemas, migrations, versioned prompt files, and pure prompt builder active and tested.
 
@@ -52,16 +52,16 @@
 
 ### Tests for User Story 1
 
-- [ ] T014 [P] [US1] Create integration test for deterministic pipeline execution with `FakeAiProviderAdapter` validating 1-call multi-platform drafting, scoring, and bounded 1-loop revision in `tests/integration/agent-pipeline.test.ts`
+- [x] T014 [P] [US1] Create integration test for deterministic pipeline execution with `FakeAiProviderAdapter` validating 1-call multi-platform drafting, scoring, and bounded 1-loop revision in `tests/integration/agent-pipeline.test.ts`
 
 ### Implementation for User Story 1
 
-- [ ] T015 [US1] Implement Writer agent caller function using `generateUserStructured` and `WriterOutputSchema` in `src/lib/agent-engine/agents/writer.ts`
-- [ ] T016 [US1] Implement Critic agent caller function evaluating 6 dimensions and returning verdict in `src/lib/agent-engine/agents/critic.ts`
-- [ ] T017 [US1] Implement Art Director agent caller function creating image prompt and alt text in `src/lib/agent-engine/agents/art-director.ts`
-- [ ] T018 [US1] Implement core pipeline state machine orchestrator in `src/lib/agent-engine/orchestrator.ts`
-- [ ] T019 [US1] Implement post generation creation endpoint `POST /api/runs` in `src/app/api/runs/route.ts`
-- [ ] T020 [US1] Implement run details and post retrieval endpoint `GET /api/runs/[runId]` in `src/app/api/runs/[runId]/route.ts`
+- [x] T015 [US1] Implement Writer agent caller function using `generateUserStructured` and `WriterOutputSchema` in `src/lib/agent-engine/agents/writer.ts`
+- [x] T016 [US1] Implement Critic agent caller function evaluating 6 dimensions and returning verdict in `src/lib/agent-engine/agents/critic.ts`
+- [x] T017 [US1] Implement Art Director agent caller function creating image prompt and alt text in `src/lib/agent-engine/agents/art-director.ts`
+- [x] T018 [US1] Implement core pipeline state machine orchestrator in `src/lib/agent-engine/orchestrator.ts`
+- [x] T019 [US1] Implement post generation creation endpoint `POST /api/runs` in `src/app/api/runs/route.ts`
+- [x] T020 [US1] Implement run details and post retrieval endpoint `GET /api/runs/[runId]` in `src/app/api/runs/[runId]/route.ts`
 
 **Checkpoint**: User Story 1 complete — Deterministic pipeline executes end-to-end and returns schema-validated multi-platform posts.
 
@@ -75,16 +75,16 @@
 
 ### Tests for User Story 2
 
-- [ ] T021 [P] [US2] Create contract tests for Redis stream event encoding and SSE event payloads in `tests/contract/agent-events.contract.test.ts`
-- [ ] T022 [P] [US2] Create integration test for SSE route verifying `Last-Event-ID` recovery and stream resumption in `tests/integration/sse-streaming.test.ts`
+- [x] T021 [P] [US2] Create contract tests for Redis stream event encoding and SSE event payloads in `tests/contract/agent-events.contract.test.ts`
+- [x] T022 [P] [US2] Create integration test for SSE route verifying `Last-Event-ID` recovery and stream resumption in `tests/integration/sse-streaming.test.ts`
 
 ### Implementation for User Story 2
 
-- [ ] T023 [US2] Implement Redis Stream publisher (`XADD`) and range reader (`XRANGE` / `XREAD`) in `src/lib/agent-engine/event-stream.ts`
-- [ ] T024 [US2] Implement Server-Sent Events route `GET /api/runs/[runId]/events` with `Last-Event-ID` recovery and `X-Accel-Buffering: no` in `src/app/api/runs/[runId]/events/route.ts`
-- [ ] T025 [US2] Create client-side React hook `useRunEvents` managing SSE connection, auto-reconnect, and state accumulation in `src/hooks/useRunEvents.ts`
-- [ ] T026 [US2] Update `ActivityTimeline` component to consume real-time events, animating hand-off transitions with plain-language reasons in `src/components/agent/ActivityTimeline.tsx`
-- [ ] T027 [US2] Update `AgentChip` component to show active agent name, one-line status (< 12 words), and rate-limit countdown timers in `src/components/agent/AgentChip.tsx`
+- [x] T023 [US2] Implement Redis Stream publisher (`XADD`) and range reader (`XRANGE` / `XREAD`) in `src/lib/agent-engine/event-stream.ts`
+- [x] T024 [US2] Implement Server-Sent Events route `GET /api/runs/[runId]/events` with `Last-Event-ID` recovery and `X-Accel-Buffering: no` in `src/app/api/runs/[runId]/events/route.ts`
+- [x] T025 [US2] Create client-side React hook `useRunEvents` managing SSE connection, auto-reconnect, and state accumulation in `src/hooks/useRunEvents.ts`
+- [x] T026 [US2] Update `ActivityTimeline` component to consume real-time events, animating hand-off transitions with plain-language reasons in `src/components/agent/ActivityTimeline.tsx`
+- [x] T027 [US2] Update `AgentChip` component to show active agent name, one-line status (< 12 words), and rate-limit countdown timers in `src/components/agent/AgentChip.tsx`
 
 **Checkpoint**: User Story 2 complete — Users experience real-time visibility into agent activities with resilient SSE streaming.
 
@@ -98,14 +98,14 @@
 
 ### Tests for User Story 3
 
-- [ ] T028 [P] [US3] Create integration test verifying BullMQ worker job execution, state rehydration across disconnections, and cancellation signal handling in `tests/integration/run-resiliency.test.ts`
+- [x] T028 [P] [US3] Create integration test verifying BullMQ worker job execution, state rehydration across disconnections, and cancellation signal handling in `tests/integration/run-resiliency.test.ts`
 
 ### Implementation for User Story 3
 
-- [ ] T029 [US3] Implement BullMQ job processor for `generate-post-run` in `src/worker/processors/agent-engine.ts`
-- [ ] T030 [US3] Register agent engine processor with BullMQ worker in `src/lib/queue/worker.ts` and `src/worker/index.ts`
-- [ ] T031 [US3] Implement run cancellation endpoint `POST /api/runs/[runId]/cancel` setting Redis abort signal in `src/app/api/runs/[runId]/cancel/route.ts`
-- [ ] T032 [US3] Wire Workspace Composer and Activity Timeline in `src/app/[locale]/page.tsx` to rehydrate active runs on mount and support Cancel Run action
+- [x] T029 [US3] Implement BullMQ job processor for `generate-post-run` in `src/worker/processors/agent-engine.ts`
+- [x] T030 [US3] Register agent engine processor with BullMQ worker in `src/lib/queue/worker.ts` and `src/worker/index.ts`
+- [x] T031 [US3] Implement run cancellation endpoint `POST /api/runs/[runId]/cancel` setting Redis abort signal in `src/app/api/runs/[runId]/cancel/route.ts`
+- [x] T032 [US3] Wire Workspace Composer and Activity Timeline in `src/app/[locale]/page.tsx` to rehydrate active runs on mount and support Cancel Run action
 
 **Checkpoint**: User Story 3 complete — Runs survive page refreshes and can be cancelled on demand.
 
@@ -119,12 +119,12 @@
 
 ### Tests for User Story 4
 
-- [ ] T033 [P] [US4] Create unit test verifying logger redaction and step persistence in `tests/unit/run-audit-trail.test.ts`
+- [x] T033 [P] [US4] Create unit test verifying logger redaction and step persistence in `tests/unit/run-audit-trail.test.ts`
 
 ### Implementation for User Story 4
 
-- [ ] T034 [US4] Implement `recordAgentStep` helper to record granular step metrics and durations in `src/lib/agent-engine/audit.ts`
-- [ ] T035 [US4] Hook audit logging into orchestrator state transitions in `src/lib/agent-engine/orchestrator.ts`
+- [x] T034 [US4] Implement `recordAgentStep` helper to record granular step metrics and durations in `src/lib/agent-engine/audit.ts`
+- [x] T035 [US4] Hook audit logging into orchestrator state transitions in `src/lib/agent-engine/orchestrator.ts`
 
 **Checkpoint**: User Story 4 complete — Complete audit trail recorded with zero credential leakage.
 
@@ -138,12 +138,12 @@
 
 ### Tests for User Story 5
 
-- [ ] T036 [P] [US5] Create unit test verifying orchestrator transitions from Writer directly to Art Director when `skipCritic: true` in `tests/unit/critic-skip.test.ts`
+- [x] T036 [P] [US5] Create unit test verifying orchestrator transitions from Writer directly to Art Director when `skipCritic: true` in `tests/unit/critic-skip.test.ts`
 
 ### Implementation for User Story 5
 
-- [ ] T037 [US5] Add `skipCritic` branching logic to orchestrator state machine in `src/lib/agent-engine/orchestrator.ts`
-- [ ] T038 [US5] Add "Fast Draft (Skip Critic)" toggle to Composer options in `src/components/layout/Composer.tsx`
+- [x] T037 [US5] Add `skipCritic` branching logic to orchestrator state machine in `src/lib/agent-engine/orchestrator.ts`
+- [x] T038 [US5] Add "Fast Draft (Skip Critic)" toggle to Composer options in `src/components/layout/Composer.tsx`
 
 **Checkpoint**: User Story 5 complete — Fast draft option active and tested.
 

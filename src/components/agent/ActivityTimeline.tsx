@@ -2,20 +2,25 @@ import React from 'react';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { AGENTS, type AgentStep } from '@/lib/agent-events';
+import { convertEventsToTimelineSteps, type AgentEngineEvent } from '@/lib/agent-engine/events';
 
 export interface ActivityTimelineProps {
-  steps: AgentStep[];
+  steps?: AgentStep[];
+  events?: AgentEngineEvent[];
+  skipCritic?: boolean;
   className?: string;
 }
 
-export function ActivityTimeline({ steps, className }: ActivityTimelineProps) {
+export function ActivityTimeline({ steps, events, skipCritic = false, className }: ActivityTimelineProps) {
+  const displaySteps = steps || (events ? convertEventsToTimelineSteps(events, skipCritic) : []);
+
   return (
     <div
       role="region"
       aria-label="Agent activity timeline"
       className={twMerge('flex w-full flex-col gap-2', className)}
     >
-      {steps.map((step) => {
+      {displaySteps.map((step) => {
         const agent = AGENTS[step.agent] || AGENTS.writer;
         const isDone = step.state === 'done';
         const isWorking = step.state === 'working';

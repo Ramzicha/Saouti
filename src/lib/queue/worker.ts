@@ -31,6 +31,11 @@ export function createWorker(): Worker {
         await recordHeartbeat();
         return { status: 'ok', timestamp: new Date().toISOString() };
       }
+      if (job.name === 'generate-post-run') {
+        const { processRunGenerationJob } = await import('@/worker/processors/agent-engine');
+        await processRunGenerationJob(job);
+        return { status: 'completed' };
+      }
       return { status: 'unknown-job' };
     },
     {
