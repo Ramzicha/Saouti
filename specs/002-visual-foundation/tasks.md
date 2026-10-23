@@ -61,7 +61,7 @@
 
 ## Phase 4: User Story 4 — Multilingual Support & Right-to-Left (RTL) Layout (Priority: P1)
 
-*Note: Scheduled before Shell and Components so that all layout containers and text elements are natively localized and bidirectional from inception.*
+_Note: Scheduled before Shell and Components so that all layout containers and text elements are natively localized and bidirectional from inception._
 
 **Goal**: Support English (`en`), French (`fr`), and Arabic (`ar`) with full RTL mirroring for Arabic, correct mixed-direction text isolation, and cookie persistence.
 

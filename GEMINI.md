@@ -4,6 +4,9 @@ Auto-generated from all feature plans. Last updated: 2026-10-22
 
 ## Active Technologies
 
+- TypeScript 5.7+ (strict mode, noImplicitAny, strictNullChecks, no `any`) + Next.js 15 (App Router), Drizzle ORM 0.38+, `@node-rs/argon2`, `ioredis`, `zod`, `next-intl`, `@tabler/icons-react` (003-accounts-auth)
+- PostgreSQL 16 (`users`, `sessions`, `verification_tokens`, `password_reset_tokens`), Redis 7 (sliding-window rate limiting) (003-accounts-auth)
+
 - TypeScript 5.7+ (strict mode, noImplicitAny, strictNullChecks, no `any`) + Next.js 15 (App Router), React 19, Tailwind CSS 3.4, `next-intl` 3.x, `@tabler/icons-react` (or `lucide-react`) for SVG icons, `clsx` + `tailwind-merge` (002-visual-foundation)
 - Client cookies (`saouti-theme`, `saouti-locale`) for zero-flash SSR persistence; no database entities needed for Epic 1 (002-visual-foundation)
 
@@ -109,6 +112,8 @@ redaction list catches them, but prefer not creating the field in the first plac
 Always import `config` from `src/lib/config.ts`.
 
 ## Recent Changes
+
+- 003-accounts-auth: Added TypeScript 5.7+ (strict mode, noImplicitAny, strictNullChecks, no `any`) + Next.js 15 (App Router), Drizzle ORM 0.38+, `@node-rs/argon2`, `ioredis`, `zod`, `next-intl`, `@tabler/icons-react`
 
 - 002-visual-foundation: Added TypeScript 5.7+ (strict mode, noImplicitAny, strictNullChecks, no `any`) + Next.js 15 (App Router), React 19, Tailwind CSS 3.4, `next-intl` 3.x, `@tabler/icons-react` (or `lucide-react`) for SVG icons, `clsx` + `tailwind-merge`
 
