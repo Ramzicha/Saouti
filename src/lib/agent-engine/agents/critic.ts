@@ -8,6 +8,8 @@ import {
 } from '../schemas';
 import { assembleAgentPrompt } from '../prompt-builder';
 
+import type { z } from 'zod';
+
 export interface CriticStepInput {
   userId: string;
   profileSummary: string;
@@ -46,7 +48,7 @@ export async function executeCriticStep(input: CriticStepInput): Promise<Evaluat
   });
 
   const result = await generateUserStructured<CriticOutput>(input.userId, prompt, {
-    schema: CriticOutputSchema as any,
+    schema: CriticOutputSchema as unknown as z.ZodType<CriticOutput>,
     schemaName: 'CriticOutput',
     schemaDescription: 'Rigorous 6-dimensional evaluation and quality verdict for drafted posts.',
     signal: input.signal,

@@ -48,13 +48,15 @@ export async function recordAgentStep(input: RecordStepInput): Promise<string | 
 /**
  * Updates run status and results in the database.
  */
+import type { Run } from '@/lib/db/schema';
+
 export async function updateRunRecord(
   runId: string,
   update: {
-    status?: 'pending' | 'running' | 'completed' | 'cancelled' | 'failed' | 'timed_out';
-    posts?: any;
-    totalDurationMs?: number;
-    errorMessage?: string;
+    status?: 'pending' | 'running' | 'completed' | 'cancelled' | 'failed' | 'timed_out' | undefined;
+    posts?: Run['posts'] | undefined;
+    totalDurationMs?: number | undefined;
+    errorMessage?: string | undefined;
   },
 ): Promise<void> {
   try {

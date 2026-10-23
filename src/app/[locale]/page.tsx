@@ -36,8 +36,6 @@ export default function WorkspacePage() {
     statusText,
     isCompleted,
     isCancelled,
-    isRateLimited,
-    retryCountdownSeconds,
   } = useRunEvents(activeRunId);
 
   // Check key and profile status on mount

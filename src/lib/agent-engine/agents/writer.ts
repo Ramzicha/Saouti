@@ -2,6 +2,8 @@ import { generateUserStructured } from '@/lib/ai/service';
 import { WriterOutputSchema, type WriterOutput } from '../schemas';
 import { assembleAgentPrompt } from '../prompt-builder';
 
+import type { z } from 'zod';
+
 export interface WriterStepInput {
   userId: string;
   profileSummary: string;
@@ -33,7 +35,7 @@ export async function executeWriterStep(input: WriterStepInput): Promise<WriterO
   });
 
   const result = await generateUserStructured<WriterOutput>(input.userId, prompt, {
-    schema: WriterOutputSchema as any,
+    schema: WriterOutputSchema as unknown as z.ZodType<WriterOutput>,
     schemaName: 'WriterOutput',
     schemaDescription: 'Multi-platform social media post drafts formatted for target networks.',
     signal: input.signal,

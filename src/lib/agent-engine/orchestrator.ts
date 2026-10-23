@@ -1,5 +1,5 @@
 import { db } from '@/lib/db/client';
-import { profiles, voiceSamples, platformPreferences, runs } from '@/lib/db/schema';
+import { profiles, voiceSamples, platformPreferences } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { logger } from '@/lib/logger';
 import { QuotaExhaustedError } from '@/lib/ai/errors';
@@ -11,17 +11,18 @@ import { recordAgentStep, updateRunRecord } from './audit';
 import { publishRunEvent, isRunCancelled } from './event-stream';
 import type { AgentEngineEvent } from './events';
 import type { GeneratedPost } from '@/../specs/006-agent-engine/contracts/agent-engine.contract';
+import type { CriticScores } from './schemas';
 
 export interface RunOrchestratorOptions {
   runId: string;
   userId: string;
   topicBrief: string;
   selectedPlatforms: Array<'linkedin' | 'instagram' | 'reddit' | 'x' | 'facebook'>;
-  targetLanguage?: string;
-  arabicDialect?: string;
-  skipCritic?: boolean;
-  onEvent?: (event: AgentEngineEvent) => void | Promise<void>;
-  signal?: AbortSignal;
+  targetLanguage?: string | undefined;
+  arabicDialect?: string | undefined;
+  skipCritic?: boolean | undefined;
+  onEvent?: ((event: AgentEngineEvent) => void | Promise<void>) | undefined;
+  signal?: AbortSignal | undefined;
 }
 
 export class RunCancelledException extends Error {
@@ -120,7 +121,7 @@ export async function executeAgentPipeline(options: RunOrchestratorOptions): Pro
     const samplesTexts = userSamples.map((s) => s.content);
     const subreddits = userPlatforms
       .find((p) => p.platform === 'reddit')
-      ?.subreddits?.map((sub) => ({ name: sub.name, rules: sub.rulesSummary }));
+      ?.subreddits?.map((sub) => ({ name: sub.name, rules: sub.rulesSummary ?? undefined }));
 
     await checkAbort();
 
@@ -179,9 +180,12 @@ export async function executeAgentPipeline(options: RunOrchestratorOptions): Pro
     await checkAbort();
 
     let activePosts = [...writerOutput.posts];
-    let criticScoresByPlatform: Record<string, any> = {};
-    let criticIssuesByPlatform: Record<string, any[]> = {};
-    let criticVerdictsByPlatform: Record<string, 'pass' | 'revise'> = {};
+    const criticScoresByPlatform: Record<string, CriticScores> = {};
+    const criticIssuesByPlatform: Record<
+      string,
+      Array<{ exactPhrase: string; problem: string; suggestedFix: string }>
+    > = {};
+    const criticVerdictsByPlatform: Record<string, 'pass' | 'revise'> = {};
 
     // 4. STEP 2: CRITIC REVIEW (OR SKIP CRITIC)
     if (skipCritic) {
@@ -402,7 +406,7 @@ export async function executeAgentPipeline(options: RunOrchestratorOptions): Pro
     const finalPosts: GeneratedPost[] = activePosts.map((post) => {
       const art = artVisualsByPlatform[post.platform];
       return {
-        platform: post.platform as any,
+        platform: post.platform as 'linkedin' | 'instagram' | 'reddit' | 'x' | 'facebook',
         language: post.language,
         text: post.text,
         hashtags: post.hashtags || [],

@@ -36,11 +36,11 @@ export interface PostCardProps {
   platform: string;
   status: 'ready' | 'in_review';
   content: string;
-  imagePrompt?: string;
-  onCopy?: () => void;
-  onEdit?: () => void;
-  onRegenerate?: () => void;
-  className?: string;
+  imagePrompt?: string | undefined;
+  onCopy?: (() => void) | undefined;
+  onEdit?: (() => void) | undefined;
+  onRegenerate?: (() => void) | undefined;
+  className?: string | undefined;
 }
 
 export function PostCard({

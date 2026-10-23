@@ -7,9 +7,9 @@ export interface RunGenerationJobData {
   userId: string;
   topicBrief: string;
   selectedPlatforms: Array<'linkedin' | 'instagram' | 'reddit' | 'x' | 'facebook'>;
-  targetLanguage?: string;
-  arabicDialect?: string;
-  skipCritic?: boolean;
+  targetLanguage?: string | undefined;
+  arabicDialect?: string | undefined;
+  skipCritic?: boolean | undefined;
 }
 
 /**

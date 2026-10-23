@@ -153,11 +153,11 @@
 
 **Purpose**: Evaluation against golden profiles, prompt-injection defense verification, and final CI quality gates.
 
-- [ ] T039 [P] Create 5 canonical golden profiles and briefs (English, French, Arabic MSA, Algerian Darija, Creative) in `tests/evaluation/golden-profiles.ts`
-- [ ] T040 [P] Implement golden-profile evaluation test suite running against `FakeAiProviderAdapter` in CI and live API on demand in `tests/evaluation/agent-engine-eval.test.ts`
-- [ ] T041 [P] Implement adversarial security test suite testing 10 prompt injection payloads in `tests/security/prompt-injection.test.ts`
-- [ ] T042 [P] Implement Playwright E2E test verifying live SSE activity streaming, timeline rendering, and reload survival in `tests/e2e/agent-activity-stream.spec.ts`
-- [ ] T043 Run full test suite (`pnpm test`), linter (`pnpm lint`), type checker (`pnpm type-check`), and production build (`pnpm build`) to ensure 0 errors
+- [x] T039 [P] Create 5 canonical golden profiles and briefs (English, French, Arabic MSA, Algerian Darija, Creative) in `tests/evaluation/golden-profiles.ts`
+- [x] T040 [P] Implement golden-profile evaluation test suite running against `FakeAiProviderAdapter` in CI and live API on demand in `tests/evaluation/agent-engine-eval.test.ts`
+- [x] T041 [P] Implement adversarial security test suite testing 10 prompt injection payloads in `tests/security/prompt-injection.test.ts`
+- [x] T042 [P] Implement Playwright E2E test verifying live SSE activity streaming, timeline rendering, and reload survival in `tests/e2e/agent-activity-stream.spec.ts`
+- [x] T043 Run full test suite (`pnpm test`), linter (`pnpm lint`), type checker (`pnpm type-check`), and production build (`pnpm build`) to ensure 0 errors
 
 ---
 
