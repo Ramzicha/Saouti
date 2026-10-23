@@ -23,18 +23,43 @@ export type CreateRunRequestInput = z.infer<typeof CreateRunRequestSchema>;
  * Writer Agent Output Schemas
  */
 export const WriterPostItemSchema = z.object({
-  platform: z.enum(['linkedin', 'instagram', 'reddit', 'x', 'facebook']),
+  platform: z.preprocess(
+    (val) => (typeof val === 'string' ? val.toLowerCase() : val),
+    z.enum(['linkedin', 'instagram', 'reddit', 'x', 'facebook']),
+  ),
   language: z.string(),
   text: z.string().min(1, 'Generated post text cannot be empty'),
-  hashtags: z.array(z.string()).default([]),
+  hashtags: z
+    .preprocess((val) => {
+      if (Array.isArray(val)) return val;
+      if (typeof val === 'string') {
+        return val
+          .split(/[\s,]+/)
+          .map((s) => s.trim())
+          .filter((s) => s.length > 0);
+      }
+      return [];
+    }, z.array(z.string()))
+    .default([]),
 });
 
-export const WriterOutputSchema = z.object({
-  posts: z.array(WriterPostItemSchema).min(1, 'At least one post must be drafted'),
-});
+export interface WriterOutput {
+  posts: WriterPostItem[];
+}
+
+export const WriterOutputSchema: z.ZodType<WriterOutput, z.ZodTypeDef, unknown> = z.preprocess(
+  (val) => {
+    if (Array.isArray(val)) {
+      return { posts: val };
+    }
+    return val;
+  },
+  z.object({
+    posts: z.array(WriterPostItemSchema).min(1, 'At least one post must be drafted'),
+  }),
+);
 
 export type WriterPostItem = z.infer<typeof WriterPostItemSchema>;
-export type WriterOutput = z.infer<typeof WriterOutputSchema>;
 
 /**
  * Critic Agent Output Schemas
@@ -55,38 +80,69 @@ export const CriticIssueSchema = z.object({
 });
 
 export const CriticEvaluationItemSchema = z.object({
-  platform: z.enum(['linkedin', 'instagram', 'reddit', 'x', 'facebook']),
-  verdict: z.enum(['pass', 'revise']),
+  platform: z.preprocess(
+    (val) => (typeof val === 'string' ? val.toLowerCase() : val),
+    z.enum(['linkedin', 'instagram', 'reddit', 'x', 'facebook']),
+  ),
+  verdict: z.preprocess(
+    (val) => (typeof val === 'string' ? val.toLowerCase() : val),
+    z.enum(['pass', 'revise']),
+  ),
   scores: CriticScoreSchema,
-  issues: z.array(CriticIssueSchema).max(3),
-  statusText: z.string().max(100),
-});
-
-export const CriticOutputSchema = z.object({
-  evaluations: z.array(CriticEvaluationItemSchema).min(1),
+  issues: z.array(CriticIssueSchema).max(3).default([]),
+  statusText: z.string().max(200).default(''),
 });
 
 export type CriticScores = z.infer<typeof CriticScoreSchema>;
 export type CriticIssue = z.infer<typeof CriticIssueSchema>;
 export type CriticEvaluationItem = z.infer<typeof CriticEvaluationItemSchema>;
-export type CriticOutput = z.infer<typeof CriticOutputSchema>;
+
+export interface CriticOutput {
+  evaluations: CriticEvaluationItem[];
+}
+
+export const CriticOutputSchema: z.ZodType<CriticOutput, z.ZodTypeDef, unknown> = z.preprocess(
+  (val) => {
+    if (Array.isArray(val)) {
+      return { evaluations: val };
+    }
+    return val;
+  },
+  z.object({
+    evaluations: z.array(CriticEvaluationItemSchema).min(1),
+  }),
+);
 
 /**
  * Art Director Agent Output Schemas
  */
 export const ArtDirectorItemSchema = z.object({
-  platform: z.enum(['linkedin', 'instagram', 'reddit', 'x', 'facebook']),
+  platform: z.preprocess(
+    (val) => (typeof val === 'string' ? val.toLowerCase() : val),
+    z.enum(['linkedin', 'instagram', 'reddit', 'x', 'facebook']),
+  ),
   prompt: z.string().min(1, 'Image prompt cannot be empty'),
   aspectRatio: z.string().default('16:9'),
   altText: z.string().min(1, 'Accessibility alt text cannot be empty'),
 });
 
-export const ArtDirectorOutputSchema = z.object({
-  visuals: z.array(ArtDirectorItemSchema).min(1),
-});
-
 export type ArtDirectorItem = z.infer<typeof ArtDirectorItemSchema>;
-export type ArtDirectorOutput = z.infer<typeof ArtDirectorOutputSchema>;
+
+export interface ArtDirectorOutput {
+  visuals: ArtDirectorItem[];
+}
+
+export const ArtDirectorOutputSchema: z.ZodType<ArtDirectorOutput, z.ZodTypeDef, unknown> = z.preprocess(
+  (val) => {
+    if (Array.isArray(val)) {
+      return { visuals: val };
+    }
+    return val;
+  },
+  z.object({
+    visuals: z.array(ArtDirectorItemSchema).min(1),
+  }),
+);
 
 /**
  * Quality Assessment Helper:

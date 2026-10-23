@@ -15,7 +15,7 @@ export interface GenerateTextOptions {
 }
 
 export interface GenerateStructuredOptions<T> extends GenerateTextOptions {
-  schema: z.ZodType<T>;
+  schema: z.ZodType<T, z.ZodTypeDef, any>;
   schemaName?: string | undefined;
   schemaDescription?: string | undefined;
 }
