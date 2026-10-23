@@ -3,6 +3,8 @@
 Auto-generated from all feature plans. Last updated: 2026-10-22
 
 ## Active Technologies
+- TypeScript 5.7+ (strict mode, noImplicitAny, strictNullChecks, exactOptionalPropertyTypes) + Node.js 20 LTS + Next.js 15 (App Router), Drizzle ORM, Zod, `@tabler/icons-react`, `next-intl` (007-post-library)
+- PostgreSQL 16 (`posts`, `post_versions`, `tags`, `post_tags` with generated `search_vector` tsvector and GIN indexes) (007-post-library)
 
 - TypeScript 5.7+ (strict mode, noImplicitAny, strictNullChecks, no `any`, exactOptionalPropertyTypes) + Next.js 15 (App Router), BullMQ, ioredis (Redis Streams), Drizzle ORM, Zod, Server-Sent Events (006-agent-engine)
 - PostgreSQL 16 (`runs`, `agent_steps`), Redis 7 (`saouti:run:{runId}:events`) (006-agent-engine)
@@ -121,18 +123,15 @@ redaction list catches them, but prefer not creating the field in the first plac
 Always import `config` from `src/lib/config.ts`.
 
 ## Recent Changes
+- 007-post-library: Added TypeScript 5.7+ (strict mode, noImplicitAny, strictNullChecks, exactOptionalPropertyTypes) + Node.js 20 LTS + Next.js 15 (App Router), Drizzle ORM, Zod, `@tabler/icons-react`, `next-intl`
 
 - 006-agent-engine: Added TypeScript 5.7+ (strict mode, noImplicitAny, strictNullChecks, no `any`, exactOptionalPropertyTypes) + BullMQ worker state machine, Redis Streams event bus (`saouti:run:{runId}:events`), SSE streaming route with `Last-Event-ID` recovery, versioned prompts, XML delimiter isolation, golden-profile evaluation suite, and prompt-injection defense
 
 - 005-voice-profile: Added TypeScript 5.7+ (strict mode, noImplicitAny, strictNullChecks, no `any`, exactOptionalPropertyTypes) + Next.js 15 (App Router), React 19, `react-hook-form`, `@hookform/resolvers`, Drizzle ORM, Zod, typed JSON section storage, snapshot summary builder, multi-turn AI Profiler agent, and multilingual onboarding E2E tests
 
-- 004-ai-provider-keys: Added TypeScript 5.7+ (strict mode, noImplicitAny, strictNullChecks, no `any`) + Next.js 15 (App Router), `@google/genai`, Drizzle ORM, Zod, AES-256-GCM crypto
 
-- 003-accounts-auth: Added TypeScript 5.7+ (strict mode, noImplicitAny, strictNullChecks, no `any`) + Next.js 15 (App Router), Drizzle ORM 0.38+, `@node-rs/argon2`, `ioredis`, `zod`, `next-intl`, `@tabler/icons-react`
 
-- 002-visual-foundation: Added TypeScript 5.7+ (strict mode, noImplicitAny, strictNullChecks, no `any`) + Next.js 15 (App Router), React 19, Tailwind CSS 3.4, `next-intl` 3.x, `@tabler/icons-react` (or `lucide-react`) for SVG icons, `clsx` + `tailwind-merge`
 
-- 001-project-foundation: Added TypeScript 5.x + Node.js 20 LTS + Next.js 15 + Drizzle + BullMQ + Pino + Zod
 
 <!-- MANUAL ADDITIONS START -->
 <!-- MANUAL ADDITIONS END -->
