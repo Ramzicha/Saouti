@@ -2,7 +2,9 @@
 
 Auto-generated from all feature plans. Last updated: 2026-10-22
 
-## Active Technologies
+- TypeScript 5.7+ (strict mode, noImplicitAny, strictNullChecks, exactOptionalPropertyTypes) + Node.js 20 LTS + Next.js 15 (App Router), Drizzle ORM, Zod, Imagen 3, Pluggable StorageProvider (008-post-images)
+- PostgreSQL 16 (`images`), Local filesystem volume / S3-ready abstraction (008-post-images)
+
 - TypeScript 5.7+ (strict mode, noImplicitAny, strictNullChecks, exactOptionalPropertyTypes) + Node.js 20 LTS + Next.js 15 (App Router), Drizzle ORM, Zod, `@tabler/icons-react`, `next-intl` (007-post-library)
 - PostgreSQL 16 (`posts`, `post_versions`, `tags`, `post_tags` with generated `search_vector` tsvector and GIN indexes) (007-post-library)
 
@@ -123,6 +125,8 @@ redaction list catches them, but prefer not creating the field in the first plac
 Always import `config` from `src/lib/config.ts`.
 
 ## Recent Changes
+- 008-post-images: Added TypeScript 5.7+ (strict mode, noImplicitAny, strictNullChecks, exactOptionalPropertyTypes) + Next.js 15 (App Router), `generateImage` on `AiProviderAdapter`, Gemini Imagen 3 integration with capability detection, pluggable `StorageProvider` (local volume / S3-ready), PostgreSQL `images` table with cascade deletion, authenticated streaming endpoints, and transparent Art Director quota pause handling
+
 - 007-post-library: Added TypeScript 5.7+ (strict mode, noImplicitAny, strictNullChecks, exactOptionalPropertyTypes) + Node.js 20 LTS + Next.js 15 (App Router), Drizzle ORM, Zod, `@tabler/icons-react`, `next-intl`
 
 - 006-agent-engine: Added TypeScript 5.7+ (strict mode, noImplicitAny, strictNullChecks, no `any`, exactOptionalPropertyTypes) + BullMQ worker state machine, Redis Streams event bus (`saouti:run:{runId}:events`), SSE streaming route with `Last-Event-ID` recovery, versioned prompts, XML delimiter isolation, golden-profile evaluation suite, and prompt-injection defense

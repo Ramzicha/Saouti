@@ -1,0 +1,301 @@
+openapi: 3.0.3
+info:
+  title: Saouti Post Images API
+  description: Authenticated API endpoints for managing, generating, and downloading post visual assets.
+  version: 1.0.0
+paths:
+  /api/ai/capabilities/image:
+    get:
+      summary: Check if user's configured provider key supports image generation
+      responses:
+        '200':
+          description: Capability detection status
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - supported
+                  - providerId
+                  - model
+                properties:
+                  supported:
+                    type: boolean
+                  providerId:
+                    type: string
+                  model:
+                    type: string
+                  reason:
+                    type: string
+
+  /api/posts/{id}/images:
+    get:
+      summary: List all generated images for a post
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: List of images for post
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - images
+                properties:
+                  images:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PostImageItem'
+
+  /api/posts/{id}/images/generate:
+    post:
+      summary: Generate an image for a post using the user's API key
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                prompt:
+                  type: string
+                aspectRatio:
+                  type: string
+                  enum: ['16:9', '1:1', '4:5', '9:16']
+                altText:
+                  type: string
+      responses:
+        '201':
+          description: Image generated and attached
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostImageItem'
+        '422':
+          description: Provider does not support image generation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Rate limit reached with retry countdown
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RateLimitResponse'
+
+  /api/posts/{id}/images/regenerate:
+    post:
+      summary: Regenerate an image with a refinement instruction
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - instruction
+              properties:
+                instruction:
+                  type: string
+                aspectRatio:
+                  type: string
+      responses:
+        '201':
+          description: New image iteration generated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostImageItem'
+
+  /api/posts/{id}/images/{imageId}:
+    get:
+      summary: Authenticated private stream of the image
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: imageId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Image binary stream
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+        '403':
+          description: Forbidden - Not post owner
+        '404':
+          description: Image or post not found
+    delete:
+      summary: Delete a specific image iteration
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: imageId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Image deleted successfully
+
+  /api/posts/{id}/images/{imageId}/download:
+    get:
+      summary: Download image file with Content-Disposition
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: imageId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Image download stream
+          headers:
+            Content-Disposition:
+              schema:
+                type: string
+                example: attachment; filename="saouti-linkedin-1.png"
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+
+  /api/posts/{id}/images/{imageId}/primary:
+    patch:
+      summary: Set image as the primary visual for the post
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: imageId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Primary image updated
+
+components:
+  schemas:
+    PostImageItem:
+      type: object
+      required:
+        - id
+        - postId
+        - url
+        - mimeType
+        - fileSizeBytes
+        - aspectRatio
+        - prompt
+        - versionNumber
+        - isPrimary
+        - createdAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        postId:
+          type: string
+          format: uuid
+        url:
+          type: string
+        downloadUrl:
+          type: string
+        mimeType:
+          type: string
+        fileSizeBytes:
+          type: integer
+        width:
+          type: integer
+          nullable: true
+        height:
+          type: integer
+          nullable: true
+        aspectRatio:
+          type: string
+        prompt:
+          type: string
+        altText:
+          type: string
+          nullable: true
+        refinementInstruction:
+          type: string
+          nullable: true
+        versionNumber:
+          type: integer
+        isPrimary:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+        reason:
+          type: string
+
+    RateLimitResponse:
+      type: object
+      required:
+        - error
+        - retryAfterSeconds
+      properties:
+        error:
+          type: string
+        retryAfterSeconds:
+          type: integer
