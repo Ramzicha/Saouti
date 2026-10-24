@@ -19,6 +19,7 @@ export interface AiConfiguration {
     critic: string;
     artDirector: string;
     image: string;
+    profiler: string;
   };
   supportedModels: {
     text: ModelDescriptor[];
@@ -39,6 +40,7 @@ export const aiConfig: AiConfiguration = {
     critic: process.env.AI_CRITIC_MODEL || 'gemini-3.1-flash-lite',
     artDirector: process.env.AI_ART_DIRECTOR_MODEL || 'gemini-3.1-flash-lite',
     image: process.env.AI_IMAGE_MODEL || 'gemini-3.1-flash-image',
+    profiler: process.env.AI_PROFILER_MODEL || 'gemini-3.1-flash-lite',
   },
   supportedModels: {
     text: [

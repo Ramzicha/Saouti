@@ -57,20 +57,20 @@ description: "Task list for Profile Documents (PDF) implementation"
 
 ### Tests for User Story 1
 
-- [ ] T012 [P] [US1] Unit tests for PDF magic byte validation, encrypted PDF detection, and page count checks in tests/unit/pdf-extractor.test.ts
-- [ ] T013 [P] [US1] Integration tests for privacy consent gate and document upload endpoint (enforcing 5-document limit, size/page caps) in tests/integration/document-upload-flow.test.ts
+- [x] T012 [P] [US1] Unit tests for PDF magic byte validation, encrypted PDF detection, and page count checks in tests/unit/pdf-extractor.test.ts
+- [x] T013 [P] [US1] Integration tests for privacy consent gate and document upload endpoint (enforcing 5-document limit, size/page caps) in tests/integration/document-upload-flow.test.ts
 
 ### Implementation for User Story 1
 
-- [ ] T014 [US1] Implement server-side PDF validation, encryption check, and page extractor in src/lib/documents/pdf-extractor.ts
-- [ ] T015 [US1] Implement document service operations for consent logging, document creation, and AES-256-GCM encryption of extracted text in src/lib/documents/document-service.ts
-- [ ] T016 [US1] Implement privacy notice consent API endpoints (GET / POST) in src/app/api/profile/documents/consent/route.ts
-- [ ] T017 [US1] Implement document listing and PDF upload API route (POST / GET) in src/app/api/profile/documents/route.ts
-- [ ] T018 [US1] Implement authenticated private PDF file streaming route for owners only in src/app/api/profile/documents/[id]/file/route.ts
-- [ ] T019 [P] [US1] Build accessible `DocumentPrivacyConsentModal.tsx` blocking uploads until acknowledged in src/components/profile/documents/DocumentPrivacyConsentModal.tsx
-- [ ] T020 [P] [US1] Build `DocumentUploadZone.tsx` with drag-and-drop, 5-document cap indicator, and type label selector in src/components/profile/documents/DocumentUploadZone.tsx
-- [ ] T021 [P] [US1] Build `DocumentList.tsx` showing uploaded files, status chips, and file sizes in src/components/profile/documents/DocumentList.tsx
-- [ ] T022 [US1] Integrate Documents management tab into `VoiceProfileWizard.tsx` in src/components/profile/VoiceProfileWizard.tsx
+- [x] T014 [US1] Implement server-side PDF validation, encryption check, and page extractor in src/lib/documents/pdf-extractor.ts
+- [x] T015 [US1] Implement document service operations for consent logging, document creation, and AES-256-GCM encryption of extracted text in src/lib/documents/document-service.ts
+- [x] T016 [US1] Implement privacy notice consent API endpoints (GET / POST) in src/app/api/profile/documents/consent/route.ts
+- [x] T017 [US1] Implement document listing and PDF upload API route (POST / GET) in src/app/api/profile/documents/route.ts
+- [x] T018 [US1] Implement authenticated private PDF file streaming route for owners only in src/app/api/profile/documents/[id]/file/route.ts
+- [x] T019 [P] [US1] Build accessible `DocumentPrivacyConsentModal.tsx` blocking uploads until acknowledged in src/components/profile/documents/DocumentPrivacyConsentModal.tsx
+- [x] T020 [P] [US1] Build `DocumentUploadZone.tsx` with drag-and-drop, 5-document cap indicator, and type label selector in src/components/profile/documents/DocumentUploadZone.tsx
+- [x] T021 [P] [US1] Build `DocumentList.tsx` showing uploaded files, status chips, and file sizes in src/components/profile/documents/DocumentList.tsx
+- [x] T022 [US1] Integrate Documents management tab into `VoiceProfileWizard.tsx` in src/components/profile/VoiceProfileWizard.tsx
 
 **Checkpoint**: User Story 1 functional and independently testable — users can consent, upload up to 5 valid PDFs, and view them securely.
 
@@ -84,17 +84,17 @@ description: "Task list for Profile Documents (PDF) implementation"
 
 ### Tests for User Story 2
 
-- [ ] T023 [P] [US2] Unit tests for Profiler document extraction runner, structured Zod parsing, and prompt injection defense in tests/unit/profiler-document.test.ts
-- [ ] T024 [P] [US2] Integration test for scanned PDF fallback via multimodal provider adapter in tests/integration/document-scanned-fallback.test.ts
+- [x] T023 [P] [US2] Unit tests for Profiler document extraction runner, structured Zod parsing, and prompt injection defense in tests/unit/profiler-document.test.ts
+- [x] T024 [P] [US2] Integration test for scanned PDF fallback via multimodal provider adapter in tests/integration/document-scanned-fallback.test.ts
 
 ### Implementation for User Story 2
 
-- [ ] T025 [US2] Create Profiler document extraction prompt with XML delimiter isolation and injection defense in src/lib/agent-engine/prompts/profiler-document.v1.md
-- [ ] T026 [US2] Implement Profiler document extraction runner with page chunking, structured output parsing, and scanned fallback in src/lib/agent-engine/agents/profiler-document.ts
-- [ ] T027 [US2] Implement extraction trigger API endpoint emitting live progress SSE events in src/app/api/profile/documents/[id]/extract/route.ts
-- [ ] T028 [US2] Implement document insights retrieval API route in src/app/api/profile/documents/[id]/insights/route.ts
-- [ ] T029 [US2] Update agent activity stream and presence indicator to reflect active document reading in src/components/agent-engine/AgentPresence.tsx
-- [ ] T030 [US2] Connect extraction trigger button and live progress status in src/components/profile/documents/DocumentList.tsx
+- [x] T025 [US2] Create Profiler document extraction prompt with XML delimiter isolation and injection defense in src/lib/agent-engine/prompts/profiler-document.v1.md
+- [x] T026 [US2] Implement Profiler document extraction runner with page chunking, structured output parsing, and scanned fallback in src/lib/agent-engine/agents/profiler-document.ts
+- [x] T027 [US2] Implement extraction trigger API endpoint emitting live progress SSE events in src/app/api/profile/documents/[id]/extract/route.ts
+- [x] T028 [US2] Implement document insights retrieval API route in src/app/api/profile/documents/[id]/insights/route.ts
+- [x] T029 [US2] Update agent activity stream and presence indicator to reflect active document reading in src/components/agent-engine/AgentPresence.tsx
+- [x] T030 [US2] Connect extraction trigger button and live progress status in src/components/profile/documents/DocumentList.tsx
 
 **Checkpoint**: User Stories 1 AND 2 functional — documents extract into structured, categorized insights with source page references.
 
@@ -108,18 +108,18 @@ description: "Task list for Profile Documents (PDF) implementation"
 
 ### Tests for User Story 3
 
-- [ ] T031 [P] [US3] Unit tests for insight review state transitions (`pending` -> `approved` | `edited` | `rejected`) and ApprovedFact conversion in tests/unit/insight-review.test.ts
-- [ ] T032 [P] [US3] Integration test verifying approved facts inclusion in profile summary snapshot and exclusion of rejected items in tests/integration/profile-summary-facts.test.ts
+- [x] T031 [P] [US3] Unit tests for insight review state transitions (`pending` -> `approved` | `edited` | `rejected`) and ApprovedFact conversion in tests/unit/insight-review.test.ts
+- [x] T032 [P] [US3] Integration test verifying approved facts inclusion in profile summary snapshot and exclusion of rejected items in tests/integration/profile-summary-facts.test.ts
 
 ### Implementation for User Story 3
 
-- [ ] T033 [US3] Implement insight review service logic (accept, edit, reject, and ApprovedFact persistence) in src/lib/documents/document-service.ts
-- [ ] T034 [US3] Implement insight review API endpoint in src/app/api/profile/documents/insights/[insightId]/review/route.ts
-- [ ] T035 [US3] Implement approved facts listing API route in src/app/api/profile/facts/route.ts
-- [ ] T036 [P] [US3] Build `InsightReviewCard.tsx` with source page citation, inline edit form, and accept/reject actions in src/components/profile/documents/InsightReviewCard.tsx
-- [ ] T037 [P] [US3] Build `InsightReviewDrawer.tsx` grouping proposed insights by category with filter tabs in src/components/profile/documents/InsightReviewDrawer.tsx
-- [ ] T038 [P] [US3] Build `ApprovedFactsList.tsx` showing active verified facts and citations in src/components/profile/documents/ApprovedFactsList.tsx
-- [ ] T039 [US3] Update profile summary builder and "What the AI sees" preview dialog to display approved document facts and insights in src/lib/profile/summary-builder.ts
+- [x] T033 [US3] Implement insight review service logic (accept, edit, reject, and ApprovedFact persistence) in src/lib/documents/document-service.ts
+- [x] T034 [US3] Implement insight review API endpoint in src/app/api/profile/documents/insights/[insightId]/review/route.ts
+- [x] T035 [US3] Implement approved facts listing API route in src/app/api/profile/facts/route.ts
+- [x] T036 [P] [US3] Build `InsightReviewCard.tsx` with source page citation, inline edit form, and accept/reject actions in src/components/profile/documents/InsightReviewCard.tsx
+- [x] T037 [P] [US3] Build `InsightReviewDrawer.tsx` grouping proposed insights by category with filter tabs in src/components/profile/documents/InsightReviewDrawer.tsx
+- [x] T038 [P] [US3] Build `ApprovedFactsList.tsx` showing active verified facts and citations in src/components/profile/documents/ApprovedFactsList.tsx
+- [x] T039 [US3] Update profile summary builder and "What the AI sees" preview dialog to display approved document facts and insights in src/lib/profile/summary-builder.ts
 
 **Checkpoint**: User Stories 1, 2, and 3 functional — zero unreviewed insights committed; human-in-the-loop review generates verified facts.
 
@@ -133,17 +133,17 @@ description: "Task list for Profile Documents (PDF) implementation"
 
 ### Tests for User Story 4
 
-- [ ] T040 [P] [US4] Unit tests for Writer `<approved_facts>` injection and Critic claim verification in tests/unit/approved-facts-pipeline.test.ts
-- [ ] T041 [P] [US4] Run and verify Golden Profile evaluation suite with prompt versions v1 and v2 in tests/evaluation/agent-engine-eval.test.ts
+- [x] T040 [P] [US4] Unit tests for Writer `<approved_facts>` injection and Critic claim verification in tests/unit/approved-facts-pipeline.test.ts
+- [x] T041 [P] [US4] Run and verify Golden Profile evaluation suite with prompt versions v1 and v2 in tests/evaluation/agent-engine-eval.test.ts
 
 ### Implementation for User Story 4
 
-- [ ] T042 [US4] Create Writer agent prompt v2 enforcing `<approved_facts>` usage and placeholder insertion in src/lib/agent-engine/prompts/writer.v2.md
-- [ ] T043 [US4] Create Critic agent prompt v2 auditing claims against `<approved_facts>` and flagging ungrounded claims in src/lib/agent-engine/prompts/critic.v2.md
-- [ ] T044 [US4] Update prompt builder to assemble `<approved_facts>` XML block from user's active approved facts in src/lib/agent-engine/prompt-builder.ts
-- [ ] T045 [US4] Update Writer agent runner to support prompt version v2 and inject approved facts in src/lib/agent-engine/agents/writer.ts
-- [ ] T046 [US4] Update Critic agent runner to support prompt version v2 and verify claims against approved facts in src/lib/agent-engine/agents/critic.ts
-- [ ] T047 [US4] Ensure backward compatibility for users with zero documents (omit `<approved_facts>` block cleanly) in src/lib/agent-engine/prompt-builder.ts
+- [x] T042 [US4] Create Writer agent prompt v2 enforcing `<approved_facts>` usage and placeholder insertion in src/lib/agent-engine/prompts/writer.v2.md
+- [x] T043 [US4] Create Critic agent prompt v2 auditing claims against `<approved_facts>` and flagging ungrounded claims in src/lib/agent-engine/prompts/critic.v2.md
+- [x] T044 [US4] Update prompt builder to assemble `<approved_facts>` XML block from user's active approved facts in src/lib/agent-engine/prompt-builder.ts
+- [x] T045 [US4] Update Writer agent runner to support prompt version v2 and inject approved facts in src/lib/agent-engine/agents/writer.ts
+- [x] T046 [US4] Update Critic agent runner to support prompt version v2 and verify claims against approved facts in src/lib/agent-engine/agents/critic.ts
+- [x] T047 [US4] Ensure backward compatibility for users with zero documents (omit `<approved_facts>` block cleanly) in src/lib/agent-engine/prompt-builder.ts
 
 **Checkpoint**: User Stories 1 through 4 functional — drafts strictly grounded in verified facts with Critic auditing.
 
@@ -157,16 +157,16 @@ description: "Task list for Profile Documents (PDF) implementation"
 
 ### Tests for User Story 5
 
-- [ ] T048 [P] [US5] Integration tests for document deletion (Option A retain facts vs Option B purge facts) in tests/integration/document-deletion.test.ts
-- [ ] T049 [P] [US5] Integration test for complete account deletion cascade (DB records and physical storage files) in tests/integration/document-account-cascade.test.ts
+- [x] T048 [P] [US5] Integration tests for document deletion (Option A retain facts vs Option B purge facts) in tests/integration/document-deletion.test.ts
+- [x] T049 [P] [US5] Integration test for complete account deletion cascade (DB records and physical storage files) in tests/integration/document-account-cascade.test.ts
 
 ### Implementation for User Story 5
 
-- [ ] T050 [US5] Implement document deletion logic with `keepApprovedFacts` query parameter and storage binary purge in src/lib/documents/document-service.ts
-- [ ] T051 [US5] Implement document deletion API endpoint (DELETE /api/profile/documents/[id]) in src/app/api/profile/documents/[id]/route.ts
-- [ ] T052 [P] [US5] Build `DocumentDeleteModal.tsx` presenting explicit radio choices (keep vs remove facts) in src/components/profile/documents/DocumentDeleteModal.tsx
-- [ ] T053 [US5] Connect delete modal and deletion trigger to document actions menu in src/components/profile/documents/DocumentList.tsx
-- [ ] T054 [US5] Update account deletion route to purge user's private documents directory from storage volume in src/app/api/auth/delete-account/route.ts
+- [x] T050 [US5] Implement document deletion logic with `keepApprovedFacts` query parameter and storage binary purge in src/lib/documents/document-service.ts
+- [x] T051 [US5] Implement document deletion API endpoint (DELETE /api/profile/documents/[id]) in src/app/api/profile/documents/[id]/route.ts
+- [x] T052 [P] [US5] Build `DocumentDeleteModal.tsx` presenting explicit radio choices (keep vs remove facts) in src/components/profile/documents/DocumentDeleteModal.tsx
+- [x] T053 [US5] Connect delete modal and deletion trigger to document actions menu in src/components/profile/documents/DocumentList.tsx
+- [x] T054 [US5] Update account deletion route to purge user's private documents directory from storage volume in src/app/api/auth/delete-account/route.ts
 
 **Checkpoint**: User Stories 1 through 5 complete — data sovereignty, GDPR right to erasure, and full lifecycle control delivered.
 
@@ -180,14 +180,14 @@ description: "Task list for Profile Documents (PDF) implementation"
 
 ### Tests for User Story 6
 
-- [ ] T055 [P] [US6] Unit tests for profile conflict detection comparator in tests/unit/conflict-detector.test.ts
+- [x] T055 [P] [US6] Unit tests for profile conflict detection comparator in tests/unit/conflict-detector.test.ts
 
 ### Implementation for User Story 6
 
-- [ ] T056 [US6] Implement conflict detection comparator between existing profile fields and extracted insights in src/lib/documents/conflict-detector.ts
-- [ ] T057 [P] [US6] Build `InsightConflictBadge.tsx` comparing profile vs document proposal with selection toggles in src/components/profile/documents/InsightConflictBadge.tsx
-- [ ] T058 [US6] Integrate conflict badge into `InsightReviewCard.tsx` in src/components/profile/documents/InsightReviewCard.tsx
-- [ ] T059 [P] [US6] Build `QuotaEstimateBanner.tsx` displaying expected token/request usage prior to extraction in src/components/profile/documents/QuotaEstimateBanner.tsx
+- [x] T056 [US6] Implement conflict detection comparator between existing profile fields and extracted insights in src/lib/documents/conflict-detector.ts
+- [x] T057 [P] [US6] Build `InsightConflictBadge.tsx` comparing profile vs document proposal with selection toggles in src/components/profile/documents/InsightConflictBadge.tsx
+- [x] T058 [US6] Integrate conflict badge into `InsightReviewCard.tsx` in src/components/profile/documents/InsightReviewCard.tsx
+- [x] T059 [P] [US6] Build `QuotaEstimateBanner.tsx` displaying expected token/request usage prior to extraction in src/components/profile/documents/QuotaEstimateBanner.tsx
 
 **Checkpoint**: All 6 user stories complete — conflict resolution and quota awareness operational.
 
@@ -199,23 +199,23 @@ description: "Task list for Profile Documents (PDF) implementation"
 
 ### Security & Privacy (Principle 2)
 
-- [ ] T060 [P] Security review: verify all document queries and storage paths enforce strict user ID scoping in src/lib/documents/document-service.ts
-- [ ] T061 [P] Security review: confirm extracted text is encrypted at rest (AES-256-GCM) and never logged in plain text in src/lib/documents/document-service.ts
-- [ ] T062 Prompt-injection adversarial test: verify adversarial PDFs fail to execute instructions or hijack agent turns in tests/security/document-injection.test.ts
+- [x] T060 [P] Security review: verify all document queries and storage paths enforce strict user ID scoping in src/lib/documents/document-service.ts
+- [x] T061 [P] Security review: confirm extracted text is encrypted at rest (AES-256-GCM) and never logged in plain text in src/lib/documents/document-service.ts
+- [x] T062 Prompt-injection adversarial test: verify adversarial PDFs fail to execute instructions or hijack agent turns in tests/security/document-injection.test.ts
 
 ### Accessibility & Localisation (Principle 6)
 
-- [ ] T063 [P] Accessibility audit: run automated axe-core scans on DocumentPrivacyConsentModal, DocumentUploadZone, and InsightReviewDrawer in tests/e2e/document-a11y.spec.ts
-- [ ] T064 [P] Verify keyboard navigation (`Tab`, `Space`, `Enter`, `Escape`) and WCAG AA contrast for all document UI components in src/components/profile/documents/
-- [ ] T065 [P] RTL layout verification: verify Arabic text alignment, chevron mirroring, and badge orientation in src/components/profile/documents/
+- [x] T063 [P] Accessibility audit: run automated axe-core scans on DocumentPrivacyConsentModal, DocumentUploadZone, and InsightReviewDrawer in tests/e2e/document-a11y.spec.ts
+- [x] T064 [P] Verify keyboard navigation (`Tab`, `Space`, `Enter`, `Escape`) and WCAG AA contrast for all document UI components in src/components/profile/documents/
+- [x] T065 [P] RTL layout verification: verify Arabic text alignment, chevron mirroring, and badge orientation in src/components/profile/documents/
 
 ### Quality Gates (Principle 8)
 
-- [ ] T066 [P] Execute linter with zero errors (`pnpm lint`)
-- [ ] T067 [P] Execute TypeScript compiler with zero errors (`pnpm type-check`)
-- [ ] T068 Run all unit and integration test suites (`pnpm test`)
-- [ ] T069 Verify production build succeeds (`pnpm build`)
-- [ ] T070 Execute end-to-end user journey validation per quickstart.md in tests/e2e/profile-documents.spec.ts
+- [x] T066 [P] Execute linter with zero errors (`pnpm lint`)
+- [x] T067 [P] Execute TypeScript compiler with zero errors (`pnpm type-check`)
+- [x] T068 Run all unit and integration test suites (`pnpm test`)
+- [x] T069 Verify production build succeeds (`pnpm build`)
+- [x] T070 Execute end-to-end user journey validation per quickstart.md in tests/e2e/profile-documents.spec.ts
 
 ---
 

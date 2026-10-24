@@ -11,6 +11,7 @@ import {
   IconCheck,
   IconAlertCircle,
   IconLoader2,
+  IconFileText,
 } from '@tabler/icons-react';
 import clsx from 'clsx';
 import { CompletenessMeter } from './CompletenessMeter';
@@ -23,6 +24,7 @@ import { Step4Objectives } from './steps/Step4Objectives';
 import { Step5StyleLanguage } from './steps/Step5StyleLanguage';
 import { Step6VoiceSamples } from './steps/Step6VoiceSamples';
 import { Step7Platforms } from './steps/Step7Platforms';
+import { DocumentsManagerView } from './documents/DocumentsManagerView';
 import { calculateProfileCompleteness } from '@/lib/profile/completeness';
 
 interface ProfileFormValues {
@@ -63,8 +65,9 @@ interface ProfileFormValues {
 export function ProfileSettingsView() {
   const t = useTranslations('Profile');
   const tOnboarding = useTranslations('Onboarding');
+  const tDocs = useTranslations('Documents');
 
-  const [activeTab, setActiveTab] = useState<'editor' | 'preview' | 'versions'>('editor');
+  const [activeTab, setActiveTab] = useState<'editor' | 'preview' | 'versions' | 'documents'>('editor');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
@@ -401,6 +404,20 @@ export function ProfileSettingsView() {
           <IconHistory className="w-4 h-4" />
           <span>{t('tabVersions')}</span>
         </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab('documents')}
+          className={clsx(
+            'inline-flex items-center gap-2 px-4 py-2.5 text-sm font-semibold border-b-2 transition-all -mb-[1px]',
+            activeTab === 'documents'
+              ? 'border-primary text-primary'
+              : 'border-transparent text-muted-foreground hover:text-foreground',
+          )}
+        >
+          <IconFileText className="w-4 h-4" />
+          <span>{tDocs('tabTitle')}</span>
+        </button>
       </div>
 
       {/* Alerts */}
@@ -474,6 +491,13 @@ export function ProfileSettingsView() {
       {activeTab === 'versions' && (
         <div className="bg-card/60 p-6 sm:p-8 rounded-2xl border border-border/60">
           <RevisionHistoryList onRollbackComplete={loadProfile} />
+        </div>
+      )}
+
+      {/* Tab 4: Profile Documents */}
+      {activeTab === 'documents' && (
+        <div className="bg-card/60 p-6 sm:p-8 rounded-2xl border border-border/60">
+          <DocumentsManagerView />
         </div>
       )}
     </div>

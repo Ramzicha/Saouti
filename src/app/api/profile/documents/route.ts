@@ -178,7 +178,7 @@ export async function POST(req: NextRequest) {
       pageCount,
       documentType: typeParse.data,
       buffer: fileBuffer,
-      extractedText: extractedText || undefined,
+      ...(extractedText ? { extractedText } : {}),
     });
 
     return NextResponse.json({ document: createdDoc }, { status: 201 });

@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import { validateCurrentSession } from '@/lib/auth/session';
 import { db } from '@/lib/db/client';
-import { profiles, voiceSamples, platformPreferences } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
+import { profiles, voiceSamples, platformPreferences, approvedFacts } from '@/lib/db/schema';
+import { eq, and } from 'drizzle-orm';
 import { buildVoiceProfileSummary } from '@/lib/profile/summary-builder';
 import { logger } from '@/lib/logger';
 
@@ -54,16 +54,26 @@ export async function GET() {
       .from(platformPreferences)
       .where(eq(platformPreferences.profileId, profile.id));
 
+    const factRecords = await db
+      .select()
+      .from(approvedFacts)
+      .where(and(eq(approvedFacts.userId, user.id), eq(approvedFacts.isActive, true)));
+
     const summaryMarkdown = buildVoiceProfileSummary(
       profile,
       sampleRecords,
       platformRecords.map((p) => ({
         platform: p.platform,
-        primaryObjective: p.primaryObjective,
+        primaryObjective: p.primaryObjective || undefined,
         subreddits: p.subreddits || undefined,
         customInstructions: p.customInstructions || undefined,
       })),
       '1.0',
+      factRecords.map((f) => ({
+        factText: f.factText,
+        sourceCitation: f.sourceCitation || undefined,
+        factCategory: f.factCategory,
+      })),
     );
 
     return NextResponse.json({

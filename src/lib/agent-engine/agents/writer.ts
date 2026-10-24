@@ -14,10 +14,12 @@ export interface WriterStepInput {
   brief: string;
   draftedPosts?: Array<{ platform: string; language: string; text: string; hashtags?: string[] | undefined }> | undefined;
   revisionNotes?: Array<{ exactPhrase: string; problem: string; suggestedFix: string }> | undefined;
+  approvedFacts?: Array<{ factText: string; sourceCitation?: string | undefined; factCategory?: string | undefined }> | undefined;
+  promptVersion?: string | undefined;
   signal?: AbortSignal | undefined;
 }
 
-export const WRITER_PROMPT_VERSION = 'v1';
+export const WRITER_PROMPT_VERSION = 'v2';
 
 /**
  * Executes the Writer agent turn to produce platform-native post drafts.
@@ -32,7 +34,8 @@ export async function executeWriterStep(input: WriterStepInput): Promise<WriterO
     brief: input.brief,
     draftedPosts: input.draftedPosts,
     revisionNotes: input.revisionNotes,
-    promptVersion: WRITER_PROMPT_VERSION,
+    approvedFacts: input.approvedFacts,
+    promptVersion: input.promptVersion || WRITER_PROMPT_VERSION,
   });
 
   const result = await generateUserStructured<WriterOutput>(input.userId, prompt, {

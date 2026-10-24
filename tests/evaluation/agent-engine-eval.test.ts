@@ -65,6 +65,42 @@ describe('Golden-Profile Evaluation Suite (agent-engine-eval.test.ts)', () => {
           }
         }
       });
+
+      it('evaluates prompt version v2 with approved facts without regression', () => {
+        const summary = buildVoiceProfileSummary(
+          testCase.profile,
+          testCase.samples.map((s, idx) => ({ ...s, orderIndex: idx })),
+          testCase.platforms.map((p) => ({ platform: p })),
+          '1.0',
+          [
+            {
+              factCategory: 'achievements',
+              factText: 'Over 5 years scaling high-availability systems',
+              sourceCitation: 'CV.pdf, Page 1',
+            },
+          ],
+        );
+
+        const promptV2 = assembleAgentPrompt({
+          role: 'writer',
+          profileSummary: summary,
+          samples: testCase.samples.map((s) => s.content),
+          platforms: testCase.platforms,
+          brief: testCase.brief,
+          approvedFacts: [
+            {
+              factCategory: 'achievements',
+              factText: 'Over 5 years scaling high-availability systems',
+              sourceCitation: 'CV.pdf, Page 1',
+            },
+          ],
+          promptVersion: 'v2',
+        });
+
+        expect(promptV2).toContain('<approved_facts>');
+        expect(promptV2).toContain('Over 5 years scaling high-availability systems');
+        expect(promptV2).toContain('FACTUAL GROUNDING & APPROVED FACTS');
+      });
     });
   });
 });

@@ -43,6 +43,12 @@ export interface SummaryPlatformInput {
   customInstructions?: string | undefined;
 }
 
+export interface SummaryFactInput {
+  factText: string;
+  sourceCitation?: string | undefined;
+  factCategory?: string | undefined;
+}
+
 /**
  * Escapes sensitive XML/HTML-like delimiter tags inside user-provided content.
  * Prevents delimiter breakout attacks (e.g. user pasting "</voice_profile>" inside a sample).
@@ -63,6 +69,7 @@ export function buildVoiceProfileSummary(
   samples: SummarySampleInput[] = [],
   platforms: SummaryPlatformInput[] = [],
   version = '1.0',
+  approvedFacts: SummaryFactInput[] = [],
 ): string {
   const role = profile.identityData?.role || profile.role || 'Professional';
   const industry = profile.identityData?.industry || 'Unspecified';
@@ -160,6 +167,16 @@ export function buildVoiceProfileSummary(
       lines.push('    </sample>');
     });
     lines.push('  </voice_samples>');
+  }
+
+  if (approvedFacts && approvedFacts.length > 0) {
+    lines.push('  <approved_facts>');
+    approvedFacts.forEach((fact, idx) => {
+      const citationAttr = fact.sourceCitation ? ` source="${sanitizeTagContent(fact.sourceCitation)}"` : '';
+      const categoryAttr = fact.factCategory ? ` category="${sanitizeTagContent(fact.factCategory)}"` : '';
+      lines.push(`    <fact index="${idx + 1}"${categoryAttr}${citationAttr}>${sanitizeTagContent(fact.factText.trim())}</fact>`);
+    });
+    lines.push('  </approved_facts>');
   }
 
   lines.push('</voice_profile>');

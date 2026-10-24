@@ -18,10 +18,12 @@ export interface CriticStepInput {
   platforms: string[];
   brief: string;
   draftedPosts: Array<{ platform: string; language: string; text: string; hashtags?: string[] | undefined }>;
+  approvedFacts?: Array<{ factText: string; sourceCitation?: string | undefined; factCategory?: string | undefined }> | undefined;
+  promptVersion?: string | undefined;
   signal?: AbortSignal | undefined;
 }
 
-export const CRITIC_PROMPT_VERSION = 'v1';
+export const CRITIC_PROMPT_VERSION = 'v2';
 
 export interface EvaluatedCriticResult {
   overallVerdict: 'pass' | 'revise';
@@ -45,7 +47,8 @@ export async function executeCriticStep(input: CriticStepInput): Promise<Evaluat
     platforms: input.platforms,
     brief: input.brief,
     draftedPosts: input.draftedPosts,
-    promptVersion: CRITIC_PROMPT_VERSION,
+    approvedFacts: input.approvedFacts,
+    promptVersion: input.promptVersion || CRITIC_PROMPT_VERSION,
   });
 
   const result = await generateUserStructured<CriticOutput>(input.userId, prompt, {

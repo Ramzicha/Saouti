@@ -48,6 +48,10 @@ export async function POST(request: Request) {
       );
     }
 
+    // Purge user's profile documents, insights, facts, and storage folder
+    const { DocumentService } = await import('@/lib/documents/document-service');
+    await DocumentService.purgeUserDocuments(user.id);
+
     // Cascade purge user and all associated records from database
     await db.delete(users).where(eq(users.id, user.id));
 

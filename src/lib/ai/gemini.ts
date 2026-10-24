@@ -411,9 +411,14 @@ export class GeminiAdapter implements AiProviderAdapter {
         );
       }
 
-      const parts = candidate?.content?.parts || [];
+      interface GeminiCandidatePart {
+        inlineData?: { data?: string; mimeType?: string } | undefined;
+        inline_data?: { data?: string; mime_type?: string } | undefined;
+        text?: string | undefined;
+      }
+      const parts = (candidate?.content?.parts || []) as GeminiCandidatePart[];
       const imagePart = parts.find(
-        (p: any) => p.inlineData?.data || p.inline_data?.data,
+        (p) => p.inlineData?.data || p.inline_data?.data,
       );
       const b64 = imagePart?.inlineData?.data || imagePart?.inline_data?.data;
       const mimeType = imagePart?.inlineData?.mimeType || imagePart?.inline_data?.mime_type || 'image/png';

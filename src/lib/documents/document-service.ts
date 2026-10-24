@@ -16,7 +16,6 @@ import { encryptText } from '@/lib/crypto/key-encryption';
 import {
   type DocumentType,
   MAX_DOCUMENTS_PER_USER,
-  type InsightCategory,
 } from './schemas';
 
 export class DocumentService {
@@ -106,7 +105,7 @@ export class DocumentService {
     pageCount: number;
     documentType: DocumentType;
     buffer: Buffer;
-    extractedText?: string;
+    extractedText?: string | undefined;
   }): Promise<Document> {
     // 1. Verify 5-document limit per user
     const existingCount = await db
