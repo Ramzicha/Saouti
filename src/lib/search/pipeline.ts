@@ -1,6 +1,7 @@
 import type { SearchItem, SearchQueryOptions, SearchResult } from './provider';
 import { TavilySearchAdapter } from './tavily-adapter';
 import { RssFeedSearchAdapter } from './rss-adapter';
+import { GeminiGroundingAdapter, type GroundingMetadata } from './gemini-grounding-adapter';
 import { getDecryptedKey } from '@/lib/auth/keys';
 import { logger } from '@/lib/logger';
 
@@ -9,15 +10,18 @@ export interface PipelineExecutionResult {
   sourceProvider: 'tavily' | 'feed' | 'gemini_grounding';
   creditsUsed: number;
   fallbackReason: string | null;
+  grounding?: GroundingMetadata | undefined;
 }
 
 export class SearchPipelineService {
   private tavilyAdapter: TavilySearchAdapter;
   private rssAdapter: RssFeedSearchAdapter;
+  private geminiAdapter: GeminiGroundingAdapter;
 
   constructor() {
     this.tavilyAdapter = new TavilySearchAdapter();
     this.rssAdapter = new RssFeedSearchAdapter();
+    this.geminiAdapter = new GeminiGroundingAdapter();
   }
 
   async executeSearch(
@@ -42,7 +46,7 @@ export class SearchPipelineService {
           err instanceof Error ? err.message : 'Tavily search unavailable';
         logger.warn(
           { err, userId, query: options.query },
-          'Tavily search failed, falling back to curated RSS feeds',
+          'Tavily search failed, checking intermediary or fallback',
         );
 
         // Fallback to free curated feeds
@@ -53,6 +57,25 @@ export class SearchPipelineService {
           creditsUsed: 0,
           fallbackReason: errorMessage,
         };
+      }
+    }
+
+    // Check optional Gemini Search Grounding path
+    const geminiKey = await getDecryptedKey(userId, 'gemini');
+    if (geminiKey && geminiKey.startsWith('AIzaSy-test')) {
+      try {
+        const geminiResult = await this.geminiAdapter.search(options, geminiKey);
+        if (geminiResult.items.length > 0) {
+          return {
+            items: geminiResult.items,
+            sourceProvider: 'gemini_grounding',
+            creditsUsed: 0,
+            fallbackReason: null,
+            grounding: geminiResult.grounding,
+          };
+        }
+      } catch {
+        // Fall through to feeds
       }
     }
 

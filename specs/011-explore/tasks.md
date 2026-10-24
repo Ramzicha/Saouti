@@ -249,14 +249,14 @@ description: "Task list for Explore (with Tavily Search) implementation"
 
 ### Tests for User Story 9
 
-- [ ] T076 [P] [US9] Unit tests for Gemini search grounding adapter and Google Search attribution formatting in tests/unit/gemini-grounding.test.ts
-- [ ] T077 [P] [US9] Integration tests for Gemini search grounding adapter in search pipeline in tests/integration/gemini-grounding.test.ts
+- [x] T076 [P] [US9] Unit tests for Gemini search grounding adapter and Google Search attribution formatting in tests/unit/gemini-grounding.test.ts
+- [x] T077 [P] [US9] Integration tests for Gemini search grounding adapter in search pipeline in tests/integration/gemini-grounding.test.ts
 
 ### Implementation for User Story 9
 
-- [ ] T078 [US9] Implement `GeminiGroundingAdapter` supporting Google Search suggestions and attribution in src/lib/search/gemini-grounding-adapter.ts
-- [ ] T079 [US9] Integrate `GeminiGroundingAdapter` into `SearchPipelineService` as optional intermediary in src/lib/search/pipeline.ts
-- [ ] T080 [P] [US9] Add Google Search grounding toggle and attribution chip component in src/components/explore/GoogleAttributionChip.tsx
+- [x] T078 [US9] Implement `GeminiGroundingAdapter` supporting Google Search suggestions and attribution in src/lib/search/gemini-grounding-adapter.ts
+- [x] T079 [US9] Integrate `GeminiGroundingAdapter` into `SearchPipelineService` as optional intermediary in src/lib/search/pipeline.ts
+- [x] T080 [P] [US9] Add Google Search grounding toggle and attribution chip component in src/components/explore/GoogleAttributionChip.tsx
 
 **Checkpoint**: User Story 9 complete — alternative search grounding path available.
 
