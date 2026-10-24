@@ -670,3 +670,143 @@ export const images = pgTable(
 export type Image = InferSelectModel<typeof images>;
 export type NewImage = InferInsertModel<typeof images>;
 
+/**
+ * Documents Table (010-profile-documents)
+ * Represents an uploaded PDF file associated with a user's Voice Profile.
+ */
+export const documents = pgTable(
+  'documents',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    storageKey: varchar('storage_key', { length: 500 }).notNull(),
+    originalFileName: varchar('original_file_name', { length: 255 }).notNull(),
+    fileSizeBytes: integer('file_size_bytes').notNull(),
+    pageCount: integer('page_count').notNull().default(1),
+    documentType: varchar('document_type', { length: 50 }).notNull(), // 'cv' | 'bio' | 'articles' | 'company_brochure' | 'other'
+    status: varchar('status', { length: 30 }).notNull().default('uploaded'), // 'uploaded' | 'processing' | 'completed' | 'failed'
+    extractedTextEncrypted: text('extracted_text_encrypted'), // AES-256-GCM ciphertext
+    nonce: varchar('nonce', { length: 32 }), // IV for AES-256-GCM
+    authTag: varchar('auth_tag', { length: 32 }), // Tag for AES-256-GCM
+    errorMessage: text('error_message'),
+    createdAt: timestamp('created_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    index('documents_user_id_idx').on(table.userId),
+    index('documents_status_idx').on(table.status),
+  ],
+);
+
+export type Document = InferSelectModel<typeof documents>;
+export type NewDocument = InferInsertModel<typeof documents>;
+
+/**
+ * Document Insights Table (010-profile-documents)
+ * Stores structured insights proposed by the Profiler agent from a processed document.
+ */
+export const documentInsights = pgTable(
+  'document_insights',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    documentId: uuid('document_id')
+      .notNull()
+      .references(() => documents.id, { onDelete: 'cascade' }),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    category: varchar('category', { length: 50 }).notNull(), // 'roles_experience' | 'expertise' | 'achievements' | 'audience_cues' | 'tone_style_cues' | 'languages'
+    rawText: text('raw_text').notNull(),
+    editedText: text('edited_text'),
+    sourcePage: integer('source_page').notNull().default(1),
+    confidenceScore: integer('confidence_score').notNull().default(100), // 0 to 100 percentage
+    status: varchar('status', { length: 30 }).notNull().default('pending'), // 'pending' | 'approved' | 'edited' | 'rejected'
+    reviewedAt: timestamp('reviewed_at', { withTimezone: true }),
+    createdAt: timestamp('created_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    index('document_insights_document_id_idx').on(table.documentId),
+    index('document_insights_user_status_idx').on(table.userId, table.status),
+  ],
+);
+
+export type DocumentInsight = InferSelectModel<typeof documentInsights>;
+export type NewDocumentInsight = InferInsertModel<typeof documentInsights>;
+
+/**
+ * Approved Facts Table (010-profile-documents)
+ * Stores verified factual details and metrics directly available to the Writer and audited by the Critic.
+ */
+export const approvedFacts = pgTable(
+  'approved_facts',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    sourceDocumentId: uuid('source_document_id').references(() => documents.id, {
+      onDelete: 'set null',
+    }),
+    sourceInsightId: uuid('source_insight_id').references(() => documentInsights.id, {
+      onDelete: 'set null',
+    }),
+    factCategory: varchar('fact_category', { length: 50 }).notNull().default('general'), // 'achievement' | 'credential' | 'metric' | 'experience' | 'general'
+    factText: text('fact_text').notNull(),
+    sourceCitation: varchar('source_citation', { length: 255 }), // e.g. "CV, Page 2"
+    isActive: boolean('is_active').notNull().default(true),
+    createdAt: timestamp('created_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    index('approved_facts_user_id_idx').on(table.userId),
+    index('approved_facts_source_doc_idx').on(table.sourceDocumentId),
+  ],
+);
+
+export type ApprovedFact = InferSelectModel<typeof approvedFacts>;
+export type NewApprovedFact = InferInsertModel<typeof approvedFacts>;
+
+/**
+ * Document Privacy Consents Table (010-profile-documents)
+ * Records explicit user acknowledgment of the document processing privacy notice.
+ */
+export const documentPrivacyConsents = pgTable(
+  'document_privacy_consents',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    userId: uuid('user_id')
+      .notNull()
+      .unique()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    acknowledgedAt: timestamp('acknowledged_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    noticeVersion: varchar('notice_version', { length: 20 }).notNull().default('v1'),
+  },
+  (table) => [index('doc_privacy_consent_user_idx').on(table.userId)],
+);
+
+export type DocumentPrivacyConsent = InferSelectModel<typeof documentPrivacyConsents>;
+export type NewDocumentPrivacyConsent = InferInsertModel<typeof documentPrivacyConsents>;
+
+
