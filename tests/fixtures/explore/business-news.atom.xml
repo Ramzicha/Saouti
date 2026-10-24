@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Global Executive Briefing</title>
+  <link href="https://globalbriefing.example.com/atom" rel="self"/>
+  <link href="https://globalbriefing.example.com"/>
+  <updated>2026-10-24T11:00:00Z</updated>
+  <id>tag:globalbriefing.example.com,2026:feed</id>
+  <entry>
+    <title>Sustainable Infrastructure Investments Surge in EMEA Region</title>
+    <link href="https://globalbriefing.example.com/reports/sustainable-infrastructure-2026?fbclid=IwAR2345"/>
+    <id>tag:globalbriefing.example.com,2026:entry-987</id>
+    <updated>2026-10-23T08:00:00Z</updated>
+    <published>2026-10-23T08:00:00Z</published>
+    <summary>European institutional funds allocate record capital to decentralized clean power grids and electrified freight routes.</summary>
+  </entry>
+  <entry>
+    <title>Scaling Leadership Communication for Remote Engineering Teams</title>
+    <link href="https://globalbriefing.example.com/insights/remote-leadership-communication"/>
+    <id>tag:globalbriefing.example.com,2026:entry-988</id>
+    <updated>2026-10-21T15:30:00Z</updated>
+    <published>2026-10-21T15:30:00Z</published>
+    <summary>Why asynchronous executive memos and authentic thought-leadership posts build stronger team alignment than daily standup calls.</summary>
+  </entry>
+</feed>

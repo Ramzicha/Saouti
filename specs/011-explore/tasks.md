@@ -24,11 +24,11 @@ description: "Task list for Explore (with Tavily Search) implementation"
 
 **Purpose**: Project initialization, dependency installation, internationalization strings, and testing fixtures.
 
-- [ ] T001 Install `fast-xml-parser` library for RSS/Atom fallback feed parsing in package.json
-- [ ] T002 [P] Externalize English Explore strings (onboarding guide, key inputs, topic chips, cards, filters, error states) in messages/en.json
-- [ ] T003 [P] Externalize French Explore strings in messages/fr.json
-- [ ] T004 [P] Externalize Arabic Explore strings with RTL-appropriate terminology in messages/ar.json
-- [ ] T005 [P] Create mock search response and RSS feed fixtures (Tavily JSON, Tech RSS XML, Business Atom XML, injection payload) in tests/fixtures/explore/
+- [x] T001 Install `fast-xml-parser` library for RSS/Atom fallback feed parsing in package.json
+- [x] T002 [P] Externalize English Explore strings (onboarding guide, key inputs, topic chips, cards, filters, error states) in messages/en.json
+- [x] T003 [P] Externalize French Explore strings in messages/fr.json
+- [x] T004 [P] Externalize Arabic Explore strings with RTL-appropriate terminology in messages/ar.json
+- [x] T005 [P] Create mock search response and RSS feed fixtures (Tavily JSON, Tech RSS XML, Business Atom XML, injection payload) in tests/fixtures/explore/
 
 ---
 

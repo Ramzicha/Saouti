@@ -1,0 +1,25 @@
+{
+  "query": "Enterprise Generative AI agents",
+  "follow_up_questions": null,
+  "answer": null,
+  "images": [],
+  "results": [
+    {
+      "title": "How Enterprise Generative AI is Reshaping Workflow Automation in 2026",
+      "url": "https://techchronicle.example.com/articles/enterprise-genai-automation-2026?utm_source=twitter&utm_medium=social&utm_campaign=launch",
+      "content": "Enterprises are rapidly moving from standalone chat bots to deterministic agent architectures that combine frontier reasoning with strict human verification gates. Security and zero-hallucination guarantees remain paramount for adoption.",
+      "score": 0.94,
+      "raw_content": null,
+      "published_date": "2026-10-22T14:30:00Z"
+    },
+    {
+      "title": "The Shift to User-Owned Keys and Privacy-First AI Infrastructure",
+      "url": "https://cybernews.example.org/infrastructure/byok-vaults?ref=newsletter#section-2",
+      "content": "Modern SaaS applications are abandoning shared platform AI keys in favor of bring-your-own-key models, keeping sensitive API access and billing strictly within tenant control.",
+      "score": 0.89,
+      "raw_content": null,
+      "published_date": "2026-10-23T09:15:00Z"
+    }
+  ],
+  "response_time": 0.42
+}
