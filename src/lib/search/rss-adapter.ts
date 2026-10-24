@@ -29,6 +29,10 @@ export class RssFeedSearchAdapter implements SearchProvider {
     });
   }
 
+  stripHtmlTags(text: string): string {
+    return text.replace(/<[^>]*>/g, '').trim();
+  }
+
   async isAvailable(): Promise<boolean> {
     return true; // Feeds are always available as universal zero-cost fallback
   }

@@ -182,16 +182,16 @@ description: "Task list for Explore (with Tavily Search) implementation"
 
 ### Tests for User Story 6
 
-- [ ] T057 [P] [US6] Unit tests for Tavily search adapter and RSS/Atom feed parser in tests/unit/search-adapters.test.ts
-- [ ] T058 [P] [US6] Security tests for hostile prompt injection inside external RSS feeds in tests/security/web-snippet-injection.test.ts
-- [ ] T059 [P] [US6] Integration tests for automated failover from Tavily errors (401, 429) to RSS feeds in tests/integration/search-fallback.test.ts
+- [x] T057 [P] [US6] Unit tests for Tavily search adapter and RSS/Atom feed parser in tests/unit/search-adapters.test.ts
+- [x] T058 [P] [US6] Security tests for hostile prompt injection inside external RSS feeds in tests/security/web-snippet-injection.test.ts
+- [x] T059 [P] [US6] Integration tests for automated failover from Tavily errors (401, 429) to RSS feeds in tests/integration/search-fallback.test.ts
 
 ### Implementation for User Story 6
 
-- [ ] T060 [US6] Implement `TavilySearchAdapter` executing queries and tracking credit costs in src/lib/search/tavily-adapter.ts
-- [ ] T061 [US6] Implement `RssFeedSearchAdapter` with curated topic RSS/Atom news feeds in src/lib/search/rss-adapter.ts
-- [ ] T062 [US6] Implement `SearchPipelineService` handling adapter prioritization, failover, and agent state emission in src/lib/search/pipeline.ts
-- [ ] T063 [US6] Build fallback notice banner explaining feed sources when Tavily key is absent or exhausted in src/components/explore/ExploreFeedView.tsx
+- [x] T060 [US6] Implement `TavilySearchAdapter` executing queries and tracking credit costs in src/lib/search/tavily-adapter.ts
+- [x] T061 [US6] Implement `RssFeedSearchAdapter` with curated topic RSS/Atom news feeds in src/lib/search/rss-adapter.ts
+- [x] T062 [US6] Implement `SearchPipelineService` handling adapter prioritization, failover, and agent state emission in src/lib/search/pipeline.ts
+- [x] T063 [US6] Build fallback notice banner explaining feed sources when Tavily key is absent or exhausted in src/components/explore/ExploreFeedView.tsx
 
 **Checkpoint**: User Story 6 complete — Explore is resilient, handles rate limits gracefully, and operates without third-party key blockers.
 
