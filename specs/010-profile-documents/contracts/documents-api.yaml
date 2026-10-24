@@ -1,0 +1,309 @@
+openapi: 3.0.3
+info:
+  title: Saouti Profile Documents & Approved Facts API
+  version: 1.0.0
+  description: API endpoints for managing uploaded PDF documents, Profiler extraction, insight review, and approved facts.
+paths:
+  /api/profile/documents/consent:
+    get:
+      summary: Check document privacy notice consent status
+      responses:
+        '200':
+          description: Consent status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  acknowledged:
+                    type: boolean
+                  acknowledgedAt:
+                    type: string
+                    format: date-time
+                    nullable: true
+    post:
+      summary: Acknowledge document privacy notice
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                noticeVersion:
+                  type: string
+                  default: v1
+      responses:
+        '200':
+          description: Consent acknowledged
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+
+  /api/profile/documents:
+    get:
+      summary: List all uploaded documents for the authenticated user
+      responses:
+        '200':
+          description: List of documents
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  documents:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/DocumentItem'
+    post:
+      summary: Upload a new PDF document (up to 5 max)
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+                - documentType
+              properties:
+                file:
+                  type: string
+                  format: binary
+                documentType:
+                  type: string
+                  enum: [cv, bio, articles, company_brochure, other]
+      responses:
+        '201':
+          description: Document uploaded successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  document:
+                    $ref: '#/components/schemas/DocumentItem'
+        '400':
+          description: Invalid file format, encrypted PDF, or size/page limits exceeded
+        '403':
+          description: Privacy consent not yet acknowledged
+        '409':
+          description: Maximum document limit (5) reached
+
+  /api/profile/documents/{id}/extract:
+    post:
+      summary: Trigger Profiler agent insight extraction for an uploaded document
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Extraction completed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  documentId:
+                    type: string
+                  insightsCount:
+                    type: integer
+                  insights:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/DocumentInsightItem'
+        '422':
+          description: Document unreadable or OCR unsupported
+
+  /api/profile/documents/{id}/insights:
+    get:
+      summary: List all extracted insights for a specific document
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Insights list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  insights:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/DocumentInsightItem'
+
+  /api/profile/documents/insights/{insightId}/review:
+    patch:
+      summary: Review a proposed insight (Accept, Edit, or Reject)
+      parameters:
+        - name: insightId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - action
+              properties:
+                action:
+                  type: string
+                  enum: [accept, edit, reject]
+                editedText:
+                  type: string
+                  maxLength: 400
+      responses:
+        '200':
+          description: Insight reviewed and state updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  insight:
+                    $ref: '#/components/schemas/DocumentInsightItem'
+                  approvedFact:
+                    $ref: '#/components/schemas/ApprovedFactItem'
+                    nullable: true
+
+  /api/profile/documents/{id}:
+    delete:
+      summary: Delete an uploaded document and its storage binary
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: keepApprovedFacts
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: true
+      responses:
+        '200':
+          description: Document deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  retainedFactsCount:
+                    type: integer
+
+  /api/profile/facts:
+    get:
+      summary: List all active approved facts available to the Writer
+      responses:
+        '200':
+          description: Approved facts list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  facts:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ApprovedFactItem'
+
+components:
+  schemas:
+    DocumentItem:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        originalFileName:
+          type: string
+        fileSizeBytes:
+          type: integer
+        pageCount:
+          type: integer
+        documentType:
+          type: string
+          enum: [cv, bio, articles, company_brochure, other]
+        status:
+          type: string
+          enum: [uploaded, processing, completed, failed]
+        errorMessage:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+
+    DocumentInsightItem:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        documentId:
+          type: string
+          format: uuid
+        category:
+          type: string
+          enum: [roles_experience, expertise, achievements, audience_cues, tone_style_cues, languages]
+        rawText:
+          type: string
+        editedText:
+          type: string
+          nullable: true
+        sourcePage:
+          type: integer
+        confidenceScore:
+          type: integer
+        status:
+          type: string
+          enum: [pending, approved, edited, rejected]
+        reviewedAt:
+          type: string
+          format: date-time
+          nullable: true
+
+    ApprovedFactItem:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        sourceDocumentId:
+          type: string
+          format: uuid
+          nullable: true
+        factCategory:
+          type: string
+        factText:
+          type: string
+        sourceCitation:
+          type: string
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time

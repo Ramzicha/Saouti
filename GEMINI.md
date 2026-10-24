@@ -2,6 +2,9 @@
 
 Auto-generated from all feature plans. Last updated: 2026-10-22
 
+- TypeScript 5.7+ (strict mode, noImplicitAny, strictNullChecks, exactOptionalPropertyTypes) + Node.js 20 LTS + Next.js 15 (App Router), Drizzle ORM, Zod, `unpdf`, AES-256-GCM encryption, XML delimiter isolation (010-profile-documents)
+- PostgreSQL 16 (`documents`, `document_insights`, `approved_facts`, `document_privacy_consents`), Private filesystem volume / StorageProvider (010-profile-documents)
+
 - TypeScript 5.7+ (strict mode, noImplicitAny, strictNullChecks, exactOptionalPropertyTypes) + Node.js 20 LTS + Next.js 15 (App Router), Drizzle ORM, Zod, Imagen 3, Pluggable StorageProvider (008-post-images)
 - PostgreSQL 16 (`images`), Local filesystem volume / S3-ready abstraction (008-post-images)
 
@@ -125,6 +128,8 @@ redaction list catches them, but prefer not creating the field in the first plac
 Always import `config` from `src/lib/config.ts`.
 
 ## Recent Changes
+- 010-profile-documents: Added TypeScript 5.7+ (strict mode, noImplicitAny, strictNullChecks, exactOptionalPropertyTypes) + Next.js 15 (App Router), `unpdf` server-side extraction, AES-256-GCM encrypted text at rest, mandatory privacy consent gate, Profiler structured insight extraction with page citations, human-in-the-loop review (accept/edit/reject), approved facts integration for Writer (<approved_facts>) and Critic factual verification, versioned prompts (v2), and document cascade deletion.
+
 - 008-post-images: Added TypeScript 5.7+ (strict mode, noImplicitAny, strictNullChecks, exactOptionalPropertyTypes) + Next.js 15 (App Router), `generateImage` on `AiProviderAdapter`, Gemini Imagen 3 integration with capability detection, pluggable `StorageProvider` (local volume / S3-ready), PostgreSQL `images` table with cascade deletion, authenticated streaming endpoints, and transparent Art Director quota pause handling
 
 - 007-post-library: Added TypeScript 5.7+ (strict mode, noImplicitAny, strictNullChecks, exactOptionalPropertyTypes) + Node.js 20 LTS + Next.js 15 (App Router), Drizzle ORM, Zod, `@tabler/icons-react`, `next-intl`
