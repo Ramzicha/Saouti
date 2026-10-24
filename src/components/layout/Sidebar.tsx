@@ -155,8 +155,9 @@ export function Sidebar({
   ];
 
   const sidebarContent = (
-    <div className="flex h-full select-none flex-col justify-between bg-surface p-4">
-      <div className="flex flex-col gap-6">
+    <div className="flex h-full select-none flex-col bg-surface p-4 overflow-hidden">
+      {/* Top Header & Navigation */}
+      <div className="flex flex-col gap-5 shrink-0">
         {/* Brand Header */}
         <div className="flex items-center justify-between border-b border-border pb-3">
           <Link href="/" className="group flex items-center transition-opacity hover:opacity-90">
@@ -209,55 +210,54 @@ export function Sidebar({
             })}
           </ul>
         </nav>
-
-        {/* Recent Runs section */}
-        <div className="flex flex-col gap-2 pt-2">
-          <span className="px-2.5 text-[11px] font-medium uppercase tracking-wider text-muted">
-            {t('recentRuns')}
-          </span>
-          <ul className="flex flex-col gap-1 max-h-[300px] overflow-y-auto overflow-x-hidden pr-1 scrollbar-thin">
-            {displayChats.length === 0 ? (
-              <li className="px-2.5 py-1 text-xs text-muted/60 italic">
-                No recent chats
-              </li>
-            ) : (
-              displayChats.map((chat) => {
-                const isSelected = activeSelectedId === chat.id;
-
-                return (
-                  <li key={chat.id}>
-                    <Link
-                      href={`/?chatId=${chat.id}`}
-                      onClick={(e) => {
-                        if (handleSelect) {
-                          e.preventDefault();
-                          handleSelect(chat.id);
-                        }
-                        if (isMobileOpen) onCloseMobile?.();
-                      }}
-                      className={`w-full truncate rounded-control px-2.5 py-1.5 text-start text-xs transition-colors flex items-center justify-between group ${
-                        isSelected
-                          ? 'bg-surface-raised font-semibold text-text shadow-2xs'
-                          : 'text-muted hover:bg-surface-raised hover:text-text'
-                      }`}
-                      title={chat.title}
-                    >
-                      <span className="truncate flex-1 me-2">{chat.title}</span>
-                      {isSelected && (
-                        <span className="h-1.5 w-1.5 rounded-full bg-accent shrink-0" />
-                      )}
-                    </Link>
-                  </li>
-                );
-              })
-            )}
-          </ul>
-        </div>
       </div>
 
+      {/* Recent Runs section (Takes all remaining height until bottom profile footer) */}
+      <div className="flex flex-1 flex-col gap-2 pt-4 min-h-0 overflow-hidden">
+        <span className="px-2.5 text-[11px] font-medium uppercase tracking-wider text-muted shrink-0">
+          {t('recentRuns')}
+        </span>
+        <ul className="flex flex-1 flex-col gap-1 overflow-y-auto overflow-x-hidden pr-1">
+          {displayChats.length === 0 ? (
+            <li className="px-2.5 py-1 text-xs text-muted/60 italic">
+              No recent chats
+            </li>
+          ) : (
+            displayChats.map((chat) => {
+              const isSelected = activeSelectedId === chat.id;
+
+              return (
+                <li key={chat.id}>
+                  <Link
+                    href={`/?chatId=${chat.id}`}
+                    onClick={(e) => {
+                      if (handleSelect) {
+                        e.preventDefault();
+                        handleSelect(chat.id);
+                      }
+                      if (isMobileOpen) onCloseMobile?.();
+                    }}
+                    className={`w-full truncate rounded-control px-2.5 py-1.5 text-start text-xs transition-colors flex items-center justify-between group ${
+                      isSelected
+                        ? 'bg-surface-raised font-semibold text-text shadow-2xs'
+                        : 'text-muted hover:bg-surface-raised hover:text-text'
+                    }`}
+                    title={chat.title}
+                  >
+                    <span className="truncate flex-1 me-2">{chat.title}</span>
+                    {isSelected && (
+                      <span className="h-1.5 w-1.5 rounded-full bg-accent shrink-0" />
+                    )}
+                  </Link>
+                </li>
+              );
+            })
+          )}
+        </ul>
+      </div>
 
       {/* Bottom User Profile Section */}
-      <div className="border-t border-border pt-3">
+      <div className="border-t border-border pt-3 mt-3 shrink-0">
         <div className="flex items-center justify-between rounded-xl p-1.5 transition-colors hover:bg-surface-raised">
           <Link
             href="/settings/profile"
