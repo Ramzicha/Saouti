@@ -1,0 +1,401 @@
+openapi: 3.0.3
+info:
+  title: Saouti Explore API
+  description: API endpoints for managing search topics, Explore article discovery, saving articles, and Tavily search key integration.
+  version: 1.0.0
+paths:
+  /api/explore/topics:
+    get:
+      summary: List user topics
+      description: Returns all topics belonging to the authenticated user, ordered with pinned topics first.
+      responses:
+        '200':
+          description: List of user topics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  topics:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Topic'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      summary: Add custom topic
+      description: Adds a new topic phrase to the user's active topic list.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [phrase]
+              properties:
+                phrase:
+                  type: string
+                  maxLength: 120
+                reason:
+                  type: string
+                isPinned:
+                  type: boolean
+      responses:
+        '201':
+          description: Created topic
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  topic:
+                    $ref: '#/components/schemas/Topic'
+
+  /api/explore/topics/{id}:
+    patch:
+      summary: Update topic
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                phrase:
+                  type: string
+                isPinned:
+                  type: boolean
+                orderIndex:
+                  type: integer
+      responses:
+        '200':
+          description: Updated topic
+    delete:
+      summary: Delete topic
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Topic deleted
+
+  /api/explore/topics/generate:
+    post:
+      summary: Propose topics from profile
+      description: Invokes Topic Planner agent to generate 5-8 topics matching the user's Voice Profile.
+      responses:
+        '200':
+          description: Proposed topics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  proposedTopics:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        phrase:
+                          type: string
+                        reason:
+                          type: string
+
+  /api/explore/feed:
+    get:
+      summary: Fetch Explore feed articles
+      description: Returns cached or freshly discovered articles for the user's active topics.
+      parameters:
+        - name: topic
+          in: query
+          schema:
+            type: string
+        - name: freshness
+          in: query
+          schema:
+            type: string
+            enum: [day, week, month]
+        - name: language
+          in: query
+          schema:
+            type: string
+            enum: [en, fr, ar]
+        - name: forceRefresh
+          in: query
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Articles feed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  articles:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Article'
+                  sourceProvider:
+                    type: string
+                    enum: [tavily, feed, grounding]
+                  isFallback:
+                    type: boolean
+                  quotaEstimate:
+                    type: object
+                    properties:
+                      tavilyCreditsUsedToday:
+                        type: integer
+                      tavilyCreditsUsedMonth:
+                        type: integer
+                      monthlyGuardLimit:
+                        type: integer
+
+  /api/explore/saved:
+    get:
+      summary: List saved articles
+      parameters:
+        - name: topic
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Saved articles
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  savedArticles:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SavedArticle'
+    post:
+      summary: Save article to reading list
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [canonicalUrl, title, sourceDomain, summary]
+              properties:
+                canonicalUrl:
+                  type: string
+                  format: uri
+                title:
+                  type: string
+                sourceDomain:
+                  type: string
+                publishedAt:
+                  type: string
+                  format: date-time
+                summary:
+                  type: string
+                topicPhrase:
+                  type: string
+                privateNote:
+                  type: string
+      responses:
+        '201':
+          description: Saved article
+
+  /api/explore/saved/{id}:
+    patch:
+      summary: Update saved article private note
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                privateNote:
+                  type: string
+      responses:
+        '200':
+          description: Note updated
+    delete:
+      summary: Remove saved article
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Removed from saved
+
+  /api/explore/dismiss:
+    post:
+      summary: Dismiss article
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [canonicalUrl]
+              properties:
+                canonicalUrl:
+                  type: string
+                  format: uri
+      responses:
+        '200':
+          description: Article dismissed
+
+  /api/settings/keys/tavily:
+    get:
+      summary: Get Tavily key status
+      responses:
+        '200':
+          description: Key metadata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KeyStatus'
+    post:
+      summary: Save or replace Tavily key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [apiKey]
+              properties:
+                apiKey:
+                  type: string
+      responses:
+        '200':
+          description: Key saved and validated
+    delete:
+      summary: Delete Tavily key
+      responses:
+        '200':
+          description: Key deleted
+
+  /api/onboarding/tavily-prompt/dismiss:
+    post:
+      summary: Dismiss one-time Tavily search prompt for existing users
+      responses:
+        '200':
+          description: Prompt dismissed
+
+components:
+  schemas:
+    Topic:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        phrase:
+          type: string
+        reason:
+          type: string
+        isPinned:
+          type: boolean
+        orderIndex:
+          type: integer
+    Article:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        canonicalUrl:
+          type: string
+          format: uri
+        title:
+          type: string
+        sourceDomain:
+          type: string
+        publishedAt:
+          type: string
+          format: date-time
+        summary:
+          type: string
+        matchReason:
+          type: string
+        topicPhrase:
+          type: string
+        cachedUntil:
+          type: string
+          format: date-time
+    SavedArticle:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        canonicalUrl:
+          type: string
+          format: uri
+        title:
+          type: string
+        sourceDomain:
+          type: string
+        publishedAt:
+          type: string
+          format: date-time
+        summary:
+          type: string
+        topicPhrase:
+          type: string
+        privateNote:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+    KeyStatus:
+      type: object
+      properties:
+        provider:
+          type: string
+        isConfigured:
+          type: boolean
+        lastFour:
+          type: string
+        status:
+          type: string
+          enum: [valid, invalid, quota_exceeded, missing]
+        updatedAt:
+          type: string
+          format: date-time
+  responses:
+    Unauthorized:
+      description: Authentication required
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  code:
+                    type: string
+                  message:
+                    type: string

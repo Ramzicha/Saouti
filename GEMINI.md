@@ -1,6 +1,9 @@
 # Saouti Development Guidelines
 
-Auto-generated from all feature plans. Last updated: 2026-10-22
+Auto-generated from all feature plans. Last updated: 2026-10-24
+
+- TypeScript 5.7+ (strict mode, noImplicitAny, strictNullChecks, exactOptionalPropertyTypes) + Node.js 20 LTS + Next.js 15 (App Router), Drizzle ORM, Zod, Tavily API / fast-xml-parser (RSS/Atom fallback), AES-256-GCM encryption, Topic Planner & Researcher agents (011-explore)
+- PostgreSQL 16 (`topics`, `articles`, `saved_articles`, `article_dismissals`, `search_usage_counters`), `api_keys` multi-provider extension (`user_id, provider`) (011-explore)
 
 - TypeScript 5.7+ (strict mode, noImplicitAny, strictNullChecks, exactOptionalPropertyTypes) + Node.js 20 LTS + Next.js 15 (App Router), Drizzle ORM, Zod, `unpdf`, AES-256-GCM encryption, XML delimiter isolation (010-profile-documents)
 - PostgreSQL 16 (`documents`, `document_insights`, `approved_facts`, `document_privacy_consents`), Private filesystem volume / StorageProvider (010-profile-documents)
@@ -128,6 +131,8 @@ redaction list catches them, but prefer not creating the field in the first plac
 Always import `config` from `src/lib/config.ts`.
 
 ## Recent Changes
+- 011-explore: Added TypeScript 5.7+ (strict mode, noImplicitAny, strictNullChecks, exactOptionalPropertyTypes) + Next.js 15 (App Router), multi-provider BYOK Tavily search integration with onboarding guide (EN, FR, AR), AES-256-GCM encrypted search keys, automated RSS/Atom fallback feed parser, Topic Planner agent for profile-derived topics, Researcher agent for concise grounded summaries with "Why it matches" badges, quota protection (24h cache, 15/day limit, 800 monthly credit guard, refresh cost preview), one-click "Create Post" bridge into the composer with factual attribution, and saved reading list with URL canonicalization.
+
 - 010-profile-documents: Added TypeScript 5.7+ (strict mode, noImplicitAny, strictNullChecks, exactOptionalPropertyTypes) + Next.js 15 (App Router), `unpdf` server-side extraction, AES-256-GCM encrypted text at rest, mandatory privacy consent gate, Profiler structured insight extraction with page citations, human-in-the-loop review (accept/edit/reject), approved facts integration for Writer (<approved_facts>) and Critic factual verification, versioned prompts (v2), and document cascade deletion.
 
 - 008-post-images: Added TypeScript 5.7+ (strict mode, noImplicitAny, strictNullChecks, exactOptionalPropertyTypes) + Next.js 15 (App Router), `generateImage` on `AiProviderAdapter`, Gemini Imagen 3 integration with capability detection, pluggable `StorageProvider` (local volume / S3-ready), PostgreSQL `images` table with cascade deletion, authenticated streaming endpoints, and transparent Art Director quota pause handling
