@@ -45,9 +45,25 @@ export const TagInputSchema = z.object({
     .default('#6366f1'),
 });
 
+export const CreatePostSchema = z.object({
+  runId: z.string().uuid().optional(),
+  platform: PlatformSchema,
+  language: z.string().max(10).optional().default('en'),
+  content: z.string().min(1, 'Content cannot be empty'),
+  hashtags: z.array(z.string()).optional().default([]),
+  imagePrompt: z.string().optional(),
+  imageAltText: z.string().optional(),
+  imageAspectRatio: z.string().optional(),
+  status: PostStatusSchema.optional().default('ready'),
+});
+
 export const PostFilterQuerySchema = z.object({
   platform: PlatformSchema.optional(),
   status: PostStatusSchema.optional(),
+  savedOnly: z
+    .enum(['true', 'false'])
+    .optional()
+    .transform((val) => val === 'true'),
   tag: z.string().optional(),
   search: z.string().max(200).optional(),
   dateFrom: z.string().datetime().optional(),
@@ -59,3 +75,4 @@ export const PostFilterQuerySchema = z.object({
   cursor: z.string().optional(),
   limit: z.coerce.number().int().min(1).max(100).default(20),
 });
+

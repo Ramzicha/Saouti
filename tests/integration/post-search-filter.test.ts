@@ -48,14 +48,19 @@ vi.mock('@/lib/db/client', () => {
     db: {
       select: vi.fn(() => ({
         from: vi.fn(() => ({
-          where: vi.fn(() => ({
-            orderBy: vi.fn(() => ({
-              limit: vi.fn().mockResolvedValue([mockPost2, mockPost1]),
-            })),
-            innerJoin: vi.fn(() => ({
-              where: vi.fn().mockResolvedValue([{ postId: 'p-1' }]),
-            })),
-          })),
+          where: vi.fn(() => {
+            const p = Promise.resolve([{ count: 1 }]);
+            return Object.assign(p, {
+              limit: vi.fn().mockResolvedValue([mockPost1]),
+              orderBy: vi.fn(() => ({
+                limit: vi.fn().mockResolvedValue([mockPost2, mockPost1]),
+              })),
+              innerJoin: vi.fn(() => ({
+                where: vi.fn().mockResolvedValue([{ postId: 'p-1' }]),
+              })),
+            });
+          }),
+
           innerJoin: vi.fn(() => ({
             where: vi.fn().mockResolvedValue([
               { postId: 'p-1', id: 't-1', name: 'Engineering', color: '#6366f1' },
@@ -69,12 +74,22 @@ vi.mock('@/lib/db/client', () => {
           onConflictDoNothing: vi.fn().mockResolvedValue([]),
         })),
       })),
+      update: vi.fn(() => ({
+        set: vi.fn(() => ({
+          where: vi.fn(() => ({
+            returning: vi.fn().mockResolvedValue([mockPost1]),
+          })),
+        })),
+      })),
+      execute: vi.fn().mockResolvedValue([]),
     },
   };
+
 });
 
+
 import { validateCurrentSession } from '@/lib/auth/session';
-import { GET } from '@/app/api/posts/route';
+import { GET, POST } from '@/app/api/posts/route';
 import { normalizeArabicText } from '@/lib/search/arabic-normalizer';
 
 describe('Post Search & Filter Integration (post-search-filter.test.ts)', () => {
@@ -101,6 +116,50 @@ describe('Post Search & Filter Integration (post-search-filter.test.ts)', () => 
     expect(Array.isArray(data.posts)).toBe(true);
   });
 
+  it('filters saved posts only when savedOnly=true is provided', async () => {
+    vi.mocked(validateCurrentSession).mockResolvedValueOnce({
+      session: { id: 's-1' } as any,
+      user: { id: 'user-1' } as any,
+    });
+
+    const req = new NextRequest(
+      'http://localhost:3000/api/posts?savedOnly=true&limit=20',
+      { method: 'GET' },
+    );
+
+    const res = await GET(req);
+    expect(res.status).toBe(200);
+
+    const data = await res.json();
+    expect(data.posts).toBeDefined();
+    expect(Array.isArray(data.posts)).toBe(true);
+  });
+
+  it('saves a generated post to the user library with status ready via POST /api/posts', async () => {
+    vi.mocked(validateCurrentSession).mockResolvedValueOnce({
+      session: { id: 's-1' } as any,
+      user: { id: 'user-1' } as any,
+    });
+
+    const req = new NextRequest('http://localhost:3000/api/posts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        runId: '11111111-1111-1111-1111-111111111111',
+        platform: 'linkedin',
+        content: 'Post saved from chat to library',
+        status: 'ready',
+      }),
+    });
+
+    const res = await POST(req);
+    expect(res.status).toBe(201);
+
+    const data = await res.json();
+    expect(data.post).toBeDefined();
+    expect(data.message).toBe('Post saved to library successfully');
+  });
+
   it('normalizes Arabic query in search matching', async () => {
     vi.mocked(validateCurrentSession).mockResolvedValueOnce({
       session: { id: 's-1' } as any,
@@ -123,3 +182,4 @@ describe('Post Search & Filter Integration (post-search-filter.test.ts)', () => 
     expect(data.posts).toBeDefined();
   });
 });
+

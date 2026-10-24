@@ -26,6 +26,7 @@ export interface ListPostsOptions {
   userId: string;
   platform?: 'linkedin' | 'x' | 'reddit' | 'instagram' | 'facebook' | undefined;
   status?: 'draft' | 'ready' | 'posted' | undefined;
+  savedOnly?: boolean | undefined;
   tag?: string | undefined;
   search?: string | undefined;
   dateFrom?: string | undefined;
@@ -86,6 +87,92 @@ export async function autoSaveRunPosts({
   }
 
   return createdPosts;
+}
+
+export interface CreatePostInput {
+  runId?: string | undefined;
+  platform: 'linkedin' | 'x' | 'reddit' | 'instagram' | 'facebook';
+  language?: string | undefined;
+  content: string;
+  hashtags?: string[] | undefined;
+  imagePrompt?: string | undefined;
+  imageAltText?: string | undefined;
+  imageAspectRatio?: string | undefined;
+  status?: 'draft' | 'ready' | 'posted' | undefined;
+}
+
+/**
+ * Creates a post in the library or promotes an existing run draft to 'ready'.
+ */
+export async function createOrPromotePost(
+  userId: string,
+  input: CreatePostInput,
+): Promise<PostWithTags> {
+  const targetStatus = input.status || 'ready';
+
+  // If runId is provided, check if a post already exists for this run and platform
+  if (input.runId) {
+    const [existing] = await db
+      .select()
+      .from(posts)
+      .where(
+        and(
+          eq(posts.userId, userId),
+          eq(posts.runId, input.runId),
+          eq(posts.platform, input.platform),
+          isNull(posts.deletedAt),
+        ),
+      )
+      .limit(1);
+
+    if (existing) {
+      const updated = await updatePost(userId, existing.id, {
+        content: input.content,
+        hashtags: input.hashtags,
+        imagePrompt: input.imagePrompt,
+        imageAltText: input.imageAltText,
+        imageAspectRatio: input.imageAspectRatio,
+        status: targetStatus,
+        changeSummary: 'Saved to library',
+      });
+
+      if (updated) return updated;
+    }
+  }
+
+  // Otherwise, insert new post record
+  const [newPost] = await db
+    .insert(posts)
+    .values({
+      userId,
+      runId: input.runId || null,
+      platform: input.platform,
+      language: input.language || 'en',
+      status: targetStatus,
+      content: input.content,
+      hashtags: input.hashtags || [],
+      imagePrompt: input.imagePrompt || null,
+      imageAltText: input.imageAltText || null,
+      imageAspectRatio: input.imageAspectRatio || null,
+    })
+    .returning();
+
+  if (!newPost) {
+    throw new Error('Failed to create post record');
+  }
+
+  // Create initial Version 1 snapshot
+  await db.insert(postVersions).values({
+    postId: newPost.id,
+    versionNumber: 1,
+    content: newPost.content,
+    hashtags: newPost.hashtags,
+    imagePrompt: newPost.imagePrompt,
+    changeSummary: 'Saved to library',
+  });
+
+  const postWithTags = await getPostById(userId, newPost.id);
+  return postWithTags!;
 }
 
 /**
@@ -362,6 +449,8 @@ export async function listPosts(
 
   if (status) {
     conditions.push(eq(posts.status, status));
+  } else if (options.savedOnly) {
+    conditions.push(inArray(posts.status, ['ready', 'posted']));
   }
 
   if (dateFrom) {

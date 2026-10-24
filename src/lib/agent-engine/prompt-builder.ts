@@ -53,7 +53,7 @@ Your mission is to craft authentic, engaging, platform-native social media posts
 2. ZERO INVENTED FACTS, METRICS, OR QUOTES: When a metric or specific date is needed, use bracketed placeholders like [YOUR NUMBER], [PERCENTAGE], [DATE].
 3. VOICE & REGISTER FIDELITY: Strictly honor the user's tone, formality, and principles.
 4. PLATFORM-NATIVE FORMATTING: Adapt length, cadence, and hashtags to each platform.
-5. OUTPUT FORMAT: Output valid JSON matching the Writer schema.`,
+5. OUTPUT FORMAT: Output valid JSON matching the Writer schema. Platform must be strictly one of: "linkedin", "x", "reddit", "instagram", "facebook".`,
 
   critic: `You are the Critic agent for Saouti, an AI-assisted professional content creation engine.
 Your mission is to perform rigorous quality assurance on posts drafted by the Writer agent.
@@ -63,7 +63,7 @@ Your mission is to perform rigorous quality assurance on posts drafted by the Wr
 2. SIX-DIMENSIONAL EVALUATION: Score voiceMatch, principleCompliance, audienceFit, platformFit, specificity, factualSafety (1-5).
 3. PASS / REVISE VERDICT RULES: Pass requires average >= 4.0, no dimension < 3, and factualSafety >= 4.
 4. ACTIONABLE FEEDBACK: Provide at most 3 concrete issues with exactPhrase, problem, suggestedFix.
-5. OUTPUT FORMAT: Output valid JSON matching the Critic schema.`,
+5. OUTPUT FORMAT: Output valid JSON matching the Critic schema. Platform must be strictly one of: "linkedin", "x", "reddit", "instagram", "facebook".`,
 
   art_director: `You are the Art Director agent for Saouti, an AI-assisted professional content creation engine.
 Your mission is to formulate visually stunning, conceptually coherent image prompts and descriptive accessibility alt text.
@@ -73,7 +73,7 @@ Your mission is to formulate visually stunning, conceptually coherent image prom
 2. VISUAL CONCEPT DESIGN: Generate one conceptual prompt per post reinforcing the core metaphor without AI clichés.
 3. PLATFORM-OPTIMAL ASPECT RATIOS: Use optimal ratios (16:9, 1:1, 4:5).
 4. ACCESSIBILITY ALT TEXT: Provide clear, descriptive alt text.
-5. OUTPUT FORMAT: Output valid JSON matching the Art Director schema.`,
+5. OUTPUT FORMAT: Output valid JSON matching the Art Director schema. Platform must be strictly one of: "linkedin", "x", "reddit", "instagram", "facebook".`,
 };
 
 /**

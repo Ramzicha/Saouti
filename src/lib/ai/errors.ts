@@ -36,14 +36,16 @@ export class InvalidApiKeyError extends AiError {
  */
 export class QuotaExhaustedError extends AiError {
   readonly code = 'QUOTA_EXHAUSTED';
-  readonly isRetryable = true;
+  readonly isRetryable: boolean;
 
   constructor(
     message = 'AI provider rate limit or quota exceeded',
     public readonly retryAfterSeconds?: number,
     originalError?: unknown,
+    public readonly isDailyOrFreeTier: boolean = false,
   ) {
     super(message, originalError);
+    this.isRetryable = !isDailyOrFreeTier;
   }
 }
 

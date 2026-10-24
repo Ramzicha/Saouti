@@ -74,6 +74,27 @@ describe('Agent Engine Schemas & Validation (schemas.ts)', () => {
       expect(result.posts[0]?.platform).toBe('linkedin');
     });
 
+    it('normalizes platform casing and variations like "x (twitter)" or "Twitter"', () => {
+      const input = {
+        posts: [
+          {
+            platform: 'x (twitter)',
+            language: 'en',
+            text: 'Tweet content with [YOUR NUMBER]',
+          },
+          {
+            platform: 'LinkedIn',
+            language: 'en',
+            text: 'LinkedIn post content with [YOUR NUMBER]',
+          },
+        ],
+      };
+
+      const result = WriterOutputSchema.parse(input);
+      expect(result.posts[0]?.platform).toBe('x');
+      expect(result.posts[1]?.platform).toBe('linkedin');
+    });
+
     it('rejects empty text in drafted post', () => {
       const invalid = {
         posts: [

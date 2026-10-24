@@ -38,7 +38,7 @@ export const aiConfig: AiConfiguration = {
     writer: process.env.AI_WRITER_MODEL || 'gemini-3.1-flash-lite',
     critic: process.env.AI_CRITIC_MODEL || 'gemini-3.1-flash-lite',
     artDirector: process.env.AI_ART_DIRECTOR_MODEL || 'gemini-3.1-flash-lite',
-    image: process.env.AI_IMAGE_MODEL || 'imagen-3.0-generate-002',
+    image: process.env.AI_IMAGE_MODEL || 'gemini-3.1-flash-image',
   },
   supportedModels: {
     text: [
@@ -57,9 +57,21 @@ export const aiConfig: AiConfiguration = {
     ],
     image: [
       {
+        id: 'gemini-3.1-flash-image',
+        displayName: 'Gemini 3.1 Flash Image',
+        description: 'Native multimodal visual generation with high fidelity and text rendering.',
+        contextWindow: 1048576,
+      },
+      {
+        id: 'gemini-3-pro-image',
+        displayName: 'Gemini 3 Pro Image',
+        description: 'High-detail pro multimodal image generation.',
+        contextWindow: 1048576,
+      },
+      {
         id: 'imagen-3.0-generate-002',
-        displayName: 'Imagen 3',
-        description: 'High-detail visual generation adhering to art prompts.',
+        displayName: 'Imagen 3 (Legacy)',
+        description: 'Google legacy image generation model.',
         contextWindow: 0,
       },
     ],

@@ -28,4 +28,4 @@ Your mission is to craft authentic, engaging, platform-native social media posts
    - Facebook: Conversational, community-oriented, accessible tone, question or discussion prompt.
 
 5. OUTPUT FORMAT:
-   - You must output valid JSON matching the schema: an array of posts, each containing `platform`, `language`, `text`, and `hashtags`.
+   - You must output valid JSON matching the schema: an array of posts, each containing `platform` (strictly one of: "linkedin", "x", "reddit", "instagram", "facebook"), `language`, `text`, and `hashtags`. Note: Use "x" for X (Twitter).

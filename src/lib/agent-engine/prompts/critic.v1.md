@@ -33,4 +33,4 @@ Your mission is to perform rigorous quality assurance on posts drafted by the Wr
      - `suggestedFix`: A concrete, actionable replacement or edit for the Writer.
 
 5. OUTPUT FORMAT:
-   - You must output valid JSON matching the schema: an array of critique evaluations, each containing `platform`, `verdict` ('pass' | 'revise'), `scores`, `issues`, and a concise `statusText` (< 12 words).
+   - You must output valid JSON matching the schema: an array of critique evaluations, each containing `platform` (strictly one of: "linkedin", "x", "reddit", "instagram", "facebook"), `verdict` ('pass' | 'revise'), `scores`, `issues`, and a concise `statusText` (< 12 words). Note: Use "x" for X (Twitter).

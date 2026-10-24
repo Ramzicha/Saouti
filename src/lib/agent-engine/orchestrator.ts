@@ -12,7 +12,7 @@ import { recordAgentStep, updateRunRecord } from './audit';
 import { publishRunEvent, isRunCancelled } from './event-stream';
 import type { AgentEngineEvent } from './events';
 import type { GeneratedPost } from '@/../specs/006-agent-engine/contracts/agent-engine.contract';
-import type { CriticScores } from './schemas';
+import type { CriticScores, ArtDirectorOutput } from './schemas';
 import { autoSaveRunPosts } from '@/lib/library/post-service';
 
 export interface RunOrchestratorOptions {
@@ -370,14 +370,30 @@ export async function executeAgentPipeline(options: RunOrchestratorOptions): Pro
       stepId: artStepId,
     });
 
-    const artOutput = await executeArtDirectorStep({
-      userId,
-      profileSummary,
-      platforms: selectedPlatforms,
-      brief: topicBrief,
-      approvedPosts: activePosts,
-      signal,
-    });
+    let artOutput: ArtDirectorOutput;
+    try {
+      artOutput = await executeArtDirectorStep({
+        userId,
+        profileSummary,
+        platforms: selectedPlatforms,
+        brief: topicBrief,
+        approvedPosts: activePosts,
+        signal,
+      });
+    } catch (artErr) {
+      logger.warn(
+        { artErr, runId },
+        'Art Director step hit quota or provider limitation; synthesizing visual directions from copy',
+      );
+      artOutput = {
+        visuals: activePosts.map((post) => ({
+          platform: post.platform,
+          prompt: `High-quality modern graphic representing: ${post.text.slice(0, 160)}`,
+          aspectRatio: post.platform === 'instagram' ? '1:1' : '16:9',
+          altText: `Concept visual for ${post.platform} post about ${topicBrief.slice(0, 80)}`,
+        })),
+      };
+    }
 
     const artVisualsByPlatform = Object.fromEntries(
       artOutput.visuals.map((v) => [v.platform, v]),

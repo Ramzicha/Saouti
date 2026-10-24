@@ -6,6 +6,7 @@ import { Link, useRouter } from '@/i18n/routing';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Card } from '@/components/ui/Card';
+import { BrandLogo } from '@/components/common/BrandLogo';
 
 export default function SignUpPage() {
   const t = useTranslations('Auth');
@@ -72,11 +73,8 @@ export default function SignUpPage() {
     <div className="flex min-h-screen items-center justify-center bg-bg p-4 text-text">
       <Card className="flex w-full max-w-md flex-col gap-6 p-8">
         <div className="flex flex-col gap-1 text-center">
-          <div className="mb-2 flex items-center justify-center gap-2">
-            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-accent text-xs font-bold text-on-accent">
-              S
-            </span>
-            <span className="text-xl font-semibold tracking-tight">Saouti</span>
+          <div className="mb-3 flex items-center justify-center">
+            <BrandLogo height={36} />
           </div>
           <h1 className="text-2xl font-medium tracking-tight text-text">
             {t('signUp')}
