@@ -136,16 +136,16 @@ description: "Task list for Explore (with Tavily Search) implementation"
 
 ### Tests for User Story 4
 
-- [ ] T043 [P] [US4] Unit tests for Writer v3 prompt with `<source_article>` and Critic v3 factual attribution audit in tests/unit/explore-writer.test.ts
-- [ ] T044 [P] [US4] Integration tests for article-to-post composer bridge and generation run in tests/integration/explore-post-creation.test.ts
+- [x] T043 [P] [US4] Unit tests for Writer v3 prompt with `<source_article>` and Critic v3 factual attribution audit in tests/unit/explore-writer.test.ts
+- [x] T044 [P] [US4] Integration tests for article-to-post composer bridge and generation run in tests/integration/explore-post-creation.test.ts
 
 ### Implementation for User Story 4
 
-- [ ] T045 [US4] Update Writer prompt template to v3 with `<source_article>` tag and attribution instruction in src/lib/agent-engine/prompts/writer.v3.md
-- [ ] T046 [US4] Update Critic prompt template to v3 verifying facts against article summary in src/lib/agent-engine/prompts/critic.v3.md
-- [ ] T047 [US4] Update Writer and Critic agent runners in src/lib/agent-engine/agents/writer.ts and src/lib/agent-engine/agents/critic.ts
-- [ ] T048 [US4] Implement composer starter brief generator pre-filling article reference and platform selections in src/lib/explore/composer-bridge.ts
-- [ ] T049 [US4] Connect "Create Post" action on `ArticleCard.tsx` to navigate to composer with pre-loaded state in src/components/explore/ArticleCard.tsx
+- [x] T045 [US4] Update Writer prompt template to v3 with `<source_article>` tag and attribution instruction in src/lib/agent-engine/prompts/writer.v3.md
+- [x] T046 [US4] Update Critic prompt template to v3 verifying facts against article summary in src/lib/agent-engine/prompts/critic.v3.md
+- [x] T047 [US4] Update Writer and Critic agent runners in src/lib/agent-engine/agents/writer.ts and src/lib/agent-engine/agents/critic.ts
+- [x] T048 [US4] Implement composer starter brief generator pre-filling article reference and platform selections in src/lib/explore/composer-bridge.ts
+- [x] T049 [US4] Connect "Create Post" action on `ArticleCard.tsx` to navigate to composer with pre-loaded state in src/components/explore/ArticleCard.tsx
 
 **Checkpoint**: User Story 4 complete — articles seamlessly transform into grounded, attributed social media drafts.
 

@@ -19,11 +19,12 @@ export interface CriticStepInput {
   brief: string;
   draftedPosts: Array<{ platform: string; language: string; text: string; hashtags?: string[] | undefined }>;
   approvedFacts?: Array<{ factText: string; sourceCitation?: string | undefined; factCategory?: string | undefined }> | undefined;
+  sourceArticle?: { title: string; sourceDomain: string; url: string; summary: string } | undefined;
   promptVersion?: string | undefined;
   signal?: AbortSignal | undefined;
 }
 
-export const CRITIC_PROMPT_VERSION = 'v2';
+export const CRITIC_PROMPT_VERSION = 'v3';
 
 export interface EvaluatedCriticResult {
   overallVerdict: 'pass' | 'revise';
@@ -48,6 +49,7 @@ export async function executeCriticStep(input: CriticStepInput): Promise<Evaluat
     brief: input.brief,
     draftedPosts: input.draftedPosts,
     approvedFacts: input.approvedFacts,
+    sourceArticle: input.sourceArticle,
     promptVersion: input.promptVersion || CRITIC_PROMPT_VERSION,
   });
 

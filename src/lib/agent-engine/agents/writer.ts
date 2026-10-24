@@ -15,11 +15,12 @@ export interface WriterStepInput {
   draftedPosts?: Array<{ platform: string; language: string; text: string; hashtags?: string[] | undefined }> | undefined;
   revisionNotes?: Array<{ exactPhrase: string; problem: string; suggestedFix: string }> | undefined;
   approvedFacts?: Array<{ factText: string; sourceCitation?: string | undefined; factCategory?: string | undefined }> | undefined;
+  sourceArticle?: { title: string; sourceDomain: string; url: string; summary: string } | undefined;
   promptVersion?: string | undefined;
   signal?: AbortSignal | undefined;
 }
 
-export const WRITER_PROMPT_VERSION = 'v2';
+export const WRITER_PROMPT_VERSION = 'v3';
 
 /**
  * Executes the Writer agent turn to produce platform-native post drafts.
@@ -35,6 +36,7 @@ export async function executeWriterStep(input: WriterStepInput): Promise<WriterO
     draftedPosts: input.draftedPosts,
     revisionNotes: input.revisionNotes,
     approvedFacts: input.approvedFacts,
+    sourceArticle: input.sourceArticle,
     promptVersion: input.promptVersion || WRITER_PROMPT_VERSION,
   });
 

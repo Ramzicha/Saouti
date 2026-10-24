@@ -47,6 +47,7 @@ export async function POST(req: NextRequest) {
       arabicDialect,
       skipCritic,
       chatId: incomingChatId,
+      sourceArticle,
     } = parseResult.data;
 
     const sessionChatId = incomingChatId || crypto.randomUUID();
@@ -84,9 +85,11 @@ export async function POST(req: NextRequest) {
           targetLanguage,
           arabicDialect,
           skipCritic,
+          sourceArticle,
         },
         {
           jobId: `run-${runId}`,
+          priority: 1,
           removeOnComplete: true,
           removeOnFail: false,
         },

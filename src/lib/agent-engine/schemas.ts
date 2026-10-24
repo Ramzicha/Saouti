@@ -26,6 +26,15 @@ export const SupportedPlatformSchema = z.preprocess(
   z.enum(['linkedin', 'instagram', 'reddit', 'x', 'facebook']),
 );
 
+export const SourceArticleContextSchema = z.object({
+  title: z.string().min(1),
+  sourceDomain: z.string().min(1),
+  url: z.string(),
+  summary: z.string().min(1),
+});
+
+export type SourceArticleContext = z.infer<typeof SourceArticleContextSchema>;
+
 /**
  * Request validation schema for creating a new post generation run.
  */
@@ -42,6 +51,7 @@ export const CreateRunRequestSchema = z.object({
   arabicDialect: z.enum(['none', 'msa', 'darija', 'both']).default('none'),
   skipCritic: z.boolean().default(false),
   chatId: z.string().optional(),
+  sourceArticle: SourceArticleContextSchema.optional(),
 });
 
 export type CreateRunRequestInput = z.infer<typeof CreateRunRequestSchema>;

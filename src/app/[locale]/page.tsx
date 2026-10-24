@@ -24,6 +24,7 @@ import {
 import Link from 'next/link';
 import type { GeneratedPost } from '@/../specs/006-agent-engine/contracts/agent-engine.contract';
 import { formatChatTitle } from '@/lib/agent-engine/chat-title';
+import { consumeComposerPreload, type ComposerArticlePayload } from '@/lib/explore/composer-bridge';
 
 const ACTIVE_RUN_STORAGE_KEY = 'saouti_active_run_id';
 const SELECTED_CHAT_STORAGE_KEY = 'saouti_selected_chat_id';
@@ -69,6 +70,8 @@ export default function WorkspacePage() {
   const [regeneratingPostKey, setRegeneratingPostKey] = useState<string | null>(null);
   const [savedPostKeys, setSavedPostKeys] = useState<Set<string>>(new Set());
   const [savingPostKeys, setSavingPostKeys] = useState<Set<string>>(new Set());
+  const [attachedArticle, setAttachedArticle] = useState<ComposerArticlePayload | null>(null);
+  const [preloadedBrief, setPreloadedBrief] = useState<string>('');
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -102,6 +105,14 @@ export default function WorkspacePage() {
         }
       })
       .catch(() => setHasProfile(false));
+
+    // Check for preloaded article from Explore
+    const preload = consumeComposerPreload();
+    if (preload) {
+      setPreloadedBrief(preload.brief);
+      setAttachedArticle(preload.sourceArticle);
+      setCurrentChatId(null);
+    }
 
     // Load full runs history from database
     fetch('/api/runs')
@@ -262,17 +273,27 @@ export default function WorkspacePage() {
     localStorage.setItem(ACTIVE_RUN_STORAGE_KEY, tempId);
 
     try {
+      const payload: Record<string, unknown> = {
+        topicBrief,
+        selectedPlatforms: platformsArray,
+        targetLanguage: locale,
+        skipCritic,
+        chatId: sessionChatId,
+      };
+      if (attachedArticle) {
+        payload.sourceArticle = attachedArticle;
+      }
+
       const res = await fetch('/api/runs', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          topicBrief,
-          selectedPlatforms: platformsArray,
-          targetLanguage: locale,
-          skipCritic,
-          chatId: sessionChatId,
-        }),
+        body: JSON.stringify(payload),
       });
+
+      if (attachedArticle) {
+        setAttachedArticle(null);
+        setPreloadedBrief('');
+      }
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
@@ -769,7 +790,28 @@ export default function WorkspacePage() {
 
         {/* Bottom Pinned Composer */}
         <footer className="w-full flex-shrink-0">
+          {attachedArticle && (
+            <div className="mx-auto max-w-4xl px-4 pb-2">
+              <div className="flex items-center justify-between gap-3 rounded-xl border border-primary/30 bg-primary/10 px-4 py-2 text-xs">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="font-semibold text-primary shrink-0">Source Article:</span>
+                  <span className="truncate text-foreground font-medium">{attachedArticle.title}</span>
+                  <span className="text-muted-foreground shrink-0">({attachedArticle.sourceDomain})</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setAttachedArticle(null)}
+                  className="text-muted-foreground hover:text-foreground text-xs font-bold px-1.5 py-0.5 rounded"
+                  title="Remove attached article"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+          )}
           <Composer
+            key={preloadedBrief || 'composer-default'}
+            initialValue={preloadedBrief}
             disabled={hasKey === false || hasProfile === false || isSubmitting}
             isGenerating={Boolean(activeRunId && !isCompleted && !isCancelled)}
             onSend={handleSendRun}

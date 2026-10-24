@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { useRouter } from 'next/navigation';
+import { createComposerPreloadState, setComposerPreload } from '@/lib/explore/composer-bridge';
 import {
   IconRefresh,
   IconLoader2,
@@ -34,6 +35,7 @@ export function ExploreFeedView({
   hasDismissedPrompt = false,
 }: ExploreFeedViewProps) {
   const t = useTranslations('Explore');
+  const locale = useLocale();
   const router = useRouter();
 
   const [topicsList, setTopicsList] = useState<Topic[]>(initialTopics);
@@ -269,20 +271,17 @@ export function ExploreFeedView({
   };
 
   const handleCreatePost = (article: Article) => {
-    // Store selected source article in session storage for Composer bridge
-    if (typeof window !== 'undefined') {
-      sessionStorage.setItem(
-        'saouti_source_article',
-        JSON.stringify({
-          title: article.title,
-          sourceDomain: article.sourceDomain,
-          canonicalUrl: article.canonicalUrl,
-          summary: article.summary,
-          topicPhrase: article.topicPhrase,
-        }),
-      );
-    }
-    router.push('/?fromExplore=true');
+    const preload = createComposerPreloadState(
+      {
+        title: article.title,
+        sourceDomain: article.sourceDomain,
+        url: article.canonicalUrl,
+        summary: article.summary,
+      },
+      locale,
+    );
+    setComposerPreload(preload);
+    router.push(`/${locale}?fromExplore=true`);
   };
 
   return (

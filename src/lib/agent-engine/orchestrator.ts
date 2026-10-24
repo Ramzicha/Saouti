@@ -23,6 +23,7 @@ export interface RunOrchestratorOptions {
   targetLanguage?: string | undefined;
   arabicDialect?: string | undefined;
   skipCritic?: boolean | undefined;
+  sourceArticle?: { title: string; sourceDomain: string; url: string; summary: string } | undefined;
   onEvent?: ((event: AgentEngineEvent) => void | Promise<void>) | undefined;
   signal?: AbortSignal | undefined;
 }
@@ -50,6 +51,7 @@ export async function executeAgentPipeline(options: RunOrchestratorOptions): Pro
     targetLanguage = 'en',
     arabicDialect = 'none',
     skipCritic = false,
+    sourceArticle,
     onEvent,
     signal,
   } = options;
@@ -155,6 +157,7 @@ export async function executeAgentPipeline(options: RunOrchestratorOptions): Pro
       platforms: selectedPlatforms,
       subreddits,
       brief: topicBrief,
+      sourceArticle,
       signal,
     });
 
@@ -227,6 +230,7 @@ export async function executeAgentPipeline(options: RunOrchestratorOptions): Pro
         platforms: selectedPlatforms,
         brief: topicBrief,
         draftedPosts: activePosts,
+        sourceArticle,
         signal,
       });
 
@@ -310,6 +314,7 @@ export async function executeAgentPipeline(options: RunOrchestratorOptions): Pro
             problem: i.problem,
             suggestedFix: i.suggestedFix,
           })),
+          sourceArticle,
           signal,
         });
 

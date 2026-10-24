@@ -30,6 +30,12 @@ export function Composer({
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(['linkedin', 'x']);
   const [skipCritic, setSkipCritic] = useState(false);
 
+  React.useEffect(() => {
+    if (initialValue) {
+      setContent(initialValue);
+    }
+  }, [initialValue]);
+
   const availablePlatforms: Array<{ id: string; label: string }> = [
     { id: 'linkedin', label: 'LinkedIn' },
     { id: 'x', label: 'X (Twitter)' },
