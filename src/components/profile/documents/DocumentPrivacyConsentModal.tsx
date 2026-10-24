@@ -73,11 +73,11 @@ export function DocumentPrivacyConsentModal({
       aria-modal="true"
       aria-labelledby="privacy-modal-title"
       aria-describedby="privacy-modal-desc"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-in fade-in duration-200"
     >
       <div
         ref={modalRef}
-        className="relative w-full max-w-lg overflow-hidden bg-card border border-border shadow-2xl rounded-2xl p-6 sm:p-8 space-y-6"
+        className="relative w-full max-w-lg overflow-hidden bg-surface border border-border shadow-2xl rounded-2xl p-6 sm:p-8 space-y-6"
       >
         {/* Header */}
         <div className="flex items-start justify-between gap-4">
@@ -97,7 +97,7 @@ export function DocumentPrivacyConsentModal({
           <button
             type="button"
             onClick={onCancel}
-            className="p-1 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            className="p-1 rounded-lg text-muted-foreground hover:text-foreground hover:bg-surface-raised transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
             aria-label={t('privacyModalCancel')}
           >
             <IconX className="w-5 h-5" />
@@ -106,21 +106,21 @@ export function DocumentPrivacyConsentModal({
 
         {/* Guarantees List */}
         <div className="space-y-4 py-2">
-          <div className="flex items-start gap-3 p-3.5 rounded-xl bg-muted/40 border border-border/50">
+          <div className="flex items-start gap-3 p-3.5 rounded-xl bg-surface-raised border border-border/60">
             <IconKey className="w-5 h-5 text-primary shrink-0 mt-0.5" />
             <p className="text-sm text-foreground/90 leading-relaxed">
               {t('privacyPointKey')}
             </p>
           </div>
 
-          <div className="flex items-start gap-3 p-3.5 rounded-xl bg-muted/40 border border-border/50">
+          <div className="flex items-start gap-3 p-3.5 rounded-xl bg-surface-raised border border-border/60">
             <IconLock className="w-5 h-5 text-primary shrink-0 mt-0.5" />
             <p className="text-sm text-foreground/90 leading-relaxed">
               {t('privacyPointStorage')}
             </p>
           </div>
 
-          <div className="flex items-start gap-3 p-3.5 rounded-xl bg-muted/40 border border-border/50">
+          <div className="flex items-start gap-3 p-3.5 rounded-xl bg-surface-raised border border-border/60">
             <IconTrash className="w-5 h-5 text-primary shrink-0 mt-0.5" />
             <p className="text-sm text-foreground/90 leading-relaxed">
               {t('privacyPointDelete')}

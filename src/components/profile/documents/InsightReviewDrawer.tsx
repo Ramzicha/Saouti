@@ -119,10 +119,10 @@ export function InsightReviewDrawer({
       role="dialog"
       aria-modal="true"
       aria-labelledby="review-drawer-title"
-      className="fixed inset-0 z-50 overflow-hidden bg-background/70 backdrop-blur-sm animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 overflow-hidden bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
     >
       <div className="absolute inset-y-0 right-0 max-w-full flex pl-10">
-        <div className="w-screen max-w-2xl bg-card border-s border-border shadow-2xl flex flex-col">
+        <div className="w-screen max-w-2xl bg-surface border-s border-border shadow-2xl flex flex-col">
           {/* Top Bar Header */}
           <div className="p-6 border-b border-border/60 flex items-start justify-between gap-4 bg-muted/20">
             <div className="space-y-1 min-w-0">

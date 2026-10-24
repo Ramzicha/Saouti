@@ -16,6 +16,8 @@ const config: Config = {
         surface: 'var(--surface)',
         'surface-raised': 'var(--surface-raised)',
         'surface-elevated': 'var(--surface-raised)',
+        card: 'var(--surface)',
+        'card-foreground': 'var(--text)',
         border: 'var(--border)',
         text: 'var(--text)',
         foreground: 'var(--text)',

@@ -75,9 +75,9 @@ export function DocumentDeleteModal({
       role="dialog"
       aria-modal="true"
       aria-labelledby="delete-modal-title"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-in fade-in duration-200"
     >
-      <div className="w-full max-w-md bg-card border border-border shadow-2xl rounded-2xl p-6 sm:p-7 space-y-5">
+      <div className="w-full max-w-md bg-surface border border-border shadow-2xl rounded-2xl p-6 sm:p-7 space-y-5">
         {/* Header */}
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3">
