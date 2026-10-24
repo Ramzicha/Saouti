@@ -27,6 +27,7 @@ export class ExploreService {
   async getFeedArticles(
     userId: string,
     topicPhrase?: string,
+    filters?: { freshness?: 'day' | 'week' | 'month'; language?: 'en' | 'fr' | 'ar' },
   ): Promise<FeedResponse> {
     const now = new Date();
 
@@ -54,6 +55,17 @@ export class ExploreService {
       conditions.push(eq(articles.topicPhrase, topicPhrase.trim()));
     }
 
+    if (filters?.freshness) {
+      const ms =
+        filters.freshness === 'day'
+          ? 24 * 3600 * 1000
+          : filters.freshness === 'month'
+            ? 30 * 24 * 3600 * 1000
+            : 7 * 24 * 3600 * 1000;
+      const minDate = new Date(Date.now() - ms);
+      conditions.push(gt(articles.publishedAt, minDate));
+    }
+
     if (dismissedUrls.length > 0) {
       conditions.push(notInArray(articles.canonicalUrl, dismissedUrls));
     }
@@ -79,6 +91,7 @@ export class ExploreService {
   async refreshFeedForTopic(
     userId: string,
     topicPhrase: string,
+    filters?: { freshness?: 'day' | 'week' | 'month'; language?: 'en' | 'fr' | 'ar' },
   ): Promise<FeedResponse> {
     const normalizedTopic = topicPhrase.trim();
 
@@ -86,6 +99,8 @@ export class ExploreService {
     const searchResult = await searchPipeline.executeSearch(userId, {
       query: normalizedTopic,
       limit: 7,
+      freshness: filters?.freshness,
+      language: filters?.language,
     });
 
     // 2. Filter out already dismissed items

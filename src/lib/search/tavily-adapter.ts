@@ -69,6 +69,7 @@ export class TavilySearchAdapter implements SearchProvider {
           max_results: options.limit ?? 7,
           include_answer: false,
           include_raw_content: false,
+          time_range: options.freshness ?? 'week',
         }),
         signal: AbortSignal.timeout(10000),
       });

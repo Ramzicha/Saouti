@@ -227,15 +227,15 @@ description: "Task list for Explore (with Tavily Search) implementation"
 
 ### Tests for User Story 8
 
-- [ ] T070 [P] [US8] Unit tests for freshness and language query parameter mapping in tests/unit/explore-filters.test.ts
-- [ ] T071 [P] [US8] Integration tests for article dismissals and exclusion from future refreshes in tests/integration/explore-filters.test.ts
+- [x] T070 [P] [US8] Unit tests for freshness and language query parameter mapping in tests/unit/explore-filters.test.ts
+- [x] T071 [P] [US8] Integration tests for article dismissals and exclusion from future refreshes in tests/integration/explore-filters.test.ts
 
 ### Implementation for User Story 8
 
-- [ ] T072 [US8] Implement article dismissal service and API route in src/app/api/explore/dismiss/route.ts
-- [ ] T073 [US8] Implement freshness and language filter parameter handling in src/lib/search/pipeline.ts
-- [ ] T074 [P] [US8] Build filter controls (freshness dropdown, language selector, "Not interested" button) in src/components/explore/ExploreFiltersBar.tsx
-- [ ] T075 [US8] Integrate filter controls and dismissal handling into `ExploreFeedView.tsx` in src/components/explore/ExploreFeedView.tsx
+- [x] T072 [US8] Implement article dismissal service and API route in src/app/api/explore/dismiss/route.ts
+- [x] T073 [US8] Implement freshness and language filter parameter handling in src/lib/search/pipeline.ts
+- [x] T074 [P] [US8] Build filter controls (freshness dropdown, language selector, "Not interested" button) in src/components/explore/ExploreFiltersBar.tsx
+- [x] T075 [US8] Integrate filter controls and dismissal handling into `ExploreFeedView.tsx` in src/components/explore/ExploreFeedView.tsx
 
 **Checkpoint**: User Story 8 complete — advanced filtering and dismissal management active.
 

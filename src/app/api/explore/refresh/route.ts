@@ -28,7 +28,13 @@ export async function POST(request: Request) {
       );
     }
 
-    const feed = await exploreService.refreshFeedForTopic(user.id, topicPhrase);
+    const freshness = body.freshness as 'day' | 'week' | 'month' | undefined;
+    const language = body.language as 'en' | 'fr' | 'ar' | undefined;
+
+    const feed = await exploreService.refreshFeedForTopic(user.id, topicPhrase, {
+      freshness,
+      language,
+    });
 
     return NextResponse.json(feed);
   } catch (err: unknown) {

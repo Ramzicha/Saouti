@@ -19,8 +19,13 @@ export async function GET(request: Request) {
 
     const { searchParams } = new URL(request.url);
     const topic = searchParams.get('topic') || undefined;
+    const freshness = (searchParams.get('freshness') as 'day' | 'week' | 'month') || undefined;
+    const language = (searchParams.get('language') as 'en' | 'fr' | 'ar') || undefined;
 
-    const feed = await exploreService.getFeedArticles(user.id, topic);
+    const feed = await exploreService.getFeedArticles(user.id, topic, {
+      freshness,
+      language,
+    });
 
     return NextResponse.json(feed);
   } catch (err) {

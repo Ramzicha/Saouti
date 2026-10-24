@@ -20,6 +20,7 @@ import { SearchBox } from './SearchBox';
 import { ArticleCard } from './ArticleCard';
 import { TavilyKeyPromptCard } from './TavilyKeyPromptCard';
 import { QuotaEstimateBadge } from './QuotaEstimateBadge';
+import { ExploreFiltersBar, type ExploreFilters } from './ExploreFiltersBar';
 import type { QuotaStatus } from '@/lib/explore/quota-guard';
 import Link from 'next/link';
 
@@ -57,6 +58,10 @@ export function ExploreFeedView({
     !hasTavilyKey && !hasDismissedPrompt,
   );
   const [quota, setQuota] = useState<QuotaStatus | null>(null);
+  const [filters, setFilters] = useState<ExploreFilters>({
+    freshness: 'week',
+    language: undefined,
+  });
 
   // Load quota status
   const loadQuota = useCallback(async () => {
@@ -107,34 +112,39 @@ export function ExploreFeedView({
     }
   }, [initialTopics.length, t]);
 
-  // Fetch feed when active topic or search query changes
-  const fetchFeed = useCallback(async (topicPhrase?: string) => {
-    setLoadingFeed(true);
-    setFallbackNotice(null);
+  // Fetch feed when active topic, search query, or filters change
+  const fetchFeed = useCallback(
+    async (topicPhrase?: string, currentFilters = filters) => {
+      setLoadingFeed(true);
+      setFallbackNotice(null);
 
-    try {
-      const url = topicPhrase
-        ? `/api/explore/feed?topic=${encodeURIComponent(topicPhrase)}`
-        : '/api/explore/feed';
+      try {
+        const params = new URLSearchParams();
+        if (topicPhrase) params.set('topic', topicPhrase);
+        if (currentFilters.freshness) params.set('freshness', currentFilters.freshness);
+        if (currentFilters.language) params.set('language', currentFilters.language);
 
-      const res = await fetch(url);
-      if (!res.ok) throw new Error('Failed to load feed');
+        const url = `/api/explore/feed?${params.toString()}`;
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('Failed to load feed');
 
-      const data = await res.json();
-      setArticlesList(data.articles || []);
-      setSavedUrls(new Set(data.savedUrls || []));
-      setFallbackNotice(data.fallbackNotice || null);
-    } catch {
-      // Continue with current list
-    } finally {
-      setLoadingFeed(false);
-    }
-  }, []);
+        const data = await res.json();
+        setArticlesList(data.articles || []);
+        setSavedUrls(new Set(data.savedUrls || []));
+        setFallbackNotice(data.fallbackNotice || null);
+      } catch {
+        // Continue with current list
+      } finally {
+        setLoadingFeed(false);
+      }
+    },
+    [filters],
+  );
 
   useEffect(() => {
     const phrase = searchQuery.trim() || activeTopic?.phrase;
-    fetchFeed(phrase);
-  }, [activeTopic, searchQuery, fetchFeed]);
+    fetchFeed(phrase, filters);
+  }, [activeTopic, searchQuery, filters, fetchFeed]);
 
   // Handle Refresh Action
   const handleRefresh = async () => {
@@ -152,7 +162,11 @@ export function ExploreFeedView({
       const res = await fetch('/api/explore/refresh', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ topicPhrase: currentTopicPhrase }),
+        body: JSON.stringify({
+          topicPhrase: currentTopicPhrase,
+          freshness: filters.freshness,
+          language: filters.language,
+        }),
       });
 
       if (!res.ok) {
@@ -429,6 +443,14 @@ export function ExploreFeedView({
           (tp) => tp.phrase.toLowerCase() === searchQuery.trim().toLowerCase(),
         )}
         isLoading={loadingFeed}
+      />
+
+      {/* Freshness & Language Filters Bar */}
+      <ExploreFiltersBar
+        filters={filters}
+        onChange={(newFilters) => {
+          setFilters(newFilters);
+        }}
       />
 
       {/* Feed Cards Grid */}
