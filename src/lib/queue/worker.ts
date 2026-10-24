@@ -36,6 +36,12 @@ export function createWorker(): Worker {
         await processRunGenerationJob(job);
         return { status: 'completed' };
       }
+      if (job.name === 'search-refresh') {
+        const { exploreService } = await import('@/lib/explore/explore-service');
+        const { userId, topic } = job.data;
+        await exploreService.refreshFeed(userId, { topic });
+        return { status: 'completed' };
+      }
       return { status: 'unknown-job' };
     },
     {

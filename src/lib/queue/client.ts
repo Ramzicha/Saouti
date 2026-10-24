@@ -16,6 +16,11 @@ redisConnection.on('error', (err: unknown) => {
   }
 });
 
+export const QUEUE_PRIORITIES = {
+  POST_GENERATION: 1,
+  SEARCH_REFRESH: 5,
+} as const;
+
 export const saoutiQueue = new Queue('saouti', {
   connection: redisConnection,
 });

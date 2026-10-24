@@ -205,15 +205,15 @@ description: "Task list for Explore (with Tavily Search) implementation"
 
 ### Tests for User Story 7
 
-- [ ] T064 [P] [US7] Unit tests for quota tracker, 24h cache TTL, daily cap, and monthly credit guard in tests/unit/quota-guard.test.ts
-- [ ] T065 [P] [US7] Integration tests verifying post generation job priority over background search in tests/integration/quota-guard.test.ts
+- [x] T064 [P] [US7] Unit tests for quota tracker, 24h cache TTL, daily cap, and monthly credit guard in tests/unit/quota-guard.test.ts
+- [x] T065 [P] [US7] Integration tests verifying post generation job priority over background search in tests/integration/quota-guard.test.ts
 
 ### Implementation for User Story 7
 
-- [ ] T066 [US7] Implement Quota Guard service (15 searches/day cap, 800 monthly credit threshold, 24h cache check) in src/lib/explore/quota-guard.ts
-- [ ] T067 [US7] Update BullMQ worker job definitions to assign priority 1 to post generation and priority 5 to search refresh in src/lib/queue/worker.ts
-- [ ] T068 [P] [US7] Build `QuotaEstimateBadge.tsx` displaying estimated search credit cost before refresh in src/components/explore/QuotaEstimateBadge.tsx
-- [ ] T069 [US7] Integrate quota warnings and daily limit pause indicators into `ExploreFeedView.tsx` in src/components/explore/ExploreFeedView.tsx
+- [x] T066 [US7] Implement Quota Guard service (15 searches/day cap, 800 monthly credit threshold, 24h cache check) in src/lib/explore/quota-guard.ts
+- [x] T067 [US7] Update BullMQ worker job definitions to assign priority 1 to post generation and priority 5 to search refresh in src/lib/queue/worker.ts
+- [x] T068 [P] [US7] Build `QuotaEstimateBadge.tsx` displaying estimated search credit cost before refresh in src/components/explore/QuotaEstimateBadge.tsx
+- [x] T069 [US7] Integrate quota warnings and daily limit pause indicators into `ExploreFeedView.tsx` in src/components/explore/ExploreFeedView.tsx
 
 **Checkpoint**: User Story 7 complete — free tier quotas are guarded, caching prevents redundant API calls, and post generation runs are never starved.
 

@@ -19,6 +19,8 @@ import { TopicEditModal } from './TopicEditModal';
 import { SearchBox } from './SearchBox';
 import { ArticleCard } from './ArticleCard';
 import { TavilyKeyPromptCard } from './TavilyKeyPromptCard';
+import { QuotaEstimateBadge } from './QuotaEstimateBadge';
+import type { QuotaStatus } from '@/lib/explore/quota-guard';
 import Link from 'next/link';
 
 interface ExploreFeedViewProps {
@@ -54,6 +56,24 @@ export function ExploreFeedView({
   const [showPromptBanner, setShowPromptBanner] = useState(
     !hasTavilyKey && !hasDismissedPrompt,
   );
+  const [quota, setQuota] = useState<QuotaStatus | null>(null);
+
+  // Load quota status
+  const loadQuota = useCallback(async () => {
+    try {
+      const res = await fetch('/api/explore/quota');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.quota) setQuota(data.quota);
+      }
+    } catch {
+      // Ignore
+    }
+  }, []);
+
+  useEffect(() => {
+    loadQuota();
+  }, [loadQuota]);
 
   // Load topics on mount if empty
   useEffect(() => {
@@ -144,6 +164,7 @@ export function ExploreFeedView({
       setArticlesList(data.articles || []);
       setSavedUrls(new Set(data.savedUrls || []));
       setFallbackNotice(data.fallbackNotice || null);
+      loadQuota();
       setAgentStatus(t('statusReady'));
       setTimeout(() => setAgentStatus(null), 2500);
     } catch (err: unknown) {
@@ -310,33 +331,53 @@ export function ExploreFeedView({
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5 shrink-0">
-          <Link
-            href="/explore/saved"
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-border bg-surface text-foreground hover:bg-surface-raised text-xs font-semibold transition-colors shadow-sm"
-          >
-            <IconBookmark className="w-4 h-4 text-primary" />
-            <span>{t('savedTitle')}</span>
-            {savedUrls.size > 0 && (
-              <span className="flex h-4 min-w-[16px] px-1 items-center justify-center rounded-full bg-primary text-primary-foreground text-[10px] font-bold">
-                {savedUrls.size}
-              </span>
-            )}
-          </Link>
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2.5 shrink-0">
+          <QuotaEstimateBadge quota={quota || undefined} hasTavilyKey={hasTavilyKey} />
 
-          <button
-            type="button"
-            onClick={handleRefresh}
-            disabled={refreshing}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50 transition-colors shadow-sm"
-          >
-            <IconRefresh
-              className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`}
-            />
-            <span>{refreshing ? t('refreshingFeed') : t('refreshFeed')}</span>
-          </button>
+          <div className="flex items-center gap-2">
+            <Link
+              href={`/${locale}/explore/saved`}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-border bg-surface text-foreground hover:bg-surface-raised text-xs font-semibold transition-colors shadow-sm"
+            >
+              <IconBookmark className="w-4 h-4 text-primary" />
+              <span>{t('savedTitle')}</span>
+              {savedUrls.size > 0 && (
+                <span className="flex h-4 min-w-[16px] px-1 items-center justify-center rounded-full bg-primary text-primary-foreground text-[10px] font-bold">
+                  {savedUrls.size}
+                </span>
+              )}
+            </Link>
+
+            <button
+              type="button"
+              onClick={handleRefresh}
+              disabled={refreshing}
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50 transition-colors shadow-sm"
+            >
+              <IconRefresh
+                className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`}
+              />
+              <span>{refreshing ? t('refreshingFeed') : t('refreshFeed')}</span>
+            </button>
+          </div>
         </div>
       </div>
+
+      {/* Daily Quota Pause Alert */}
+      {quota?.isDailyLimitReached && (
+        <div className="flex items-center justify-between gap-3 p-4 rounded-xl border border-destructive/30 bg-destructive/10 text-destructive text-xs">
+          <div className="flex items-center gap-2 font-medium">
+            <IconAlertCircle className="w-4 h-4 shrink-0" />
+            <span>Daily search limit reached (15/15). Showing cached results and curated news feeds.</span>
+          </div>
+          <Link
+            href={`/${locale}/explore/saved`}
+            className="text-xs font-bold underline hover:no-underline shrink-0"
+          >
+            Review Saved
+          </Link>
+        </div>
+      )}
 
       {/* Live Agent Status Timeline */}
       {agentStatus && (

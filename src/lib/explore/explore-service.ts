@@ -10,6 +10,7 @@ import {
 import { eq, and, desc, notInArray, gt, sql } from 'drizzle-orm';
 import { searchPipeline } from '@/lib/search/pipeline';
 import { summarizeAndRankArticles } from '@/lib/agent-engine/agents/researcher';
+import { recordSearchUsage } from '@/lib/explore/quota-guard';
 import { logger } from '@/lib/logger';
 
 export interface FeedResponse {
@@ -144,57 +145,12 @@ export class ExploreService {
       }
     }
 
-    // 5. Track daily and monthly credit usage
-    if (searchResult.creditsUsed > 0) {
-      const today = new Date().toISOString().slice(0, 10);
-      const currentMonth = new Date().toISOString().slice(0, 7);
-
-      // Increment daily queries
-      await db
-        .insert(searchUsageCounters)
-        .values({
-          userId,
-          provider: searchResult.sourceProvider,
-          periodType: 'daily',
-          periodKey: today,
-          count: searchResult.creditsUsed,
-        })
-        .onConflictDoUpdate({
-          target: [
-            searchUsageCounters.userId,
-            searchUsageCounters.provider,
-            searchUsageCounters.periodType,
-            searchUsageCounters.periodKey,
-          ],
-          set: {
-            count: sql`${searchUsageCounters.count} + ${searchResult.creditsUsed}`,
-            updatedAt: new Date(),
-          },
-        });
-
-      // Increment monthly credits
-      await db
-        .insert(searchUsageCounters)
-        .values({
-          userId,
-          provider: searchResult.sourceProvider,
-          periodType: 'monthly',
-          periodKey: currentMonth,
-          count: searchResult.creditsUsed,
-        })
-        .onConflictDoUpdate({
-          target: [
-            searchUsageCounters.userId,
-            searchUsageCounters.provider,
-            searchUsageCounters.periodType,
-            searchUsageCounters.periodKey,
-          ],
-          set: {
-            count: sql`${searchUsageCounters.count} + ${searchResult.creditsUsed}`,
-            updatedAt: new Date(),
-          },
-        });
-    }
+    // 5. Track daily and monthly credit usage via Quota Guard
+    await recordSearchUsage(
+      userId,
+      searchResult.sourceProvider === 'tavily' ? 'tavily' : 'feed',
+      searchResult.creditsUsed,
+    );
 
     // 6. Get saved URLs to show bookmark status
     const savedRecords = await db
