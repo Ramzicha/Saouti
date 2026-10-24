@@ -24,11 +24,11 @@ description: "Task list for Profile Documents (PDF) implementation"
 
 **Purpose**: Project initialization, dependency installation, internationalization strings, and testing fixtures.
 
-- [ ] T001 Install `unpdf` library for server-side PDF parsing in package.json
-- [ ] T002 [P] Externalize English document strings (privacy notice, labels, categories, status badges, errors) in messages/en.json
-- [ ] T003 [P] Externalize French document strings in messages/fr.json
-- [ ] T004 [P] Externalize Arabic document strings with RTL-appropriate terminology in messages/ar.json
-- [ ] T005 [P] Create mock PDF test fixtures (valid English CV, French bio, Arabic article, scanned PDF, encrypted PDF, injection prompt PDF) in tests/fixtures/documents/
+- [x] T001 Install `unpdf` library for server-side PDF parsing in package.json
+- [x] T002 [P] Externalize English document strings (privacy notice, labels, categories, status badges, errors) in messages/en.json
+- [x] T003 [P] Externalize French document strings in messages/fr.json
+- [x] T004 [P] Externalize Arabic document strings with RTL-appropriate terminology in messages/ar.json
+- [x] T005 [P] Create mock PDF test fixtures (valid English CV, French bio, Arabic article, scanned PDF, encrypted PDF, injection prompt PDF) in tests/fixtures/documents/
 
 ---
 
@@ -38,12 +38,12 @@ description: "Task list for Profile Documents (PDF) implementation"
 
 **⚠️ CRITICAL**: No user story work can begin until this foundational phase is complete.
 
-- [ ] T006 Extend storage provider interface with folder deletion and prefix purging capabilities in src/lib/storage/provider.ts
-- [ ] T007 Implement private `documents/` path isolation, directory cleanup, and authenticated streaming support in src/lib/storage/local-storage.ts
-- [ ] T008 Define Drizzle ORM schema for `documents`, `document_insights`, `approved_facts`, and `document_privacy_consents` in src/lib/db/schema.ts
-- [ ] T009 Generate and run Drizzle migration `0008_profile_documents.sql` in src/lib/db/migrations/
-- [ ] T010 [P] Define Zod validation schemas for document upload, review actions, and deletion options in src/lib/documents/schemas.ts
-- [ ] T011 [P] Unit tests for storage provider document operations and path traversal defense in tests/unit/storage-provider.test.ts
+- [x] T006 Extend storage provider interface with folder deletion and prefix purging capabilities in src/lib/storage/provider.ts
+- [x] T007 Implement private `documents/` path isolation, directory cleanup, and authenticated streaming support in src/lib/storage/local-storage.ts
+- [x] T008 Define Drizzle ORM schema for `documents`, `document_insights`, `approved_facts`, and `document_privacy_consents` in src/lib/db/schema.ts
+- [x] T009 Generate and run Drizzle migration `0008_profile_documents.sql` in src/lib/db/migrations/
+- [x] T010 [P] Define Zod validation schemas for document upload, review actions, and deletion options in src/lib/documents/schemas.ts
+- [x] T011 [P] Unit tests for storage provider document operations and path traversal defense in tests/unit/storage-provider.test.ts
 
 **Checkpoint**: Foundation ready — database tables active, storage volume ready, user story implementation can begin.
 

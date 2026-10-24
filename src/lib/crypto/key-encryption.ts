@@ -86,3 +86,36 @@ export function decryptApiKey(
 
   return decrypted;
 }
+
+/**
+ * Encrypts arbitrary text (e.g. extracted PDF content) using AES-256-GCM.
+ */
+export function encryptText(
+  plainText: string,
+  masterKeyHex?: string,
+): { ciphertext: string; nonce: string; authTag: string } {
+  const result = encryptApiKey(plainText, masterKeyHex);
+  return {
+    ciphertext: result.encryptedKey,
+    nonce: result.nonce,
+    authTag: result.authTag,
+  };
+}
+
+/**
+ * Decrypts AES-256-GCM encrypted text back to plaintext.
+ */
+export function decryptText(
+  payload: { ciphertext: string; nonce: string; authTag: string },
+  masterKeyHex?: string,
+): string {
+  return decryptApiKey(
+    {
+      encryptedKey: payload.ciphertext,
+      nonce: payload.nonce,
+      authTag: payload.authTag,
+    },
+    masterKeyHex,
+  );
+}
+

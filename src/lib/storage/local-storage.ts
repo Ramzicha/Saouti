@@ -1,12 +1,12 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { StorageProvider, StoredImageStream } from './provider';
+import { StorageProvider, StoredFileStream, StoredImageStream } from './provider';
 
 export class LocalStorageProvider implements StorageProvider {
   private readonly baseDir: string;
 
   constructor(baseDir?: string) {
-    this.baseDir = path.resolve(baseDir || path.join(process.cwd(), 'data', 'images'));
+    this.baseDir = path.resolve(baseDir || path.join(process.cwd(), 'data'));
     if (!fs.existsSync(this.baseDir)) {
       fs.mkdirSync(this.baseDir, { recursive: true });
     }
@@ -42,17 +42,46 @@ export class LocalStorageProvider implements StorageProvider {
   }
 
   async getImageStream(key: string): Promise<StoredImageStream> {
+    return this.getFileStream(key);
+  }
+
+  async deleteImage(key: string): Promise<void> {
+    try {
+      const fullPath = this.resolveSafePath(key);
+      if (fs.existsSync(fullPath)) {
+        await fs.promises.unlink(fullPath);
+      }
+    } catch {
+      // Non-fatal if already deleted
+    }
+  }
+
+  async deleteImages(keys: string[]): Promise<void> {
+    await Promise.all(keys.map((k) => this.deleteImage(k)));
+  }
+
+  async saveFile(buffer: Buffer, key: string, contentType: string): Promise<string> {
+    return this.saveImage(buffer, key, contentType);
+  }
+
+  async getFileStream(key: string): Promise<StoredFileStream> {
     const fullPath = this.resolveSafePath(key);
 
     if (!fs.existsSync(fullPath)) {
-      throw new Error(`Image not found at key '${key}'`);
+      throw new Error(`File not found at key '${key}'`);
     }
 
     const stats = await fs.promises.stat(fullPath);
     const ext = path.extname(fullPath).toLowerCase();
 
-    let contentType = 'image/png';
-    if (ext === '.jpg' || ext === '.jpeg') {
+    let contentType = 'application/octet-stream';
+    if (ext === '.pdf') {
+      contentType = 'application/pdf';
+    } else if (ext === '.json') {
+      contentType = 'application/json';
+    } else if (ext === '.png') {
+      contentType = 'image/png';
+    } else if (ext === '.jpg' || ext === '.jpeg') {
       contentType = 'image/jpeg';
     } else if (ext === '.webp') {
       contentType = 'image/webp';
@@ -69,19 +98,23 @@ export class LocalStorageProvider implements StorageProvider {
     };
   }
 
-  async deleteImage(key: string): Promise<void> {
-    try {
-      const fullPath = this.resolveSafePath(key);
-      if (fs.existsSync(fullPath)) {
-        await fs.promises.unlink(fullPath);
-      }
-    } catch {
-      // Non-fatal if already deleted
-    }
+  async deleteFile(key: string): Promise<void> {
+    return this.deleteImage(key);
   }
 
-  async deleteImages(keys: string[]): Promise<void> {
-    await Promise.all(keys.map((k) => this.deleteImage(k)));
+  async deleteFiles(keys: string[]): Promise<void> {
+    await Promise.all(keys.map((k) => this.deleteFile(k)));
+  }
+
+  async deleteFolder(folderKey: string): Promise<void> {
+    try {
+      const fullPath = this.resolveSafePath(folderKey);
+      if (fs.existsSync(fullPath)) {
+        await fs.promises.rm(fullPath, { recursive: true, force: true });
+      }
+    } catch {
+      // Non-fatal if folder doesn't exist
+    }
   }
 }
 
