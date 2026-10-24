@@ -73,3 +73,21 @@ export const ExploreSearchQuerySchema = z.object({
 });
 
 export type ExploreSearchQuery = z.infer<typeof ExploreSearchQuerySchema>;
+
+export const TopicPlannerOutputSchema = z.object({
+  topics: z
+    .array(
+      z.object({
+        phrase: z
+          .string()
+          .trim()
+          .min(2, 'Topic must be at least 2 characters')
+          .max(120, 'Topic must not exceed 120 characters'),
+        reason: z.string().trim().max(300),
+      }),
+    )
+    .min(1, 'At least 1 topic must be generated')
+    .max(10),
+});
+
+export type TopicPlannerOutput = z.infer<typeof TopicPlannerOutputSchema>;

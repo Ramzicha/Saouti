@@ -84,20 +84,20 @@ description: "Task list for Explore (with Tavily Search) implementation"
 
 ### Tests for User Story 2
 
-- [ ] T023 [P] [US2] Unit tests for Topic Planner prompt formatting and Zod output schema in tests/unit/topic-planner.test.ts
-- [ ] T024 [P] [US2] Security tests ensuring zero personal profile identifiers in topic search queries in tests/security/search-privacy.test.ts
-- [ ] T025 [P] [US2] Integration tests for topic CRUD API and generation endpoint in tests/integration/explore-topics.test.ts
+- [x] T023 [P] [US2] Unit tests for Topic Planner prompt formatting and Zod output schema in tests/unit/topic-planner.test.ts
+- [x] T024 [P] [US2] Security tests ensuring zero personal profile identifiers in topic search queries in tests/security/search-privacy.test.ts
+- [x] T025 [P] [US2] Integration tests for topic CRUD API and generation endpoint in tests/integration/explore-topics.test.ts
 
 ### Implementation for User Story 2
 
-- [ ] T026 [US2] Create Topic Planner prompt template in src/lib/agent-engine/prompts/topic-planner.v1.md
-- [ ] T027 [US2] Implement Topic Planner agent runner extracting 5-8 topic phrases from Voice Profile in src/lib/agent-engine/agents/topic-planner.ts
-- [ ] T028 [US2] Implement topic listing and creation API routes (GET / POST) in src/app/api/explore/topics/route.ts
-- [ ] T029 [US2] Implement individual topic PATCH / DELETE API routes in src/app/api/explore/topics/[id]/route.ts
-- [ ] T030 [US2] Implement topic generation API route in src/app/api/explore/topics/generate/route.ts
-- [ ] T031 [P] [US2] Build interactive topic chips component `TopicChipsBar.tsx` with credit estimate badges in src/components/explore/TopicChipsBar.tsx
-- [ ] T032 [P] [US2] Build accessible `TopicEditModal.tsx` for adding and editing topic phrases in src/components/explore/TopicEditModal.tsx
-- [ ] T033 [P] [US2] Build `SearchBox.tsx` for ad-hoc searching without modifying pinned topics in src/components/explore/SearchBox.tsx
+- [x] T026 [US2] Create Topic Planner prompt template in src/lib/agent-engine/prompts/topic-planner.v1.md
+- [x] T027 [US2] Implement Topic Planner agent runner extracting 5-8 topic phrases from Voice Profile in src/lib/agent-engine/agents/topic-planner.ts
+- [x] T028 [US2] Implement topic listing and creation API routes (GET / POST) in src/app/api/explore/topics/route.ts
+- [x] T029 [US2] Implement individual topic PATCH / DELETE API routes in src/app/api/explore/topics/[id]/route.ts
+- [x] T030 [US2] Implement topic generation API route in src/app/api/explore/topics/generate/route.ts
+- [x] T031 [P] [US2] Build interactive topic chips component `TopicChipsBar.tsx` with credit estimate badges in src/components/explore/TopicChipsBar.tsx
+- [x] T032 [P] [US2] Build accessible `TopicEditModal.tsx` for adding and editing topic phrases in src/components/explore/TopicEditModal.tsx
+- [x] T033 [P] [US2] Build `SearchBox.tsx` for ad-hoc searching without modifying pinned topics in src/components/explore/SearchBox.tsx
 
 **Checkpoint**: User Story 2 complete — topics automatically generated from Voice Profile, manageable as chips, and query privacy strictly enforced.
 
