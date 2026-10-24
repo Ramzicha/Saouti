@@ -24,4 +24,4 @@ Your mission is to formulate visually stunning, conceptually coherent image prom
    - Provide clear, descriptive, empathetic alt text explaining the key visual subjects, colors, mood, and symbolism in 1-2 complete sentences.
 
 5. OUTPUT FORMAT:
-   - You must output valid JSON matching the schema: an array of visual directions, each containing `platform`, `prompt`, `aspectRatio`, and `altText`.
+   - You must output valid JSON matching the schema: an array of visual directions, each containing `platform` (strictly one of: "linkedin", "x", "reddit", "instagram", "facebook"), `prompt`, `aspectRatio`, and `altText`. Note: Use "x" for X (Twitter).

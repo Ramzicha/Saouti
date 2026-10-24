@@ -264,10 +264,14 @@
     "searchPlaceholder": "Rechercher des publications ou des hashtags...",
     "allPlatforms": "Toutes les plateformes",
     "allStatuses": "Tous les statuts",
+    "allSaved": "Tous les enregistrés",
     "allTags": "Toutes les étiquettes",
     "statusDraft": "Brouillon",
     "statusReady": "Prêt",
     "statusPosted": "Publié",
+    "saveToLibrary": "Enregistrer dans la bibliothèque",
+    "savedToLibrary": "Enregistré dans la bibliothèque",
+    "savedToLibrarySuccess": "Publication enregistrée dans votre bibliothèque !",
     "copy": "Copier la publication",
     "copied": "Copié !",
     "copyFailed": "Échec de la copie",
@@ -338,8 +342,11 @@
     "artDirectorStateFailed": "Directeur artistique · Échec de génération : {reason}",
     "artDirectorStateSafety": "Directeur artistique · Visuel bloqué par les filtres de sécurité. Ajustez la consigne.",
     "cancelGeneration": "Annuler",
-    "retrying": "Nouvel essai dans {seconds}s...",
     "maxIterationsReached": "Nombre maximal d'itérations atteint (anciennes versions archivées)",
-    "imageDeleted": "Itération visuelle supprimée."
+    "imageDeleted": "Itération visuelle supprimée.",
+    "quotaExceededTitle": "Quota de génération d'image atteint",
+    "quotaExceededDescription": "Le niveau gratuit de Google AI Studio ne dispose pas de quota pour les modèles d'image Gemini (limite : 0). Pour générer directement, activez Pay-as-you-go sur Google AI Studio, ou copiez l'instruction ci-dessous dans Midjourney, DALL-E ou Canva.",
+    "copyArtDirectorPrompt": "Copier l'invite visuelle",
+    "copiedPrompt": "Invite copiée !"
   }
 }

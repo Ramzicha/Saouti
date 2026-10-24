@@ -407,6 +407,7 @@ export const runs = pgTable(
     id: uuid('id')
       .primaryKey()
       .default(sql`gen_random_uuid()`),
+    chatId: varchar('chat_id', { length: 100 }),
     userId: uuid('user_id')
       .notNull()
       .references(() => users.id, { onDelete: 'cascade' }),
@@ -453,6 +454,7 @@ export const runs = pgTable(
   },
   (table) => [
     index('runs_user_id_idx').on(table.userId),
+    index('runs_chat_id_idx').on(table.chatId),
     index('runs_status_idx').on(table.status),
     index('runs_created_at_idx').on(table.createdAt),
   ],

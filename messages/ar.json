@@ -264,10 +264,14 @@
     "searchPlaceholder": "ابحث في نصوص المنشورات أو الوسوم بأي لغة...",
     "allPlatforms": "جميع المنصات",
     "allStatuses": "جميع الحالات",
+    "allSaved": "جميع المحفوظات",
     "allTags": "جميع الوسوم",
     "statusDraft": "مسودة",
     "statusReady": "جاهز",
     "statusPosted": "تم النشر",
+    "saveToLibrary": "حفظ في المكتبة",
+    "savedToLibrary": "تم الحفظ في المكتبة",
+    "savedToLibrarySuccess": "تم حفظ المنشور في مكتبتك بنجاح!",
     "copy": "نسخ المنشور",
     "copied": "تم النسخ!",
     "copyFailed": "فشل النسخ",
@@ -338,8 +342,11 @@
     "artDirectorStateFailed": "المخرج الفني · فشل توليد الصورة: {reason}",
     "artDirectorStateSafety": "المخرج الفني · تعذر التوليد بسبب سياسات السلامة. يرجى تعديل الوصف.",
     "cancelGeneration": "إلغاء",
-    "retrying": "إعادة المحاولة بعد {seconds} ثانية...",
     "maxIterationsReached": "تم الوصول إلى الحد الأقصى للإصدارات (تم أرشفة الإصدارات الأقدم)",
-    "imageDeleted": "تم حذف النسخة البصرية."
+    "imageDeleted": "تم حذف النسخة البصرية.",
+    "quotaExceededTitle": "تم بلوغ الحصة المجانية لتوليد الصور",
+    "quotaExceededDescription": "الباقة المجانية في Google AI Studio لا تحتوي على حصة يومية لتوليد الصور (الحد 0). لتوليد الصور مباشرة، قم بترقية المشروع إلى الدفع حسب الاستخدام (Pay-as-you-go)، أو انسخ وصف المخرج الفني أدناه لتوليدها في Midjourney أو DALL-E.",
+    "copyArtDirectorPrompt": "نسخ وصف الصورة",
+    "copiedPrompt": "تم نسخ الوصف!"
   }
 }

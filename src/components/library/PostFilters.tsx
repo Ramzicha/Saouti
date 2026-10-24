@@ -14,6 +14,7 @@ interface PostFiltersProps {
   filters: FilterState;
   onChange: (updated: FilterState) => void;
   availableTags?: Array<{ id: string; name: string }> | undefined;
+  savedOnly?: boolean | undefined;
   className?: string;
 }
 
@@ -21,6 +22,7 @@ export function PostFilters({
   filters,
   onChange,
   availableTags = [],
+  savedOnly = false,
   className = '',
 }: PostFiltersProps) {
   const t = useTranslations('Library');
@@ -34,12 +36,20 @@ export function PostFilters({
     { value: 'facebook', label: 'Facebook' },
   ];
 
-  const statuses = [
-    { value: '', label: t('allStatuses') },
-    { value: 'draft', label: t('statusDraft') },
-    { value: 'ready', label: t('statusReady') },
-    { value: 'posted', label: t('statusPosted') },
-  ];
+  const statuses = savedOnly
+    ? [
+        { value: '', label: t.has('allSaved') ? t('allSaved') : 'All Saved' },
+        { value: 'ready', label: t.has('statusReady') ? t('statusReady') : 'Ready' },
+        { value: 'posted', label: t.has('statusPosted') ? t('statusPosted') : 'Posted' },
+      ]
+    : [
+        { value: '', label: t.has('allStatuses') ? t('allStatuses') : 'All statuses' },
+        { value: 'draft', label: t.has('statusDraft') ? t('statusDraft') : 'Draft' },
+        { value: 'ready', label: t.has('statusReady') ? t('statusReady') : 'Ready' },
+        { value: 'posted', label: t.has('statusPosted') ? t('statusPosted') : 'Posted' },
+      ];
+
+
 
   const handlePlatformChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const val = e.target.value as FilterState['platform'];
@@ -76,19 +86,22 @@ export function PostFilters({
         ))}
       </select>
 
-      {/* Status Select */}
-      <select
-        value={filters.status || ''}
-        onChange={handleStatusChange}
-        className="px-3 py-1.5 text-xs font-medium bg-surface-elevated border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
-        aria-label="Filter by status"
-      >
-        {statuses.map((s) => (
-          <option key={s.value} value={s.value}>
-            {s.label}
-          </option>
-        ))}
-      </select>
+      {/* Status Select: Only show if not locked to draft */}
+      {filters.status !== 'draft' && (
+        <select
+          value={filters.status || ''}
+          onChange={handleStatusChange}
+          className="px-3 py-1.5 text-xs font-medium bg-surface-elevated border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+          aria-label="Filter by status"
+        >
+          {statuses.map((s) => (
+            <option key={s.value} value={s.value}>
+              {s.label}
+            </option>
+          ))}
+        </select>
+      )}
+
 
       {/* Tag Select */}
       {availableTags.length > 0 && (

@@ -59,10 +59,43 @@ export function normalizeGeminiError(error: unknown): AiError {
     lowerMsg.includes('rate limit') ||
     lowerMsg.includes('429')
   ) {
+    let retryAfterSeconds: number | undefined;
+    let isDailyOrFreeTier = false;
+
+    // Detect if this is a Google AI Studio Free Tier limit: 0 or daily quota exhaustion
+    if (
+      lowerMsg.includes('limit: 0') ||
+      lowerMsg.includes('per day limit') ||
+      lowerMsg.includes('daily limit') ||
+      lowerMsg.includes('free tier') ||
+      lowerMsg.includes('free_tier_requests')
+    ) {
+      isDailyOrFreeTier = true;
+    }
+
+    // Try extracting retry delay from retryInfo (e.g. "18885s") or text ("retry in 5h")
+    const delayMatch = message.match(/"retryDelay":\s*"(\d+)s"/i) || message.match(/retry in\s+(\d+)h/i);
+    if (delayMatch && delayMatch[1]) {
+      const parsed = parseInt(delayMatch[1], 10);
+      if (message.includes('h') && !message.includes('"retryDelay"')) {
+        retryAfterSeconds = parsed * 3600;
+      } else {
+        retryAfterSeconds = parsed;
+      }
+      if (retryAfterSeconds > 60) {
+        isDailyOrFreeTier = true;
+      }
+    }
+
+    const friendlyMessage = isDailyOrFreeTier
+      ? 'Google AI Studio Free Tier has no quota for Gemini image models (limit: 0) or daily quota is exceeded. Direct generation requires a Pay-as-you-go project in Google AI Studio.'
+      : 'Gemini API rate limit or quota exceeded. Please wait a moment and try again.';
+
     return new QuotaExhaustedError(
-      'Gemini API rate limit or free-tier quota exceeded',
-      undefined,
+      friendlyMessage,
+      retryAfterSeconds,
       error,
+      isDailyOrFreeTier,
     );
   }
 
@@ -99,14 +132,12 @@ export function normalizeGeminiError(error: unknown): AiError {
     return new RequestTimeoutError('Gemini request timed out', error);
   }
 
-  // Capability not supported / model not found for image generation
+  // Capability not supported / tier lacks image generation support
   if (
-    lowerMsg.includes('imagen') ||
-    (lowerMsg.includes('image') &&
-      (lowerMsg.includes('not supported') ||
-        lowerMsg.includes('not found') ||
-        lowerMsg.includes('unsupported') ||
-        lowerMsg.includes('not available')))
+    lowerMsg.includes('unsupported_capability') ||
+    lowerMsg.includes('image_generation_not_supported') ||
+    (lowerMsg.includes('tier') && lowerMsg.includes('does not support')) ||
+    (lowerMsg.includes('image') && lowerMsg.includes('permission_denied_for_capability'))
   ) {
     return new AiUnsupportedCapabilityError(
       'Configured AI provider key does not support direct image generation',
@@ -327,15 +358,17 @@ export class GeminiAdapter implements AiProviderAdapter {
     }
   }
 
-  async generateImage(
+  private async executeGenerateImage(
+    model: string,
     prompt: string,
-    options?: GenerateImageOptions,
+    aspectRatio: string,
+    signal?: AbortSignal,
   ): Promise<ImageGenerationResult> {
-    try {
-      const model = options?.model || aiConfig.models.image;
-      const aspectRatio = options?.aspectRatio || '16:9';
+    const dims = parseImageDimensions(aspectRatio);
 
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:predict?key=${encodeURIComponent(
+    // If Gemini multimodal model (gemini-3.1-flash-image, gemini-3-pro-image, etc.)
+    if (model.startsWith('gemini-')) {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(
         this.apiKey,
       )}`;
 
@@ -343,44 +376,159 @@ export class GeminiAdapter implements AiProviderAdapter {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          instances: [{ prompt }],
-          parameters: {
-            sampleCount: 1,
-            aspectRatio,
-            outputMimeType: 'image/png',
+          contents: [
+            {
+              parts: [{ text: prompt }],
+            },
+          ],
+          generationConfig: {
+            responseModalities: ['TEXT', 'IMAGE'],
+            imageConfig: {
+              aspectRatio: dims.apiRatio,
+              imageSize: '1K',
+            },
           },
         }),
       };
-      if (options?.signal) {
-        fetchInit.signal = options.signal;
+      if (signal) {
+        fetchInit.signal = signal;
       }
 
       const res = await fetch(url, fetchInit);
 
       if (!res.ok) {
         const errorText = await res.text();
-        throw new Error(`Google Imagen API error (${res.status}): ${errorText}`);
+        throw new Error(`Google Gemini Image API error (${res.status}): ${errorText}`);
       }
 
       const json = await res.json();
-      const b64 = json.predictions?.[0]?.bytesBase64Encoded;
+      const candidate = json.candidates?.[0];
+
+      if (candidate?.finishReason === 'SAFETY' || json.promptFeedback?.blockReason) {
+        throw new ContentSafetyBlockedError(
+          'Image prompt or generation was blocked by safety filters',
+          candidate?.finishReason || json.promptFeedback?.blockReason,
+        );
+      }
+
+      const parts = candidate?.content?.parts || [];
+      const imagePart = parts.find(
+        (p: any) => p.inlineData?.data || p.inline_data?.data,
+      );
+      const b64 = imagePart?.inlineData?.data || imagePart?.inline_data?.data;
+      const mimeType = imagePart?.inlineData?.mimeType || imagePart?.inline_data?.mime_type || 'image/png';
 
       if (!b64) {
-        throw new Error('No image bytes returned in Imagen response');
+        throw new Error('No image bytes returned in Gemini response');
       }
 
       const buffer = Buffer.from(b64, 'base64');
-
       return {
         imageBuffer: buffer,
         base64Data: b64,
-        mimeType: 'image/png',
+        mimeType,
         prompt,
-        width: 1200,
-        height: 675,
+        width: dims.width,
+        height: dims.height,
       };
-    } catch (err) {
-      throw normalizeGeminiError(err);
     }
+
+    // Legacy Imagen model (:predict endpoint)
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:predict?key=${encodeURIComponent(
+      this.apiKey,
+    )}`;
+
+    const fetchInit: RequestInit = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        instances: [{ prompt }],
+        parameters: {
+          sampleCount: 1,
+          aspectRatio,
+          outputMimeType: 'image/png',
+        },
+      }),
+    };
+    if (signal) {
+      fetchInit.signal = signal;
+    }
+
+    const res = await fetch(url, fetchInit);
+
+    if (!res.ok) {
+      const errorText = await res.text();
+      throw new Error(`Google Imagen API error (${res.status}): ${errorText}`);
+    }
+
+    const json = await res.json();
+    const b64 = json.predictions?.[0]?.bytesBase64Encoded;
+
+    if (!b64) {
+      throw new Error('No image bytes returned in Imagen response');
+    }
+
+    const buffer = Buffer.from(b64, 'base64');
+    return {
+      imageBuffer: buffer,
+      base64Data: b64,
+      mimeType: 'image/png',
+      prompt,
+      width: dims.width,
+      height: dims.height,
+    };
+  }
+
+  async generateImage(
+    prompt: string,
+    options?: GenerateImageOptions,
+  ): Promise<ImageGenerationResult> {
+    const primaryModel = options?.model || aiConfig.models.image;
+    const aspectRatio = options?.aspectRatio || '16:9';
+
+    try {
+      return await this.executeGenerateImage(primaryModel, prompt, aspectRatio, options?.signal);
+    } catch (primaryErr) {
+      // If primary model failed due to 404 or model not found, try fallback
+      const errMsg = primaryErr instanceof Error ? primaryErr.message.toLowerCase() : '';
+      const isNotFound = errMsg.includes('404') || errMsg.includes('not found') || errMsg.includes('not supported');
+
+      if (isNotFound) {
+        const fallbackModel = primaryModel.startsWith('gemini-')
+          ? 'imagen-3.0-generate-002'
+          : 'gemini-3.1-flash-image';
+
+        try {
+          logger.warn(
+            { primaryModel, fallbackModel, primaryErr },
+            'Primary image model failed with not found; attempting fallback model',
+          );
+          return await this.executeGenerateImage(fallbackModel, prompt, aspectRatio, options?.signal);
+        } catch {
+          // If fallback also fails, throw normalized primary error
+          throw normalizeGeminiError(primaryErr);
+        }
+      }
+
+      throw normalizeGeminiError(primaryErr);
+    }
+  }
+}
+
+function parseImageDimensions(ratio: string): { width: number; height: number; apiRatio: string } {
+  switch (ratio) {
+    case '1:1':
+      return { width: 1024, height: 1024, apiRatio: '1:1' };
+    case '4:5':
+      return { width: 800, height: 1000, apiRatio: '3:4' };
+    case '3:4':
+      return { width: 768, height: 1024, apiRatio: '3:4' };
+    case '4:3':
+      return { width: 1024, height: 768, apiRatio: '4:3' };
+    case '9:16':
+      return { width: 720, height: 1280, apiRatio: '9:16' };
+    case '16:9':
+    default:
+      return { width: 1200, height: 675, apiRatio: '16:9' };
   }
 }

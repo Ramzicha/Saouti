@@ -1,31 +1,137 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link, usePathname } from '@/i18n/routing';
+import { BrandLogo } from '@/components/common/BrandLogo';
 import {
   IconPlus,
   IconFolders,
   IconFileText,
   IconSettings,
-  IconPalette,
   IconX,
+  IconLogout,
 } from '@tabler/icons-react';
+
+import { formatChatTitle } from '@/lib/agent-engine/chat-title';
+
+interface CurrentUserData {
+  id: string;
+  email: string;
+  name: string;
+  role: string;
+  industry?: string | null;
+  initials: string;
+}
+
+export interface SidebarChatSession {
+  id: string;
+  title: string;
+  createdAt?: string | undefined;
+}
+
+export interface SidebarRunItem {
+  id: string;
+  chatId?: string;
+  title?: string;
+  topicBrief: string;
+  status?: string;
+  createdAt?: string;
+}
 
 export interface SidebarProps {
   isMobileOpen?: boolean;
   onCloseMobile?: () => void;
+  currentChatId?: string | null;
+  onSelectChat?: (chatId: string) => void;
+  onNewRun?: () => void;
+  chats?: SidebarChatSession[];
+  // Backwards compatibility props
+  currentRunId?: string | null;
+  onSelectRun?: (runId: string) => void;
+  runs?: SidebarRunItem[];
   className?: string;
 }
 
 export function Sidebar({
   isMobileOpen = false,
   onCloseMobile,
+  currentChatId,
+  onSelectChat,
+  onNewRun,
+  chats: chatsProp,
+  currentRunId,
+  onSelectRun,
+  runs: runsProp,
   className,
 }: SidebarProps) {
   const t = useTranslations('Nav');
   const pathname = usePathname();
   const drawerRef = useRef<HTMLDivElement>(null);
+  const [currentUser, setCurrentUser] = useState<CurrentUserData | null>(null);
+  const [internalRuns, setInternalRuns] = useState<SidebarRunItem[]>([]);
+
+  useEffect(() => {
+    let isMounted = true;
+    fetch('/api/auth/me')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (isMounted && data?.user) {
+          setCurrentUser(data.user);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  // Fetch recent runs if not provided by parent
+  useEffect(() => {
+    if (chatsProp || runsProp) return;
+    let isMounted = true;
+    fetch('/api/runs')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (isMounted && data?.runs) {
+          setInternalRuns(data.runs);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      isMounted = false;
+    };
+  }, [chatsProp, runsProp, pathname]);
+
+  const displayChats: SidebarChatSession[] = useMemo(() => {
+    if (chatsProp) return chatsProp;
+    const sourceRuns = runsProp ?? internalRuns;
+    const map = new Map<string, SidebarChatSession>();
+    for (const r of sourceRuns) {
+      const cId = r.chatId || r.id;
+      if (!map.has(cId)) {
+        map.set(cId, {
+          id: cId,
+          title: r.title || formatChatTitle(r.topicBrief),
+          createdAt: r.createdAt,
+        });
+      }
+    }
+    // Return sorted with newest chat first
+    return Array.from(map.values()).reverse();
+  }, [chatsProp, runsProp, internalRuns]);
+
+  const activeSelectedId = currentChatId ?? currentRunId;
+  const handleSelect = onSelectChat ?? onSelectRun;
+
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+      window.location.href = '/login';
+    } catch {
+      window.location.href = '/login';
+    }
+  };
 
   // Accessible keyboard trap for mobile drawer (Escape closes drawer)
   useEffect(() => {
@@ -45,14 +151,7 @@ export function Sidebar({
     { label: t('newRun'), href: '/', icon: IconPlus },
     { label: t('library'), href: '/library', icon: IconFolders },
     { label: t('drafts'), href: '/drafts', icon: IconFileText },
-    { label: 'Design Gallery', href: '/design', icon: IconPalette },
     { label: t('settings'), href: '/settings', icon: IconSettings },
-  ];
-
-  const recentRuns = [
-    { id: '1', title: 'Why Antigravity Agentic Workflows Scale' },
-    { id: '2', title: 'Announcing Saouti v0.2 Design System' },
-    { id: '3', title: 'Bringing your own key for visible AI' },
   ];
 
   const sidebarContent = (
@@ -60,13 +159,8 @@ export function Sidebar({
       <div className="flex flex-col gap-6">
         {/* Brand Header */}
         <div className="flex items-center justify-between border-b border-border pb-3">
-          <Link href="/" className="group flex items-center gap-2">
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-accent text-[10px] font-bold text-on-accent">
-              S
-            </span>
-            <span className="text-lg font-semibold tracking-tight text-text transition-colors group-hover:text-accent">
-              Saouti
-            </span>
+          <Link href="/" className="group flex items-center transition-opacity hover:opacity-90">
+            <BrandLogo height={42} />
           </Link>
           {isMobileOpen && (
             <button
@@ -85,12 +179,22 @@ export function Sidebar({
           <ul className="flex flex-col gap-1">
             {navItems.map((item) => {
               const Icon = item.icon;
-              const isActive = pathname === item.href;
+              const isNewRunItem = item.href === '/';
+              const isActive = isNewRunItem
+                ? pathname === '/' && !activeSelectedId
+                : pathname === item.href;
+
               return (
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    onClick={() => isMobileOpen && onCloseMobile?.()}
+                    onClick={(e) => {
+                      if (isNewRunItem && onNewRun) {
+                        e.preventDefault();
+                        onNewRun();
+                      }
+                      if (isMobileOpen) onCloseMobile?.();
+                    }}
                     className={`flex items-center gap-2.5 rounded-control px-2.5 py-2 text-sm font-medium transition-colors ${
                       isActive
                         ? 'bg-surface-raised font-semibold text-text'
@@ -111,24 +215,89 @@ export function Sidebar({
           <span className="px-2.5 text-[11px] font-medium uppercase tracking-wider text-muted">
             {t('recentRuns')}
           </span>
-          <ul className="flex flex-col gap-1">
-            {recentRuns.map((run) => (
-              <li key={run.id}>
-                <button
-                  type="button"
-                  className="w-full truncate rounded-control px-2.5 py-1.5 text-start text-xs text-muted transition-colors hover:bg-surface-raised hover:text-text"
-                >
-                  {run.title}
-                </button>
+          <ul className="flex flex-col gap-1 max-h-[300px] overflow-y-auto overflow-x-hidden pr-1 scrollbar-thin">
+            {displayChats.length === 0 ? (
+              <li className="px-2.5 py-1 text-xs text-muted/60 italic">
+                No recent chats
               </li>
-            ))}
+            ) : (
+              displayChats.map((chat) => {
+                const isSelected = activeSelectedId === chat.id;
+
+                return (
+                  <li key={chat.id}>
+                    <Link
+                      href={`/?chatId=${chat.id}`}
+                      onClick={(e) => {
+                        if (handleSelect) {
+                          e.preventDefault();
+                          handleSelect(chat.id);
+                        }
+                        if (isMobileOpen) onCloseMobile?.();
+                      }}
+                      className={`w-full truncate rounded-control px-2.5 py-1.5 text-start text-xs transition-colors flex items-center justify-between group ${
+                        isSelected
+                          ? 'bg-surface-raised font-semibold text-text shadow-2xs'
+                          : 'text-muted hover:bg-surface-raised hover:text-text'
+                      }`}
+                      title={chat.title}
+                    >
+                      <span className="truncate flex-1 me-2">{chat.title}</span>
+                      {isSelected && (
+                        <span className="h-1.5 w-1.5 rounded-full bg-accent shrink-0" />
+                      )}
+                    </Link>
+                  </li>
+                );
+              })
+            )}
           </ul>
         </div>
       </div>
 
-      {/* Footer Disclaimer/Info */}
-      <div className="border-t border-border pt-4 text-center text-[11px] text-muted">
-        Saouti v0.2 · Design System
+
+      {/* Bottom User Profile Section */}
+      <div className="border-t border-border pt-3">
+        <div className="flex items-center justify-between rounded-xl p-1.5 transition-colors hover:bg-surface-raised">
+          <Link
+            href="/settings/profile"
+            onClick={() => isMobileOpen && onCloseMobile?.()}
+            className="flex min-w-0 flex-1 items-center gap-2.5"
+            title="View profile settings"
+          >
+            {/* Profile Avatar / Picture */}
+            <div className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-tr from-accent via-purple-600 to-indigo-500 font-semibold text-white shadow-xs">
+              <span className="text-xs font-bold tracking-wider">
+                {currentUser?.initials || 'U'}
+              </span>
+              <span
+                className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-surface bg-emerald-500"
+                title="Active"
+              />
+            </div>
+
+            {/* Name & Role / Details */}
+            <div className="flex min-w-0 flex-1 flex-col">
+              <span className="truncate text-xs font-semibold text-text">
+                {currentUser?.name || 'Loading...'}
+              </span>
+              <span className="truncate text-[11px] text-muted">
+                {currentUser?.role || currentUser?.email || 'Logged in'}
+              </span>
+            </div>
+          </Link>
+
+          {/* Quick Logout Button */}
+          <button
+            type="button"
+            onClick={handleLogout}
+            title="Log out"
+            aria-label="Log out"
+            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-muted transition-colors hover:bg-surface hover:text-danger focus:outline-none"
+          >
+            <IconLogout size={15} aria-hidden="true" />
+          </button>
+        </div>
       </div>
     </div>
   );

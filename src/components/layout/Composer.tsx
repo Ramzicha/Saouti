@@ -4,8 +4,7 @@ import React, { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Chip } from '@/components/ui/Chip';
 import { Button } from '@/components/ui/Button';
-import { AgentChip } from '@/components/agent/AgentChip';
-import { IconArrowUp, IconPlayerStop, IconBolt } from '@tabler/icons-react';
+import { IconArrowUp, IconSquareFilled, IconBolt } from '@tabler/icons-react';
 
 export interface ComposerProps {
   initialValue?: string | undefined;
@@ -50,12 +49,19 @@ export function Composer({
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = (e?: React.FormEvent) => {
+    e?.preventDefault();
     if (!content.trim() || isGenerating) return;
     const textToSend = content;
     setContent('');
     onSend?.(textToSend, selectedPlatforms, skipCritic);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit();
+    }
   };
 
   return (
@@ -71,22 +77,16 @@ export function Composer({
           dir="auto"
           value={content}
           onChange={(e) => setContent(e.target.value)}
+          onKeyDown={handleKeyDown}
           placeholder={disabledMessage || t('placeholder')}
           rows={3}
           disabled={disabled || isGenerating}
           className="w-full resize-none border-none bg-transparent text-sm leading-relaxed text-text placeholder:text-muted focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
         />
 
-        {/* Action Row: Agent chip, platform selection chips, skip critic option, send/cancel button */}
+        {/* Action Row: Platform selection chips, skip critic option, send/cancel button */}
         <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border pt-2">
           <div className="flex flex-wrap items-center gap-2">
-            <AgentChip
-              agent="writer"
-              action={isGenerating ? 'orchestrating pipeline' : 'ready'}
-              isWorking={isGenerating}
-              className="py-0.5"
-            />
-
             {/* Target platform toggle chips */}
             <div
               className="flex flex-wrap items-center gap-1.5"
@@ -130,7 +130,7 @@ export function Composer({
                 onClick={onCancel}
                 className="gap-1.5 text-xs font-medium text-danger hover:bg-danger/10 border-danger/30"
               >
-                <IconPlayerStop size={16} />
+                <IconSquareFilled size={14} aria-hidden="true" />
                 <span>Cancel Run</span>
               </Button>
             ) : (

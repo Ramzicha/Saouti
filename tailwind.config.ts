@@ -12,14 +12,20 @@ const config: Config = {
       colors: {
         // Design System Semantic Surface & Text Tokens
         bg: 'var(--bg)',
+        background: 'var(--bg)',
         surface: 'var(--surface)',
         'surface-raised': 'var(--surface-raised)',
+        'surface-elevated': 'var(--surface-raised)',
         border: 'var(--border)',
         text: 'var(--text)',
+        foreground: 'var(--text)',
         muted: 'var(--muted)',
+        'muted-foreground': 'var(--muted)',
 
         // Accent & Buttons
         accent: 'var(--accent)',
+        primary: 'var(--accent)',
+        'primary-foreground': 'var(--on-accent)',
         'accent-soft': 'var(--accent-soft)',
         'on-accent': 'var(--on-accent)',
         button: 'var(--button)',

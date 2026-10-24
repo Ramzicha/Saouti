@@ -1,5 +1,31 @@
 import { z } from 'zod';
 
+export function normalizePlatformName(val: unknown): unknown {
+  if (typeof val !== 'string') return val;
+  const lower = val.trim().toLowerCase();
+  if (lower === 'x' || lower.includes('twitter')) {
+    return 'x';
+  }
+  if (lower.includes('linkedin')) {
+    return 'linkedin';
+  }
+  if (lower.includes('reddit')) {
+    return 'reddit';
+  }
+  if (lower.includes('instagram') || lower === 'ig') {
+    return 'instagram';
+  }
+  if (lower.includes('facebook') || lower === 'fb') {
+    return 'facebook';
+  }
+  return lower;
+}
+
+export const SupportedPlatformSchema = z.preprocess(
+  normalizePlatformName,
+  z.enum(['linkedin', 'instagram', 'reddit', 'x', 'facebook']),
+);
+
 /**
  * Request validation schema for creating a new post generation run.
  */
@@ -8,13 +34,14 @@ export const CreateRunRequestSchema = z.object({
     .string()
     .trim()
     .min(1, 'Topic brief cannot be empty')
-    .max(2000, 'Topic brief must not exceed 2000 characters'),
+    .max(10000, 'Topic brief must not exceed 10000 characters'),
   selectedPlatforms: z
-    .array(z.enum(['linkedin', 'instagram', 'reddit', 'x', 'facebook']))
+    .array(SupportedPlatformSchema)
     .min(1, 'Select at least one platform'),
   targetLanguage: z.enum(['en', 'fr', 'ar']).default('en'),
   arabicDialect: z.enum(['none', 'msa', 'darija', 'both']).default('none'),
   skipCritic: z.boolean().default(false),
+  chatId: z.string().optional(),
 });
 
 export type CreateRunRequestInput = z.infer<typeof CreateRunRequestSchema>;
@@ -23,10 +50,7 @@ export type CreateRunRequestInput = z.infer<typeof CreateRunRequestSchema>;
  * Writer Agent Output Schemas
  */
 export const WriterPostItemSchema = z.object({
-  platform: z.preprocess(
-    (val) => (typeof val === 'string' ? val.toLowerCase() : val),
-    z.enum(['linkedin', 'instagram', 'reddit', 'x', 'facebook']),
-  ),
+  platform: SupportedPlatformSchema,
   language: z.string(),
   text: z.string().min(1, 'Generated post text cannot be empty'),
   hashtags: z
@@ -80,10 +104,7 @@ export const CriticIssueSchema = z.object({
 });
 
 export const CriticEvaluationItemSchema = z.object({
-  platform: z.preprocess(
-    (val) => (typeof val === 'string' ? val.toLowerCase() : val),
-    z.enum(['linkedin', 'instagram', 'reddit', 'x', 'facebook']),
-  ),
+  platform: SupportedPlatformSchema,
   verdict: z.preprocess(
     (val) => (typeof val === 'string' ? val.toLowerCase() : val),
     z.enum(['pass', 'revise']),
@@ -117,10 +138,7 @@ export const CriticOutputSchema: z.ZodType<CriticOutput, z.ZodTypeDef, unknown> 
  * Art Director Agent Output Schemas
  */
 export const ArtDirectorItemSchema = z.object({
-  platform: z.preprocess(
-    (val) => (typeof val === 'string' ? val.toLowerCase() : val),
-    z.enum(['linkedin', 'instagram', 'reddit', 'x', 'facebook']),
-  ),
+  platform: SupportedPlatformSchema,
   prompt: z.string().min(1, 'Image prompt cannot be empty'),
   aspectRatio: z.string().default('16:9'),
   altText: z.string().min(1, 'Accessibility alt text cannot be empty'),

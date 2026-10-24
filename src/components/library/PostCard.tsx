@@ -16,11 +16,13 @@ import {
   IconSparkles,
   IconClock,
   IconAlertCircle,
+  IconBookmark,
 } from '@tabler/icons-react';
 import { CopyButton } from './CopyButton';
 import { ImagePromptCard } from './ImagePromptCard';
 import { ImagePreviewGallery, GalleryImageItem } from './ImagePreviewGallery';
 import { ImageCapabilityBanner } from './ImageCapabilityBanner';
+import { ImageQuotaBanner } from './ImageQuotaBanner';
 import { ImageRegenerateModal } from './ImageRegenerateModal';
 import type { PostWithTags } from '@/lib/library/post-service';
 
@@ -30,6 +32,7 @@ interface PostCardProps {
   onDelete: (postId: string) => void;
   onOpenVersions: (post: PostWithTags) => void;
   onMarkPosted: (post: PostWithTags) => void;
+  onSaveToLibrary?: ((post: PostWithTags) => void) | undefined;
   onGenerateImage?: ((post: PostWithTags) => void) | undefined;
   isGeneratingImage?: boolean | undefined;
   canGenerateImage?: boolean | undefined;
@@ -41,9 +44,12 @@ export function PostCard({
   onDelete,
   onOpenVersions,
   onMarkPosted,
+  onSaveToLibrary,
 }: PostCardProps) {
   const t = useTranslations('Library');
   const tVisuals = useTranslations('Visuals');
+  const saveToLibraryLabel = t.has('saveToLibrary') ? t('saveToLibrary') : 'Save to Library';
+
 
   // Image & Visual State
   const [images, setImages] = useState<GalleryImageItem[]>([]);
@@ -51,6 +57,7 @@ export function PostCard({
   const [artDirectorState, setArtDirectorState] = useState<string | null>(null);
   const [quotaCountdown, setQuotaCountdown] = useState<number | null>(null);
   const [showCapabilityBanner, setShowCapabilityBanner] = useState(false);
+  const [showQuotaBanner, setShowQuotaBanner] = useState(false);
   const [isRegenerateOpen, setIsRegenerateOpen] = useState(false);
   const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -106,12 +113,26 @@ export function PostCard({
 
       if (res.status === 422) {
         setShowCapabilityBanner(true);
+        setShowQuotaBanner(false);
         setArtDirectorState(null);
         return;
       }
 
       if (res.status === 429) {
         const data = await res.json();
+        const isDailyOrFreeTier = Boolean(
+          data.error?.isDailyOrFreeTier ||
+          !data.retryAfterSeconds ||
+          data.retryAfterSeconds > 60
+        );
+
+        if (isDailyOrFreeTier) {
+          setShowQuotaBanner(true);
+          setShowCapabilityBanner(false);
+          setArtDirectorState(null);
+          return;
+        }
+
         const waitSec = data.retryAfterSeconds || 20;
         setQuotaCountdown(waitSec);
         setArtDirectorState(tVisuals('artDirectorStateQuota', { seconds: waitSec }));
@@ -168,12 +189,26 @@ export function PostCard({
 
       if (res.status === 422) {
         setShowCapabilityBanner(true);
+        setShowQuotaBanner(false);
         setArtDirectorState(null);
         return;
       }
 
       if (res.status === 429) {
         const errData = await res.json();
+        const isDailyOrFreeTier = Boolean(
+          errData.error?.isDailyOrFreeTier ||
+          !errData.retryAfterSeconds ||
+          errData.retryAfterSeconds > 60
+        );
+
+        if (isDailyOrFreeTier) {
+          setShowQuotaBanner(true);
+          setShowCapabilityBanner(false);
+          setArtDirectorState(null);
+          return;
+        }
+
         const waitSec = errData.retryAfterSeconds || 20;
         setQuotaCountdown(waitSec);
         setArtDirectorState(tVisuals('artDirectorStateQuota', { seconds: waitSec }));
@@ -287,6 +322,18 @@ export function PostCard({
               {post.platform}
             </span>
             {getStatusBadge(post.status)}
+            {post.status === 'draft' && onSaveToLibrary && (
+              <button
+                type="button"
+                onClick={() => onSaveToLibrary(post)}
+                className="ms-1.5 inline-flex items-center gap-1 px-2.5 py-0.5 text-xs font-semibold rounded-md bg-primary-600 hover:bg-primary-700 text-white transition-colors shadow-xs"
+                title={saveToLibraryLabel}
+                aria-label={saveToLibraryLabel}
+              >
+                <IconBookmark size={13} />
+                <span>{saveToLibraryLabel}</span>
+              </button>
+            )}
           </div>
 
           <div className="flex items-center gap-1">
@@ -303,6 +350,16 @@ export function PostCard({
         {showCapabilityBanner && (
           <div className="mb-4">
             <ImageCapabilityBanner onDismiss={() => setShowCapabilityBanner(false)} />
+          </div>
+        )}
+
+        {/* Quota Banner if Free Tier limit: 0 or daily quota reached */}
+        {showQuotaBanner && (
+          <div className="mb-4">
+            <ImageQuotaBanner
+              prompt={post.imagePrompt || undefined}
+              onDismiss={() => setShowQuotaBanner(false)}
+            />
           </div>
         )}
 
@@ -397,6 +454,18 @@ export function PostCard({
         <span>{formattedDate}</span>
 
         <div className="flex items-center gap-1 opacity-90 group-hover:opacity-100 transition-opacity">
+          {post.status === 'draft' && onSaveToLibrary && (
+            <button
+              type="button"
+              onClick={() => onSaveToLibrary(post)}
+              className="p-1.5 text-primary-600 hover:text-primary-700 hover:bg-primary-500/10 rounded-md transition-colors"
+              title={saveToLibraryLabel}
+              aria-label={saveToLibraryLabel}
+            >
+              <IconBookmark size={16} />
+            </button>
+          )}
+
           {post.status !== 'posted' && (
             <button
               type="button"

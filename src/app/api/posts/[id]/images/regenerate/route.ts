@@ -83,8 +83,9 @@ export async function POST(req: NextRequest, context: RouteContext) {
           {
             error: {
               code: 'QUOTA_EXHAUSTED',
-              message: 'Rate limit or quota reached on image generation.',
-              retryAfterSeconds: err.retryAfterSeconds || 20,
+              message: err.message,
+              isDailyOrFreeTier: err.isDailyOrFreeTier,
+              retryAfterSeconds: err.retryAfterSeconds,
             },
           },
           { status: 429 },

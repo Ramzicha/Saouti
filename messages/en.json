@@ -264,10 +264,14 @@
     "searchPlaceholder": "Search posts or hashtags in any language...",
     "allPlatforms": "All platforms",
     "allStatuses": "All statuses",
+    "allSaved": "All Saved",
     "allTags": "All tags",
     "statusDraft": "Draft",
     "statusReady": "Ready",
     "statusPosted": "Posted",
+    "saveToLibrary": "Save to Library",
+    "savedToLibrary": "Saved to Library",
+    "savedToLibrarySuccess": "Post saved to your library!",
     "copy": "Copy post",
     "copied": "Copied!",
     "copyFailed": "Copy failed",
@@ -338,8 +342,11 @@
     "artDirectorStateFailed": "Art Director · Generation failed: {reason}",
     "artDirectorStateSafety": "Art Director · Generation blocked by safety filters. Try editing the prompt.",
     "cancelGeneration": "Cancel",
-    "retrying": "Retrying in {seconds}s...",
     "maxIterationsReached": "Maximum iterations reached (older variants pruned)",
-    "imageDeleted": "Image iteration deleted."
+    "imageDeleted": "Image iteration deleted.",
+    "quotaExceededTitle": "Image generation quota reached",
+    "quotaExceededDescription": "Google AI Studio Free Tier has no quota for Gemini image models (limit: 0). To generate images directly, enable Pay-as-you-go in Google AI Studio, or copy the prompt below to generate in Midjourney, DALL-E, or Canva.",
+    "copyArtDirectorPrompt": "Copy visual prompt",
+    "copiedPrompt": "Copied to clipboard!"
   }
 }

@@ -8,6 +8,13 @@ import './globals.css';
 export const metadata: Metadata = {
   title: 'Saouti',
   description: 'AI-assisted professional voice generation platform',
+  icons: {
+    icon: [
+      { url: '/favicon.png', type: 'image/png' },
+    ],
+    shortcut: '/favicon.png',
+    apple: '/favicon.png',
+  },
 };
 
 // Zero-flash inline script to check OS preference when preference === 'system'

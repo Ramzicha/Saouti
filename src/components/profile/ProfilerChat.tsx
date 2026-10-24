@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { ChatMessage, ProfilerProposal } from '@/lib/profile/profiler-agent';
 import { ProfilerProposalModal } from './ProfilerProposalModal';
 import { KeySetupDialog } from '@/components/keys/KeySetupDialog';
+import { BrandLogo } from '@/components/common/BrandLogo';
 import {
   IconSend,
   IconRobot,
@@ -183,7 +184,7 @@ export function ProfilerChat({ onSwitchToWizard }: ProfilerChatProps) {
                     : 'bg-muted text-foreground border border-border',
                 )}
               >
-                {isUser ? <IconUser className="w-4 h-4" /> : <IconRobot className="w-4 h-4" />}
+                {isUser ? <IconUser className="w-4 h-4" /> : <BrandLogo variant="icon" height={18} width={18} />}
               </div>
               <div
                 className={clsx(

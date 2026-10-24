@@ -2,10 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { validateCurrentSession } from '@/lib/auth/session';
 import { db } from '@/lib/db/client';
 import { runs } from '@/lib/db/schema';
-import { eq, asc } from 'drizzle-orm';
+import { eq, asc, and } from 'drizzle-orm';
 import { saoutiQueue } from '@/lib/queue/client';
 import { CreateRunRequestSchema } from '@/lib/agent-engine/schemas';
 import { logger } from '@/lib/logger';
+import crypto from 'crypto';
+
+import { formatChatTitle } from '@/lib/agent-engine/chat-title';
 
 /**
  * POST /api/runs
@@ -37,14 +40,23 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { topicBrief, selectedPlatforms, targetLanguage, arabicDialect, skipCritic } =
-      parseResult.data;
+    const {
+      topicBrief,
+      selectedPlatforms,
+      targetLanguage,
+      arabicDialect,
+      skipCritic,
+      chatId: incomingChatId,
+    } = parseResult.data;
+
+    const sessionChatId = incomingChatId || crypto.randomUUID();
 
     // 1. Persist pending run record
     const [insertedRun] = await db
       .insert(runs)
       .values({
         userId: user.id,
+        chatId: sessionChatId,
         topicBrief,
         selectedPlatforms,
         targetLanguage,
@@ -89,6 +101,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(
       {
         runId,
+        chatId: sessionChatId,
+        title: formatChatTitle(topicBrief),
         status: 'pending',
         eventsUrl: `/api/runs/${runId}/events`,
       },
@@ -107,7 +121,7 @@ export async function POST(req: NextRequest) {
  * GET /api/runs
  * Returns the authenticated user's generation runs list ordered chronologically.
  */
-export async function GET(_req: NextRequest) {
+export async function GET(req: NextRequest) {
   try {
     const { session, user } = await validateCurrentSession();
     if (!session || !user) {
@@ -117,16 +131,27 @@ export async function GET(_req: NextRequest) {
       );
     }
 
-    const userRuns = await db
+    const url = new URL(req.url);
+    const filterChatId = url.searchParams.get('chatId');
+
+    const query = db
       .select()
       .from(runs)
-      .where(eq(runs.userId, user.id))
+      .where(
+        filterChatId
+          ? and(eq(runs.userId, user.id), eq(runs.chatId, filterChatId))
+          : eq(runs.userId, user.id),
+      )
       .orderBy(asc(runs.createdAt))
-      .limit(50);
+      .limit(100);
+
+    const userRuns = await query;
 
     return NextResponse.json({
       runs: userRuns.map((r) => ({
         id: r.id,
+        chatId: r.chatId || r.id,
+        title: formatChatTitle(r.topicBrief),
         topicBrief: r.topicBrief,
         selectedPlatforms: r.selectedPlatforms,
         targetLanguage: r.targetLanguage,
@@ -140,6 +165,7 @@ export async function GET(_req: NextRequest) {
         updatedAt: r.updatedAt.toISOString(),
       })),
     });
+
   } catch (error) {
     logger.error({ error }, 'GET /api/runs failed');
     return NextResponse.json(

@@ -1,10 +1,10 @@
 'use client';
 
 import React from 'react';
-import { AgentChip } from '@/components/agent/AgentChip';
 import { ThemeToggle } from '@/components/common/ThemeToggle';
 import { LocaleSwitcher } from '@/components/common/LocaleSwitcher';
 import { IconMenu2 } from '@tabler/icons-react';
+import { BrandLogo } from '@/components/common/BrandLogo';
 
 export interface AppHeaderProps {
   title?: string;
@@ -35,20 +35,19 @@ export function AppHeader({
             <IconMenu2 size={20} aria-hidden="true" />
           </button>
         )}
-        <h1 className="text-base font-semibold tracking-tight text-text sm:text-lg">
-          {title}
-        </h1>
+        {title === 'Saouti' ? (
+          <div className="md:hidden flex items-center">
+            <BrandLogo height={32} />
+          </div>
+        ) : (
+          <h1 className="text-base font-semibold tracking-tight text-text sm:text-lg">
+            {title}
+          </h1>
+        )}
       </div>
 
-      {/* End: Active Agent Chip & Preferences Controls */}
+      {/* End: Preferences Controls */}
       <div className="flex items-center gap-2 sm:gap-3">
-        <div className="hidden sm:block">
-          <AgentChip
-            agent="critic"
-            action="checking voice and platform rules"
-            isWorking={true}
-          />
-        </div>
         <ThemeToggle />
         <LocaleSwitcher />
       </div>
