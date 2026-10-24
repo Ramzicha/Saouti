@@ -2,6 +2,7 @@ import React from 'react';
 import { KeySetupDialog, type KeySummary } from '@/components/keys/KeySetupDialog';
 import { KeyCreationGuide } from '@/components/keys/KeyCreationGuide';
 import { UsageIndicator } from '@/components/keys/UsageIndicator';
+import { TavilyKeySettingsCard, type TavilyKeyInfo } from '@/components/settings/TavilyKeySettingsCard';
 import { ModelSelector } from '@/components/keys/ModelSelector';
 import { validateCurrentSession } from '@/lib/auth/session';
 import { redirect } from 'next/navigation';
@@ -23,7 +24,7 @@ export default async function KeysSettingsPage({ params }: KeysSettingsPageProps
     redirect(`/${locale}/login`);
   }
 
-  // Fetch initial key state server-side
+  // Fetch initial Gemini key state server-side
   const records = await db
     .select({
       provider: apiKeys.provider,
@@ -46,6 +47,27 @@ export default async function KeysSettingsPage({ params }: KeysSettingsPageProps
       }
     : null;
 
+  // Fetch initial Tavily search key state server-side
+  const tavilyRecords = await db
+    .select({
+      provider: apiKeys.provider,
+      lastFour: apiKeys.lastFour,
+      status: apiKeys.status,
+      lastValidatedAt: apiKeys.lastValidatedAt,
+    })
+    .from(apiKeys)
+    .where(and(eq(apiKeys.userId, user.id), eq(apiKeys.provider, 'tavily')))
+    .limit(1);
+
+  const initialTavilyKey: TavilyKeyInfo | null = tavilyRecords[0]
+    ? {
+        provider: 'tavily',
+        lastFour: tavilyRecords[0].lastFour,
+        status: tavilyRecords[0].status,
+        lastValidatedAt: tavilyRecords[0].lastValidatedAt?.toISOString() || null,
+      }
+    : null;
+
   const isRtl = locale === 'ar';
   const BackIcon = isRtl ? IconChevronRight : IconChevronLeft;
 
@@ -63,6 +85,8 @@ export default async function KeysSettingsPage({ params }: KeysSettingsPageProps
         </div>
 
         <KeySetupDialog initialKey={initialKey} />
+
+        <TavilyKeySettingsCard initialKey={initialTavilyKey} />
 
         <ModelSelector />
 

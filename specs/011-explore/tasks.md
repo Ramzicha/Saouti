@@ -57,20 +57,20 @@ description: "Task list for Explore (with Tavily Search) implementation"
 
 ### Tests for User Story 1
 
-- [ ] T012 [P] [US1] Unit tests for Tavily key validation regex and AES-256-GCM encryption in tests/unit/tavily-key.test.ts
-- [ ] T013 [P] [US1] Integration tests for onboarding Tavily key step, skip flow, and Settings key management in tests/integration/tavily-onboarding.test.ts
+- [x] T012 [P] [US1] Unit tests for Tavily key validation regex and AES-256-GCM encryption in tests/unit/tavily-key.test.ts
+- [x] T013 [P] [US1] Integration tests for onboarding Tavily key step, skip flow, and Settings key management in tests/integration/tavily-onboarding.test.ts
 
 ### Implementation for User Story 1
 
-- [ ] T014 [US1] Implement multi-provider key vault operations (save, get, delete Tavily key with masking to last 4 chars) in src/lib/auth/keys.ts
-- [ ] T015 [US1] Implement Tavily API key live validation lightweight ping in src/lib/search/tavily-validator.ts
-- [ ] T016 [US1] Implement Settings Tavily key API routes (GET / POST / DELETE) in src/app/api/settings/keys/tavily/route.ts
-- [ ] T017 [US1] Implement one-time prompt dismissal API route for existing users in src/app/api/onboarding/tavily-prompt/dismiss/route.ts
-- [ ] T018 [P] [US1] Build accessible multi-language onboarding step component `TavilyKeyStep.tsx` in src/components/onboarding/TavilyKeyStep.tsx
-- [ ] T019 [US1] Integrate `TavilyKeyStep.tsx` as Step 2 into onboarding wizard in src/app/[locale]/onboarding/page.tsx
-- [ ] T020 [P] [US1] Build `TavilyKeySettingsCard.tsx` for viewing, replacing, or deleting Tavily search key in src/components/settings/TavilyKeySettingsCard.tsx
-- [ ] T021 [US1] Integrate `TavilyKeySettingsCard.tsx` into Settings Keys tab in src/app/[locale]/settings/keys/page.tsx
-- [ ] T022 [P] [US1] Build dismissible one-time prompt card `TavilyKeyPromptCard.tsx` for existing users in src/components/explore/TavilyKeyPromptCard.tsx
+- [x] T014 [US1] Implement multi-provider key vault operations (save, get, delete Tavily key with masking to last 4 chars) in src/lib/auth/keys.ts
+- [x] T015 [US1] Implement Tavily API key live validation lightweight ping in src/lib/search/tavily-validator.ts
+- [x] T016 [US1] Implement Settings Tavily key API routes (GET / POST / DELETE) in src/app/api/settings/keys/tavily/route.ts
+- [x] T017 [US1] Implement one-time prompt dismissal API route for existing users in src/app/api/onboarding/tavily-prompt/dismiss/route.ts
+- [x] T018 [P] [US1] Build accessible multi-language onboarding step component `TavilyKeyStep.tsx` in src/components/onboarding/TavilyKeyStep.tsx
+- [x] T019 [US1] Integrate `TavilyKeyStep.tsx` as Step 2 into onboarding wizard in src/app/[locale]/onboarding/page.tsx
+- [x] T020 [P] [US1] Build `TavilyKeySettingsCard.tsx` for viewing, replacing, or deleting Tavily search key in src/components/settings/TavilyKeySettingsCard.tsx
+- [x] T021 [US1] Integrate `TavilyKeySettingsCard.tsx` into Settings Keys tab in src/app/[locale]/settings/keys/page.tsx
+- [x] T022 [P] [US1] Build dismissible one-time prompt card `TavilyKeyPromptCard.tsx` for existing users in src/components/explore/TavilyKeyPromptCard.tsx
 
 **Checkpoint**: User Story 1 complete — keys can be entered, validated, safely encrypted, skipped, or configured in Settings.
 
