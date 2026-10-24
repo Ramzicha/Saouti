@@ -91,3 +91,20 @@ export const TopicPlannerOutputSchema = z.object({
 });
 
 export type TopicPlannerOutput = z.infer<typeof TopicPlannerOutputSchema>;
+
+export const ResearcherArticleSchema = z.object({
+  canonicalUrl: z.string().url(),
+  title: z.string().min(1).max(500),
+  sourceDomain: z.string().min(1).max(150),
+  publishedAt: z.string().datetime().optional().nullable(),
+  summary: z.string().min(1).max(500),
+  matchReason: z.string().min(1).max(255),
+});
+
+export type ResearcherArticle = z.infer<typeof ResearcherArticleSchema>;
+
+export const ResearcherOutputSchema = z.object({
+  articles: z.array(ResearcherArticleSchema),
+});
+
+export type ResearcherOutput = z.infer<typeof ResearcherOutputSchema>;

@@ -111,18 +111,18 @@ description: "Task list for Explore (with Tavily Search) implementation"
 
 ### Tests for User Story 3
 
-- [ ] T034 [P] [US3] Unit tests for Researcher agent ranking prompt and article summary output in tests/unit/explore-feed.test.ts
-- [ ] T035 [P] [US3] Integration tests for feed retrieval and real-time SSE progress events in tests/integration/explore-feed.test.ts
+- [x] T034 [P] [US3] Unit tests for Researcher agent ranking prompt and article summary output in tests/unit/explore-feed.test.ts
+- [x] T035 [P] [US3] Integration tests for feed retrieval and real-time SSE progress events in tests/integration/explore-feed.test.ts
 
 ### Implementation for User Story 3
 
-- [ ] T036 [US3] Create Researcher agent ranking and summarization prompt with XML delimiter isolation in src/lib/agent-engine/prompts/researcher.v1.md
-- [ ] T037 [US3] Implement Researcher agent runner generating ≤40 word summaries and "Why it matches" badges in src/lib/agent-engine/agents/researcher.ts
-- [ ] T038 [US3] Implement Explore feed retrieval API route with pagination and topic filtering in src/app/api/explore/feed/route.ts
-- [ ] T039 [US3] Implement Explore refresh API route triggering Researcher run and SSE stream in src/app/api/explore/refresh/route.ts
-- [ ] T040 [P] [US3] Build accessible `ArticleCard.tsx` with publisher link, badges, and action buttons in src/components/explore/ArticleCard.tsx
-- [ ] T041 [US3] Build `ExploreFeedView.tsx` container with live agent status timeline in src/components/explore/ExploreFeedView.tsx
-- [ ] T042 [US3] Create Explore main page route in src/app/[locale]/explore/page.tsx
+- [x] T036 [US3] Create Researcher agent ranking and summarization prompt with XML delimiter isolation in src/lib/agent-engine/prompts/researcher.v1.md
+- [x] T037 [US3] Implement Researcher agent runner generating ≤40 word summaries and "Why it matches" badges in src/lib/agent-engine/agents/researcher.ts
+- [x] T038 [US3] Implement Explore feed retrieval API route with pagination and topic filtering in src/app/api/explore/feed/route.ts
+- [x] T039 [US3] Implement Explore refresh API route triggering Researcher run and SSE stream in src/app/api/explore/refresh/route.ts
+- [x] T040 [P] [US3] Build accessible `ArticleCard.tsx` with publisher link, badges, and action buttons in src/components/explore/ArticleCard.tsx
+- [x] T041 [US3] Build `ExploreFeedView.tsx` container with live agent status timeline in src/components/explore/ExploreFeedView.tsx
+- [x] T042 [US3] Create Explore main page route in src/app/[locale]/explore/page.tsx
 
 **Checkpoint**: User Stories 1, 2, and 3 complete — core discovery feed is fully functional and delivers an end-to-end MVP experience.
 
