@@ -64,6 +64,13 @@
       "when": 1792868324375,
       "tag": "0008_cloudy_clint_barton",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1792877630739,
+      "tag": "0009_blue_stone_men",
+      "breakpoints": true
     }
   ]
 }

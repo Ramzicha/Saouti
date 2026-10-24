@@ -35,6 +35,9 @@ export const users = pgTable('users', {
   passwordHash: varchar('password_hash', { length: 255 }).notNull(),
   emailVerified: boolean('email_verified').default(false).notNull(),
   googleId: varchar('google_id', { length: 255 }).unique(),
+  hasDismissedTavilyPrompt: boolean('has_dismissed_tavily_prompt')
+    .default(false)
+    .notNull(),
   createdAt: timestamp('created_at', { withTimezone: true })
     .defaultNow()
     .notNull(),
@@ -808,5 +811,172 @@ export const documentPrivacyConsents = pgTable(
 
 export type DocumentPrivacyConsent = InferSelectModel<typeof documentPrivacyConsents>;
 export type NewDocumentPrivacyConsent = InferInsertModel<typeof documentPrivacyConsents>;
+
+/**
+ * Topics Table (011-explore)
+ * Stores user-managed research and discovery topic phrases.
+ */
+export const topics = pgTable(
+  'topics',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    phrase: varchar('phrase', { length: 120 }).notNull(),
+    reason: text('reason').notNull(),
+    isPinned: boolean('is_pinned').notNull().default(false),
+    orderIndex: integer('order_index').notNull().default(0),
+    createdAt: timestamp('created_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    index('topics_user_id_idx').on(table.userId),
+    uniqueIndex('topics_user_phrase_idx').on(table.userId, table.phrase),
+  ],
+);
+
+export type Topic = InferSelectModel<typeof topics>;
+export type NewTopic = InferInsertModel<typeof topics>;
+
+/**
+ * Articles Table (011-explore)
+ * Caches discovered articles from Tavily or RSS feeds.
+ */
+export const articles = pgTable(
+  'articles',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    canonicalUrl: text('canonical_url').notNull(),
+    title: varchar('title', { length: 500 }).notNull(),
+    sourceDomain: varchar('source_domain', { length: 150 }).notNull(),
+    publishedAt: timestamp('published_at', { withTimezone: true }),
+    summary: varchar('summary', { length: 500 }).notNull(),
+    matchReason: varchar('match_reason', { length: 255 }).notNull(),
+    topicPhrase: varchar('topic_phrase', { length: 120 }).notNull(),
+    cachedUntil: timestamp('cached_until', { withTimezone: true }).notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    index('articles_user_topic_idx').on(table.userId, table.topicPhrase),
+    index('articles_cached_until_idx').on(table.cachedUntil),
+    uniqueIndex('articles_user_url_idx').on(table.userId, table.canonicalUrl),
+  ],
+);
+
+export type Article = InferSelectModel<typeof articles>;
+export type NewArticle = InferInsertModel<typeof articles>;
+
+/**
+ * Saved Articles Table (011-explore)
+ * Stores articles bookmarked by users along with private drafting notes.
+ */
+export const savedArticles = pgTable(
+  'saved_articles',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    canonicalUrl: text('canonical_url').notNull(),
+    title: varchar('title', { length: 500 }).notNull(),
+    sourceDomain: varchar('source_domain', { length: 150 }).notNull(),
+    publishedAt: timestamp('published_at', { withTimezone: true }),
+    summary: varchar('summary', { length: 500 }).notNull(),
+    topicPhrase: varchar('topic_phrase', { length: 120 }),
+    privateNote: text('private_note'),
+    createdAt: timestamp('created_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    index('saved_articles_user_id_idx').on(table.userId),
+    uniqueIndex('saved_articles_user_url_idx').on(table.userId, table.canonicalUrl),
+  ],
+);
+
+export type SavedArticle = InferSelectModel<typeof savedArticles>;
+export type NewSavedArticle = InferInsertModel<typeof savedArticles>;
+
+/**
+ * Article Dismissals Table (011-explore)
+ * Excludes dismissed articles from user feeds.
+ */
+export const articleDismissals = pgTable(
+  'article_dismissals',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    canonicalUrl: text('canonical_url').notNull(),
+    dismissedAt: timestamp('dismissed_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    uniqueIndex('article_dismissals_user_url_idx').on(table.userId, table.canonicalUrl),
+  ],
+);
+
+export type ArticleDismissal = InferSelectModel<typeof articleDismissals>;
+export type NewArticleDismissal = InferInsertModel<typeof articleDismissals>;
+
+/**
+ * Search Usage Counters Table (011-explore)
+ * Tracks daily search requests and monthly Tavily credit expenditure.
+ */
+export const searchUsageCounters = pgTable(
+  'search_usage_counters',
+  {
+    id: uuid('id')
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    provider: varchar('provider', { length: 50 }).notNull(),
+    periodType: varchar('period_type', { length: 20 }).notNull(),
+    periodKey: varchar('period_key', { length: 20 }).notNull(),
+    count: integer('count').notNull().default(0),
+    createdAt: timestamp('created_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    uniqueIndex('search_usage_unique_period_idx').on(
+      table.userId,
+      table.provider,
+      table.periodType,
+      table.periodKey,
+    ),
+  ],
+);
+
+export type SearchUsageCounter = InferSelectModel<typeof searchUsageCounters>;
+export type NewSearchUsageCounter = InferInsertModel<typeof searchUsageCounters>;
 
 

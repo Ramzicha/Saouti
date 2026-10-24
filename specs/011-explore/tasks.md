@@ -38,12 +38,12 @@ description: "Task list for Explore (with Tavily Search) implementation"
 
 **⚠️ CRITICAL**: No user story work can begin until this foundational phase is complete.
 
-- [ ] T006 Define Drizzle ORM schema for `topics`, `articles`, `saved_articles`, `article_dismissals`, `search_usage_counters`, and extend `api_keys` with `provider` and `users` with `has_dismissed_tavily_prompt` in src/lib/db/schema.ts
-- [ ] T007 Generate and run Drizzle migration `0009_explore_tavily.sql` in src/lib/db/migrations/
-- [ ] T008 [P] Define Zod validation schemas for Tavily keys, topics, feed queries, and saved articles in src/lib/explore/schemas.ts
-- [ ] T009 [P] Implement canonical URL normalizer stripping analytics/tracking parameters and trailing slashes in src/lib/search/url-normalizer.ts
-- [ ] T010 [P] Define `SearchProvider` interface and result types in src/lib/search/provider.ts
-- [ ] T011 [P] Unit tests for URL normalizer and Zod validation schemas in tests/unit/explore-schemas.test.ts
+- [x] T006 Define Drizzle ORM schema for `topics`, `articles`, `saved_articles`, `article_dismissals`, `search_usage_counters`, and extend `api_keys` with `provider` and `users` with `has_dismissed_tavily_prompt` in src/lib/db/schema.ts
+- [x] T007 Generate and run Drizzle migration `0009_explore_tavily.sql` in src/lib/db/migrations/
+- [x] T008 [P] Define Zod validation schemas for Tavily keys, topics, feed queries, and saved articles in src/lib/explore/schemas.ts
+- [x] T009 [P] Implement canonical URL normalizer stripping analytics/tracking parameters and trailing slashes in src/lib/search/url-normalizer.ts
+- [x] T010 [P] Define `SearchProvider` interface and result types in src/lib/search/provider.ts
+- [x] T011 [P] Unit tests for URL normalizer and Zod validation schemas in tests/unit/explore-schemas.test.ts
 
 **Checkpoint**: Foundation ready — database tables active, schema types available, search provider interface established, user story implementation can begin.
 
