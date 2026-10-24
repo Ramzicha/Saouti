@@ -39,7 +39,7 @@ export function createWorker(): Worker {
       if (job.name === 'search-refresh') {
         const { exploreService } = await import('@/lib/explore/explore-service');
         const { userId, topic } = job.data;
-        await exploreService.refreshFeed(userId, { topic });
+        await exploreService.refreshFeedForTopic(userId, topic);
         return { status: 'completed' };
       }
       return { status: 'unknown-job' };

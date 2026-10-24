@@ -266,11 +266,11 @@ description: "Task list for Explore (with Tavily Search) implementation"
 
 **Purpose**: Navigation integration, accessibility WCAG AA audits, RTL layout validation, and end-to-end regression test suite.
 
-- [ ] T081 [P] Add Explore navigation link and active state indicator to primary desktop sidebar in src/components/layout/Sidebar.tsx
-- [ ] T082 [P] Add Explore navigation link to mobile navigation drawer in src/components/layout/MobileNav.tsx
-- [ ] T083 [P] End-to-end accessibility audit with axe-core (WCAG 2.1 AA) in both dark and light modes in tests/e2e/explore-a11y.spec.ts
-- [ ] T084 [P] End-to-end user journey tests (onboarding -> explore -> create post) in tests/e2e/explore-user-journey.spec.ts
-- [ ] T085 Run full static verification suite (`pnpm lint`, `pnpm type-check`, `pnpm test`, `pnpm test:coverage`)
+- [x] T081 [P] Add Explore navigation link and active state indicator to primary desktop sidebar in src/components/layout/Sidebar.tsx
+- [x] T082 [P] Add Explore navigation link to mobile navigation drawer in src/components/layout/MobileNav.tsx
+- [x] T083 [P] End-to-end accessibility audit with axe-core (WCAG 2.1 AA) in both dark and light modes in tests/e2e/explore-a11y.spec.ts
+- [x] T084 [P] End-to-end user journey tests (onboarding -> explore -> create post) in tests/e2e/explore-user-journey.spec.ts
+- [x] T085 Run full static verification suite (`pnpm lint`, `pnpm type-check`, `pnpm test`, `pnpm test:coverage`)
 
 ---
 

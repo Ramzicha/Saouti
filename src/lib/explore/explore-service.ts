@@ -96,12 +96,14 @@ export class ExploreService {
     const normalizedTopic = topicPhrase.trim();
 
     // 1. Execute search pipeline
-    const searchResult = await searchPipeline.executeSearch(userId, {
+    const searchOptions: { query: string; limit: number; freshness?: 'day' | 'week' | 'month'; language?: 'en' | 'fr' | 'ar' } = {
       query: normalizedTopic,
       limit: 7,
-      freshness: filters?.freshness,
-      language: filters?.language,
-    });
+    };
+    if (filters?.freshness) searchOptions.freshness = filters.freshness;
+    if (filters?.language) searchOptions.language = filters.language;
+
+    const searchResult = await searchPipeline.executeSearch(userId, searchOptions);
 
     // 2. Filter out already dismissed items
     const dismissedRecords = await db

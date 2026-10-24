@@ -6,6 +6,7 @@ import { Link, usePathname } from '@/i18n/routing';
 import { BrandLogo } from '@/components/common/BrandLogo';
 import {
   IconPlus,
+  IconCompass,
   IconFolders,
   IconFileText,
   IconSettings,
@@ -149,6 +150,7 @@ export function Sidebar({
 
   const navItems = [
     { label: t('newRun'), href: '/', icon: IconPlus },
+    { label: t('explore'), href: '/explore', icon: IconCompass },
     { label: t('library'), href: '/library', icon: IconFolders },
     { label: t('drafts'), href: '/drafts', icon: IconFileText },
     { label: t('settings'), href: '/settings', icon: IconSettings },
@@ -183,7 +185,9 @@ export function Sidebar({
               const isNewRunItem = item.href === '/';
               const isActive = isNewRunItem
                 ? pathname === '/' && !activeSelectedId
-                : pathname === item.href;
+                : item.href === '/explore'
+                  ? pathname.startsWith('/explore')
+                  : pathname === item.href;
 
               return (
                 <li key={item.href}>

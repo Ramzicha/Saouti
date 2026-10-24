@@ -28,13 +28,15 @@ export async function POST(request: Request) {
       );
     }
 
-    const freshness = body.freshness as 'day' | 'week' | 'month' | undefined;
-    const language = body.language as 'en' | 'fr' | 'ar' | undefined;
+    const filters: { freshness?: 'day' | 'week' | 'month'; language?: 'en' | 'fr' | 'ar' } = {};
+    if (body.freshness) filters.freshness = body.freshness;
+    if (body.language) filters.language = body.language;
 
-    const feed = await exploreService.refreshFeedForTopic(user.id, topicPhrase, {
-      freshness,
-      language,
-    });
+    const feed = await exploreService.refreshFeedForTopic(
+      user.id,
+      topicPhrase,
+      Object.keys(filters).length > 0 ? filters : undefined,
+    );
 
     return NextResponse.json(feed);
   } catch (err: unknown) {
