@@ -159,16 +159,16 @@ description: "Task list for Explore (with Tavily Search) implementation"
 
 ### Tests for User Story 5
 
-- [ ] T050 [P] [US5] Unit tests for saved article deduplication by canonical URL in tests/unit/saved-articles.test.ts
-- [ ] T051 [P] [US5] Integration tests for saved articles CRUD and private notes lifecycle in tests/integration/saved-articles.test.ts
+- [x] T050 [P] [US5] Unit tests for saved article deduplication by canonical URL in tests/unit/saved-articles.test.ts
+- [x] T051 [P] [US5] Integration tests for saved articles CRUD and private notes lifecycle in tests/integration/saved-articles.test.ts
 
 ### Implementation for User Story 5
 
-- [ ] T052 [US5] Implement saved articles database operations (add, list, update note, remove) in src/lib/explore/saved-service.ts
-- [ ] T053 [US5] Implement saved articles API routes (GET / POST) in src/app/api/explore/saved/route.ts
-- [ ] T054 [US5] Implement individual saved article PATCH / DELETE API routes in src/app/api/explore/saved/[id]/route.ts
-- [ ] T055 [P] [US5] Build `SavedArticlesView.tsx` component with topic filters and inline note editing in src/components/explore/SavedArticlesView.tsx
-- [ ] T056 [US5] Create Saved Articles page route in src/app/[locale]/explore/saved/page.tsx
+- [x] T052 [US5] Implement saved articles database operations (add, list, update note, remove) in src/lib/explore/saved-service.ts
+- [x] T053 [US5] Implement saved articles API routes (GET / POST) in src/app/api/explore/saved/route.ts
+- [x] T054 [US5] Implement individual saved article PATCH / DELETE API routes in src/app/api/explore/saved/[id]/route.ts
+- [x] T055 [P] [US5] Build `SavedArticlesView.tsx` component with topic filters and inline note editing in src/components/explore/SavedArticlesView.tsx
+- [x] T056 [US5] Create Saved Articles page route in src/app/[locale]/explore/saved/page.tsx
 
 **Checkpoint**: User Story 5 complete — reading backlog and private notes fully operational.
 
