@@ -112,7 +112,7 @@ export function DocumentList({
             >
               {/* Document details */}
               <div className="flex items-start gap-3.5 min-w-0">
-                <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0 mt-0.5">
+                <div className="w-10 h-10 rounded-xl bg-surface-raised border border-border text-foreground flex items-center justify-center shrink-0 mt-0.5">
                   <IconFileTypePdf className="w-6 h-6" />
                 </div>
                 <div className="min-w-0">
@@ -153,9 +153,9 @@ export function DocumentList({
                     type="button"
                     onClick={() => onTriggerExtract(doc)}
                     disabled={isExtracting}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-xl text-primary bg-primary/10 hover:bg-primary/20 border border-primary/20 transition-colors disabled:opacity-50"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-xl text-foreground bg-surface-raised hover:bg-muted border border-border transition-colors disabled:opacity-50"
                   >
-                    <IconSparkles className="w-4 h-4" />
+                    <IconSparkles className="w-4 h-4 text-amber-500" />
                     <span>{isExtracting ? t('extracting') : t('extractButton')}</span>
                   </button>
                 )}
@@ -165,7 +165,7 @@ export function DocumentList({
                   <button
                     type="button"
                     onClick={() => onOpenReview(doc)}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-xl text-primary-foreground bg-primary hover:bg-primary/90 shadow transition-colors"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-xl bg-button text-on-button hover:opacity-90 shadow transition-colors"
                   >
                     <IconListDetails className="w-4 h-4" />
                     <span>{t('viewInsights', { count: '' })}</span>
@@ -176,7 +176,7 @@ export function DocumentList({
                 <a
                   href={`/api/profile/documents/${doc.id}/file`}
                   download={doc.originalFileName}
-                  className="p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                  className="p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-border"
                   title={t('downloadFile')}
                   aria-label={t('downloadFile')}
                 >

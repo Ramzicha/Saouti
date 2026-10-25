@@ -36,7 +36,7 @@ export function InsightConflictBadge({
             <button
               type="button"
               onClick={onUseProfile}
-              className="mt-1.5 flex items-center gap-1 text-[11px] text-primary hover:underline font-semibold"
+              className="mt-1.5 flex items-center gap-1 text-[11px] text-foreground hover:underline font-semibold"
             >
               <IconUserCheck className="w-3 h-3" />
               <span>Keep profile</span>

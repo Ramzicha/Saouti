@@ -127,7 +127,7 @@ export function InsightReviewDrawer({
           <div className="p-6 border-b border-border/60 flex items-start justify-between gap-4 bg-muted/20">
             <div className="space-y-1 min-w-0">
               <div className="flex items-center gap-2">
-                <IconFileText className="w-5 h-5 text-primary shrink-0" />
+                <IconFileText className="w-5 h-5 text-foreground shrink-0" />
                 <h2 id="review-drawer-title" className="text-lg font-bold tracking-tight text-foreground truncate">
                   {document.originalFileName}
                 </h2>
@@ -149,7 +149,7 @@ export function InsightReviewDrawer({
             <button
               type="button"
               onClick={onClose}
-              className="p-1.5 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              className="p-1.5 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-border"
               aria-label="Close review drawer"
             >
               <IconX className="w-5 h-5" />
@@ -164,7 +164,7 @@ export function InsightReviewDrawer({
               className={clsx(
                 'px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors flex items-center gap-1.5',
                 selectedCategory === 'all'
-                  ? 'bg-primary text-primary-foreground font-semibold shadow-sm'
+                  ? 'bg-foreground text-background font-semibold shadow-sm'
                   : 'bg-muted/60 text-muted-foreground hover:text-foreground hover:bg-muted',
               )}
             >
@@ -184,7 +184,7 @@ export function InsightReviewDrawer({
                   className={clsx(
                     'px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors flex items-center gap-1.5',
                     selectedCategory === cat
-                      ? 'bg-primary text-primary-foreground font-semibold shadow-sm'
+                      ? 'bg-foreground text-background font-semibold shadow-sm'
                       : 'bg-muted/60 text-muted-foreground hover:text-foreground hover:bg-muted',
                   )}
                 >
@@ -199,7 +199,7 @@ export function InsightReviewDrawer({
           <div className="flex-1 overflow-y-auto p-6 space-y-4">
             {loading && (
               <div className="flex items-center justify-center py-16 text-muted-foreground gap-2">
-                <IconLoader2 className="w-5 h-5 animate-spin text-primary" />
+                <IconLoader2 className="w-5 h-5 animate-spin text-muted-foreground" />
                 <span className="text-xs">Loading insights...</span>
               </div>
             )}

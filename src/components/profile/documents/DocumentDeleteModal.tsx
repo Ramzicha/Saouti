@@ -115,7 +115,7 @@ export function DocumentDeleteModal({
             className={clsx(
               'p-3.5 rounded-xl border flex items-start gap-3 cursor-pointer transition-all',
               keepFacts
-                ? 'border-primary bg-primary/5 ring-1 ring-primary'
+                ? 'border-foreground/80 bg-surface-raised ring-1 ring-border'
                 : 'border-border/60 hover:bg-muted/40',
             )}
           >
@@ -124,11 +124,11 @@ export function DocumentDeleteModal({
               name="keepFacts"
               checked={keepFacts}
               onChange={() => setKeepFacts(true)}
-              className="mt-0.5 text-primary focus:ring-primary"
+              className="mt-0.5 text-foreground focus:ring-border accent-foreground"
             />
             <div className="space-y-0.5">
               <div className="flex items-center gap-1.5 text-xs font-semibold text-foreground">
-                <IconBookmark className="w-4 h-4 text-primary" />
+                <IconBookmark className="w-4 h-4 text-foreground" />
                 <span>{t('keepFactsOption')}</span>
               </div>
               <p className="text-[11px] text-muted-foreground leading-relaxed">

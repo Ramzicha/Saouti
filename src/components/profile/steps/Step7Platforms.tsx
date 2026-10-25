@@ -58,17 +58,17 @@ export function Step7Platforms() {
                 className={clsx(
                   'flex items-center gap-3 p-3.5 rounded-xl border transition-all cursor-pointer',
                   isChecked
-                    ? 'border-primary bg-primary/10 shadow-sm'
-                    : 'border-input bg-card hover:bg-muted/40',
+                    ? 'border-foreground/80 bg-surface-raised font-semibold shadow-xs'
+                    : 'border-border bg-card hover:bg-surface-raised/60',
                 )}
               >
                 <input
                   type="checkbox"
                   value={p.id}
                   {...register('platformSelection')}
-                  className="w-4 h-4 rounded text-primary focus:ring-primary border-input"
+                  className="w-4 h-4 rounded text-foreground focus:ring-border border-input accent-foreground"
                 />
-                <Icon className={clsx('w-5 h-5', isChecked ? 'text-primary' : 'text-muted-foreground')} />
+                <Icon className={clsx('w-5 h-5', isChecked ? 'text-foreground' : 'text-muted-foreground')} />
                 <span className="text-sm font-semibold text-foreground">
                   {p.label}
                 </span>
@@ -79,7 +79,7 @@ export function Step7Platforms() {
 
         {/* Reddit specific configuration */}
         {isRedditSelected && (
-          <div className="p-4 sm:p-5 rounded-xl border border-primary/30 bg-primary/5 space-y-4 animate-in fade-in">
+          <div className="p-4 sm:p-5 rounded-xl border border-border bg-surface-raised/40 space-y-4 animate-in fade-in">
             <div className="flex justify-between items-center">
               <div>
                 <h3 className="text-sm font-semibold text-foreground">
@@ -92,7 +92,7 @@ export function Step7Platforms() {
               <button
                 type="button"
                 onClick={() => append({ name: 'r/', rulesSummary: '' })}
-                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-primary text-primary-foreground text-xs font-medium hover:bg-primary/90 transition-colors"
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-button text-on-button text-xs font-medium hover:opacity-90 transition-colors"
               >
                 <IconPlus className="w-3.5 h-3.5" />
                 <span>{t('addSubreddit')}</span>
@@ -109,7 +109,7 @@ export function Step7Platforms() {
                     type="text"
                     {...register(`redditSubreddits.${idx}.name` as const)}
                     placeholder={t('subredditName')}
-                    className="w-1/2 px-2.5 py-1.5 rounded-md border border-input text-xs font-mono text-foreground focus:ring-1 focus:ring-primary"
+                    className="w-1/2 px-2.5 py-1.5 rounded-md border border-input text-xs font-mono text-foreground focus:ring-1 focus:ring-border"
                   />
                   {fields.length > 1 && (
                     <button
@@ -125,7 +125,7 @@ export function Step7Platforms() {
                   type="text"
                   {...register(`redditSubreddits.${idx}.rulesSummary` as const)}
                   placeholder={t('subredditRules')}
-                  className="w-full px-2.5 py-1.5 rounded-md border border-input text-xs text-foreground focus:ring-1 focus:ring-primary"
+                  className="w-full px-2.5 py-1.5 rounded-md border border-input text-xs text-foreground focus:ring-1 focus:ring-border"
                 />
               </div>
             ))}

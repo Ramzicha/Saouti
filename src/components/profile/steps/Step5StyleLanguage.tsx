@@ -33,7 +33,7 @@ export function Step5StyleLanguage() {
             <select
               id="lang_primary"
               {...register('languages.primaryLanguage')}
-              className="w-full px-3 py-2 rounded-lg border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary shadow-sm"
+              className="w-full px-3 py-2 rounded-lg border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground/40 shadow-sm"
             >
               <option value="en">English</option>
               <option value="fr">Français</option>
@@ -52,7 +52,7 @@ export function Step5StyleLanguage() {
               id="lang_dialect"
               {...register('languages.arabicDialect')}
               disabled={selectedLanguage !== 'ar'}
-              className="w-full px-3 py-2 rounded-lg border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary shadow-sm disabled:opacity-50"
+              className="w-full px-3 py-2 rounded-lg border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground/40 shadow-sm disabled:opacity-50"
             >
               <option value="none">{t('dialectNone')}</option>
               <option value="darija">{t('dialectDarija')}</option>
@@ -70,7 +70,7 @@ export function Step5StyleLanguage() {
             >
               {t('formalityLabel')}
             </label>
-            <span className="text-xs font-semibold px-2 py-0.5 rounded bg-primary/10 text-primary">
+            <span className="text-xs font-semibold px-2 py-0.5 rounded bg-surface-raised border border-border text-foreground">
               Level {formalityValue} / 5
             </span>
           </div>
@@ -81,7 +81,7 @@ export function Step5StyleLanguage() {
             max="5"
             step="1"
             {...register('style.formality', { valueAsNumber: true })}
-            className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-primary"
+            className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-foreground"
           />
           <div className="flex justify-between text-xs text-muted-foreground mt-1">
             <span>1 (Casual / Conversational)</span>
@@ -108,7 +108,7 @@ export function Step5StyleLanguage() {
                   type="radio"
                   value={len.id}
                   {...register('style.length')}
-                  className="w-3.5 h-3.5 text-primary focus:ring-primary border-input"
+                  className="w-3.5 h-3.5 text-foreground focus:ring-border accent-foreground border-input"
                 />
                 <span>{len.label}</span>
               </label>
@@ -135,7 +135,7 @@ export function Step5StyleLanguage() {
                   type="radio"
                   value={emo.id}
                   {...register('style.emoji')}
-                  className="w-3.5 h-3.5 text-primary focus:ring-primary border-input"
+                  className="w-3.5 h-3.5 text-foreground focus:ring-border accent-foreground border-input"
                 />
                 <span>{emo.label}</span>
               </label>
@@ -154,7 +154,7 @@ export function Step5StyleLanguage() {
           <select
             id="style_hook"
             {...register('style.hookStyle')}
-            className="w-full px-3 py-2.5 rounded-lg border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary shadow-sm"
+            className="w-full px-3 py-2.5 rounded-lg border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground/40 shadow-sm"
           >
             <option value="bold_statement">{t('hookBold')}</option>
             <option value="question">{t('hookQuestion')}</option>

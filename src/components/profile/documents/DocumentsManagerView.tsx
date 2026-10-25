@@ -76,7 +76,7 @@ export function DocumentsManagerView() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[200px] text-muted-foreground gap-2">
-        <IconLoader2 className="w-5 h-5 animate-spin text-primary" />
+        <IconLoader2 className="w-5 h-5 animate-spin text-muted-foreground" />
         <span>Loading documents...</span>
       </div>
     );
@@ -116,7 +116,7 @@ export function DocumentsManagerView() {
       {/* Header Description */}
       <div className="space-y-1">
         <div className="flex items-center gap-2">
-          <IconFileText className="w-5 h-5 text-primary" />
+          <IconFileText className="w-5 h-5 text-foreground" />
           <h2 className="text-base font-semibold text-foreground">
             {t('uploadTitle')}
           </h2>

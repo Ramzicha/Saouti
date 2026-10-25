@@ -51,7 +51,7 @@ export function StepIndicator({
           aria-hidden="true"
         >
           <div
-            className="h-full bg-primary transition-all duration-300"
+            className="h-full bg-foreground/70 transition-all duration-300"
             style={{
               width: `${((currentStep - 1) / (totalSteps - 1)) * 100}%`,
             }}
@@ -80,11 +80,11 @@ export function StepIndicator({
                 onClick={() => onSelectStep?.(step)}
                 aria-current={isCurrent ? 'step' : undefined}
                 className={clsx(
-                  'w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-medium text-xs sm:text-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
+                  'w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-medium text-xs sm:text-sm transition-all focus:outline-none focus:ring-2 focus:ring-foreground/40 focus:ring-offset-2',
                   isCurrent &&
-                    'bg-primary text-primary-foreground ring-2 ring-primary ring-offset-2 ring-offset-background shadow-md',
+                    'bg-button text-on-button ring-2 ring-foreground/40 ring-offset-2 ring-offset-background shadow-md',
                   isCompleted &&
-                    'bg-primary/20 text-primary hover:bg-primary/30 border border-primary/40',
+                    'bg-surface-raised text-foreground hover:bg-surface-raised/80 border border-border',
                   !isCurrent &&
                     !isCompleted &&
                     'bg-background text-muted-foreground border border-muted',
@@ -102,7 +102,7 @@ export function StepIndicator({
               <span
                 className={clsx(
                   'hidden md:block mt-1.5 text-xs text-center max-w-[80px] truncate font-medium',
-                  isCurrent ? 'text-primary' : 'text-muted-foreground',
+                  isCurrent ? 'text-foreground font-semibold' : 'text-muted-foreground',
                 )}
                 title={stepTitle}
               >

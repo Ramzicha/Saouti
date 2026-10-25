@@ -30,7 +30,7 @@ export function Step3Audience() {
             rows={3}
             {...register('audience.persona')}
             placeholder={t('audiencePersonaPlaceholder')}
-            className="w-full px-3.5 py-2.5 rounded-lg border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all shadow-sm resize-none"
+            className="w-full px-3.5 py-2.5 rounded-lg border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground/40 transition-all shadow-sm resize-none"
           />
         </div>
 
@@ -44,7 +44,7 @@ export function Step3Audience() {
           <select
             id="audience_level"
             {...register('audience.expertiseLevel')}
-            className="w-full px-3.5 py-2.5 rounded-lg border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all shadow-sm"
+            className="w-full px-3.5 py-2.5 rounded-lg border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground/40 transition-all shadow-sm"
           >
             <option value="general">{t('levelGeneral')}</option>
             <option value="beginner">{t('levelBeginner')}</option>
@@ -65,7 +65,7 @@ export function Step3Audience() {
             type="text"
             {...register('audience.interestsRaw')}
             placeholder="e.g. System design, Career growth, Cloud costs"
-            className="w-full px-3.5 py-2.5 rounded-lg border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all shadow-sm"
+            className="w-full px-3.5 py-2.5 rounded-lg border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground/40 transition-all shadow-sm"
           />
           <p className="text-xs text-muted-foreground mt-1">
             Separate topics with commas.

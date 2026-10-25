@@ -338,7 +338,7 @@ export function ProfileSettingsView() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[300px] text-muted-foreground gap-2">
-        <IconLoader2 className="w-5 h-5 animate-spin text-primary" />
+        <IconLoader2 className="w-5 h-5 animate-spin text-muted-foreground" />
         <span>Loading voice profile...</span>
       </div>
     );
@@ -369,7 +369,7 @@ export function ProfileSettingsView() {
           className={clsx(
             'inline-flex items-center gap-2 px-4 py-2.5 text-sm font-semibold border-b-2 transition-all -mb-[1px]',
             activeTab === 'editor'
-              ? 'border-primary text-primary'
+              ? 'border-foreground text-foreground'
               : 'border-transparent text-muted-foreground hover:text-foreground',
           )}
         >
@@ -383,7 +383,7 @@ export function ProfileSettingsView() {
           className={clsx(
             'inline-flex items-center gap-2 px-4 py-2.5 text-sm font-semibold border-b-2 transition-all -mb-[1px]',
             activeTab === 'preview'
-              ? 'border-primary text-primary'
+              ? 'border-foreground text-foreground'
               : 'border-transparent text-muted-foreground hover:text-foreground',
           )}
         >
@@ -397,7 +397,7 @@ export function ProfileSettingsView() {
           className={clsx(
             'inline-flex items-center gap-2 px-4 py-2.5 text-sm font-semibold border-b-2 transition-all -mb-[1px]',
             activeTab === 'versions'
-              ? 'border-primary text-primary'
+              ? 'border-foreground text-foreground'
               : 'border-transparent text-muted-foreground hover:text-foreground',
           )}
         >
@@ -411,7 +411,7 @@ export function ProfileSettingsView() {
           className={clsx(
             'inline-flex items-center gap-2 px-4 py-2.5 text-sm font-semibold border-b-2 transition-all -mb-[1px]',
             activeTab === 'documents'
-              ? 'border-primary text-primary'
+              ? 'border-foreground text-foreground'
               : 'border-transparent text-muted-foreground hover:text-foreground',
           )}
         >
@@ -466,7 +466,7 @@ export function ProfileSettingsView() {
               <button
                 type="submit"
                 disabled={saving}
-                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-primary text-primary-foreground font-semibold text-sm shadow hover:bg-primary/90 transition-all disabled:opacity-50"
+                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-button text-on-button font-semibold text-sm shadow-sm hover:opacity-90 transition-all disabled:opacity-50"
               >
                 {saving ? (
                   <IconLoader2 className="w-4 h-4 animate-spin" />

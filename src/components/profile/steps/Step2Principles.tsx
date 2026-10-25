@@ -30,7 +30,7 @@ export function Step2Principles() {
             type="text"
             {...register('principles.valuesRaw')}
             placeholder={t('valuesPlaceholder')}
-            className="w-full px-3.5 py-2.5 rounded-lg border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all shadow-sm"
+            className="w-full px-3.5 py-2.5 rounded-lg border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground/40 transition-all shadow-sm"
           />
           <p className="text-xs text-muted-foreground mt-1">
             Separate values with commas.
@@ -49,7 +49,7 @@ export function Step2Principles() {
             rows={2}
             {...register('principles.topicsAvoidRaw')}
             placeholder={t('topicsAvoidPlaceholder')}
-            className="w-full px-3.5 py-2.5 rounded-lg border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all shadow-sm resize-none"
+            className="w-full px-3.5 py-2.5 rounded-lg border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground/40 transition-all shadow-sm resize-none"
           />
         </div>
 
@@ -65,7 +65,7 @@ export function Step2Principles() {
             rows={3}
             {...register('principles.toneRedLinesRaw')}
             placeholder={t('toneRedLinesPlaceholder')}
-            className="w-full px-3.5 py-2.5 rounded-lg border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all shadow-sm resize-none"
+            className="w-full px-3.5 py-2.5 rounded-lg border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground/40 transition-all shadow-sm resize-none"
           />
         </div>
       </div>

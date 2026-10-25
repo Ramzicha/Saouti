@@ -190,7 +190,7 @@ export function DocumentUploadZone({
         className={clsx(
           'relative border-2 border-dashed rounded-2xl p-6 sm:p-8 flex flex-col items-center justify-center text-center cursor-pointer transition-all duration-200',
           isDragging
-            ? 'border-primary bg-primary/5 scale-[1.005]'
+            ? 'border-foreground/80 bg-surface-raised scale-[1.005]'
             : 'border-border/70 bg-card/40 hover:border-border hover:bg-card/70',
           isLimitReached && 'opacity-60 cursor-not-allowed pointer-events-none',
         )}
@@ -205,7 +205,7 @@ export function DocumentUploadZone({
           aria-label={t('dropzonePrompt')}
         />
 
-        <div className="w-12 h-12 rounded-2xl bg-muted flex items-center justify-center text-primary mb-3">
+        <div className="w-12 h-12 rounded-2xl bg-surface-raised flex items-center justify-center text-foreground mb-3">
           <IconUpload className="w-6 h-6" />
         </div>
 
@@ -217,7 +217,7 @@ export function DocumentUploadZone({
         </p>
 
         {selectedFile && (
-          <div className="mt-4 inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/10 text-primary text-xs font-medium border border-primary/20">
+          <div className="mt-4 inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-raised text-foreground text-xs font-medium border border-border">
             <IconFileTypePdf className="w-4 h-4" />
             <span className="truncate max-w-[200px]">{selectedFile.name}</span>
             <span>({(selectedFile.size / (1024 * 1024)).toFixed(1)} MB)</span>
@@ -244,7 +244,7 @@ export function DocumentUploadZone({
                   className={clsx(
                     'px-3 py-2 text-xs font-medium rounded-lg border text-start transition-all',
                     selectedType === type
-                      ? 'border-primary bg-primary/10 text-primary font-semibold'
+                      ? 'border-foreground/80 bg-surface-raised text-foreground font-semibold'
                       : 'border-border/60 hover:bg-muted text-muted-foreground hover:text-foreground',
                   )}
                 >
@@ -267,7 +267,7 @@ export function DocumentUploadZone({
               type="button"
               onClick={handleTriggerUpload}
               disabled={uploading}
-              className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold text-primary-foreground bg-primary hover:bg-primary/90 rounded-xl shadow transition-colors disabled:opacity-50"
+              className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold bg-button text-on-button hover:opacity-90 rounded-xl shadow transition-colors disabled:opacity-50"
             >
               {uploading ? (
                 <>

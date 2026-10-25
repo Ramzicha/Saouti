@@ -39,7 +39,7 @@ export function ApprovedFactsList({ refreshTrigger }: ApprovedFactsListProps) {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-8 text-muted-foreground gap-2">
-        <IconLoader2 className="w-4 h-4 animate-spin text-primary" />
+        <IconLoader2 className="w-4 h-4 animate-spin text-muted-foreground" />
         <span className="text-xs">Loading approved facts...</span>
       </div>
     );
@@ -81,7 +81,7 @@ export function ApprovedFactsList({ refreshTrigger }: ApprovedFactsListProps) {
             </p>
 
             <div className="flex items-center justify-between text-[11px] text-muted-foreground pt-1 border-t border-border/30">
-              <span className="capitalize font-medium text-primary/80">
+              <span className="capitalize font-medium text-foreground/80">
                 {fact.factCategory.replace('_', ' ')}
               </span>
 

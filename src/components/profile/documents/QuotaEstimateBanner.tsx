@@ -13,7 +13,7 @@ export function QuotaEstimateBanner({ document }: QuotaEstimateBannerProps) {
 
   return (
     <div className="flex items-center gap-2.5 px-3 py-2 rounded-xl bg-muted/60 border border-border/50 text-xs text-muted-foreground">
-      <IconCoins className="w-4 h-4 text-primary shrink-0" />
+      <IconCoins className="w-4 h-4 text-foreground shrink-0" />
       <div className="flex items-center gap-2 flex-wrap">
         <span>
           Estimated usage: <strong className="text-foreground">~{estimatedTokens.toLocaleString()} tokens</strong> ({document.pageCount} {document.pageCount === 1 ? 'page' : 'pages'})

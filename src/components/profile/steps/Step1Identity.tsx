@@ -33,7 +33,7 @@ export function Step1Identity() {
             type="text"
             {...register('identity.role')}
             placeholder={t('rolePlaceholder')}
-            className="w-full px-3.5 py-2.5 rounded-lg border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all shadow-sm"
+            className="w-full px-3.5 py-2.5 rounded-lg border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground/40 transition-all shadow-sm"
           />
           {(errors.identity as Record<string, { message?: string }> | undefined)?.role && (
             <p className="text-xs text-destructive mt-1">
@@ -54,7 +54,7 @@ export function Step1Identity() {
             type="text"
             {...register('identity.industry')}
             placeholder={t('industryPlaceholder')}
-            className="w-full px-3.5 py-2.5 rounded-lg border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all shadow-sm"
+            className="w-full px-3.5 py-2.5 rounded-lg border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground/40 transition-all shadow-sm"
           />
         </div>
 
@@ -70,7 +70,7 @@ export function Step1Identity() {
             type="text"
             {...register('identity.expertiseRaw')}
             placeholder={t('expertisePlaceholder')}
-            className="w-full px-3.5 py-2.5 rounded-lg border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all shadow-sm"
+            className="w-full px-3.5 py-2.5 rounded-lg border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground/40 transition-all shadow-sm"
           />
           <p className="text-xs text-muted-foreground mt-1">
             Separate topics with commas.
@@ -89,7 +89,7 @@ export function Step1Identity() {
             rows={3}
             {...register('identity.positioning')}
             placeholder={t('positioningPlaceholder')}
-            className="w-full px-3.5 py-2.5 rounded-lg border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all shadow-sm resize-none"
+            className="w-full px-3.5 py-2.5 rounded-lg border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground/40 transition-all shadow-sm resize-none"
           />
         </div>
       </div>

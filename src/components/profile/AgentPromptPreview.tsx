@@ -38,7 +38,7 @@ export function AgentPromptPreview() {
   if (loading) {
     return (
       <div className="flex items-center justify-center p-8 text-muted-foreground text-sm gap-2">
-        <IconLoader2 className="w-4 h-4 animate-spin text-primary" />
+        <IconLoader2 className="w-4 h-4 animate-spin text-muted-foreground" />
         <span>Loading Agent System Prompt Preview...</span>
       </div>
     );

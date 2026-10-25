@@ -29,16 +29,16 @@ export function CompletenessMeter({
     >
       <div className="flex justify-between items-center text-xs">
         <div className="flex items-center gap-1.5 font-semibold text-foreground">
-          <IconSparkles className="w-3.5 h-3.5 text-primary" />
+          <IconSparkles className="w-3.5 h-3.5 text-muted-foreground" />
           <span>{t('completeness')}</span>
         </div>
         <span
           className={clsx(
             'font-bold px-2 py-0.5 rounded-full text-[11px]',
             score >= 90
-              ? 'bg-green-500/10 text-green-600 dark:text-green-400 border border-green-500/30'
+              ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30'
               : score >= 70
-                ? 'bg-primary/10 text-primary border border-primary/30'
+                ? 'bg-surface-raised text-foreground border border-border'
                 : 'bg-muted text-muted-foreground',
           )}
         >
@@ -52,9 +52,9 @@ export function CompletenessMeter({
           className={clsx(
             'h-full transition-all duration-500 rounded-full',
             score >= 90
-              ? 'bg-green-500'
+              ? 'bg-emerald-500'
               : score >= 70
-                ? 'bg-primary'
+                ? 'bg-foreground'
                 : 'bg-amber-500',
           )}
           style={{ width: `${Math.min(100, Math.max(0, score))}%` }}

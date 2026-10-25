@@ -39,7 +39,7 @@ export function Step4Objectives() {
                 type="radio"
                 value={obj.id}
                 {...register('objectives.primaryObjective')}
-                className="w-4 h-4 text-primary focus:ring-primary border-input"
+                className="w-4 h-4 text-foreground focus:ring-border accent-foreground border-input"
               />
               <span className="text-sm font-medium text-foreground">
                 {obj.label}

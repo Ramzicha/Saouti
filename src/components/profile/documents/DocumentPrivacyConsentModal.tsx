@@ -82,7 +82,7 @@ export function DocumentPrivacyConsentModal({
         {/* Header */}
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-surface-raised border border-border text-foreground flex items-center justify-center shrink-0">
               <IconShieldCheck className="w-6 h-6" />
             </div>
             <div>
@@ -97,7 +97,7 @@ export function DocumentPrivacyConsentModal({
           <button
             type="button"
             onClick={onCancel}
-            className="p-1 rounded-lg text-muted-foreground hover:text-foreground hover:bg-surface-raised transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            className="p-1 rounded-lg text-muted-foreground hover:text-foreground hover:bg-surface-raised transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-border"
             aria-label={t('privacyModalCancel')}
           >
             <IconX className="w-5 h-5" />
@@ -107,21 +107,21 @@ export function DocumentPrivacyConsentModal({
         {/* Guarantees List */}
         <div className="space-y-4 py-2">
           <div className="flex items-start gap-3 p-3.5 rounded-xl bg-surface-raised border border-border/60">
-            <IconKey className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+            <IconKey className="w-5 h-5 text-foreground shrink-0 mt-0.5" />
             <p className="text-sm text-foreground/90 leading-relaxed">
               {t('privacyPointKey')}
             </p>
           </div>
 
           <div className="flex items-start gap-3 p-3.5 rounded-xl bg-surface-raised border border-border/60">
-            <IconLock className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+            <IconLock className="w-5 h-5 text-foreground shrink-0 mt-0.5" />
             <p className="text-sm text-foreground/90 leading-relaxed">
               {t('privacyPointStorage')}
             </p>
           </div>
 
           <div className="flex items-start gap-3 p-3.5 rounded-xl bg-surface-raised border border-border/60">
-            <IconTrash className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+            <IconTrash className="w-5 h-5 text-foreground shrink-0 mt-0.5" />
             <p className="text-sm text-foreground/90 leading-relaxed">
               {t('privacyPointDelete')}
             </p>
@@ -140,7 +140,7 @@ export function DocumentPrivacyConsentModal({
             type="button"
             onClick={onCancel}
             disabled={submitting}
-            className="w-full sm:w-auto px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            className="w-full sm:w-auto px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-border"
           >
             {t('privacyModalCancel')}
           </button>
@@ -149,7 +149,7 @@ export function DocumentPrivacyConsentModal({
             type="button"
             onClick={handleAcknowledge}
             disabled={submitting}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2 text-sm font-semibold text-primary-foreground bg-primary hover:bg-primary/90 rounded-xl shadow transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:opacity-50"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2 text-sm font-semibold bg-button text-on-button hover:opacity-90 rounded-xl shadow transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-border disabled:opacity-50"
           >
             {submitting && <IconLoader2 className="w-4 h-4 animate-spin" />}
             <span>{t('privacyModalAcknowledge')}</span>

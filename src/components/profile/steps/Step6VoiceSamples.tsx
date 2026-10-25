@@ -30,7 +30,7 @@ export function Step6VoiceSamples() {
           <button
             type="button"
             onClick={() => append({ title: `Sample ${fields.length + 1}`, content: '' })}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-primary/40 bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-surface-raised text-foreground text-xs font-medium hover:bg-surface transition-colors"
           >
             <IconPlus className="w-3.5 h-3.5" />
             <span>{t('addSample')}</span>
@@ -53,12 +53,12 @@ export function Step6VoiceSamples() {
             >
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2">
-                  <IconFileText className="w-4 h-4 text-primary" />
+                  <IconFileText className="w-4 h-4 text-muted-foreground" />
                   <input
                     type="text"
                     {...register(`samples.${index}.title` as const)}
                     placeholder={`Sample ${index + 1} Title`}
-                    className="text-sm font-semibold text-foreground bg-transparent border-none focus:outline-none focus:ring-1 focus:ring-primary rounded px-1"
+                    className="text-sm font-semibold text-foreground bg-transparent border-none focus:outline-none focus:ring-1 focus:ring-border rounded px-1"
                   />
                 </div>
                 {fields.length > 1 && (
@@ -78,7 +78,7 @@ export function Step6VoiceSamples() {
                   rows={6}
                   {...register(`samples.${index}.content` as const)}
                   placeholder={t('sampleContentLabel')}
-                  className="w-full px-3.5 py-2.5 rounded-lg border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary shadow-sm resize-y"
+                  className="w-full px-3.5 py-2.5 rounded-lg border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-border shadow-sm resize-y"
                 />
               </div>
 

@@ -135,7 +135,7 @@ export function InsightReviewCard({
             onChange={(e) => setEditText(e.target.value)}
             maxLength={400}
             rows={3}
-            className="w-full text-sm rounded-lg border border-primary/40 bg-background p-2.5 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none"
+            className="w-full text-sm rounded-lg border border-border bg-background p-2.5 text-foreground focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground/40 resize-none"
             placeholder="Edit insight text..."
             aria-label="Edit insight text"
           />
@@ -154,7 +154,7 @@ export function InsightReviewCard({
                 type="button"
                 onClick={() => handleAction('edit')}
                 disabled={submitting || editText.trim().length === 0}
-                className="inline-flex items-center gap-1 px-3 py-1 text-xs font-semibold rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors shadow disabled:opacity-50"
+                className="inline-flex items-center gap-1 px-3 py-1 text-xs font-semibold rounded-lg bg-button text-on-button hover:opacity-90 transition-colors shadow disabled:opacity-50"
               >
                 {submitting && <IconLoader2 className="w-3.5 h-3.5 animate-spin" />}
                 <span>{t('saveEditAction')}</span>
@@ -204,7 +204,7 @@ export function InsightReviewCard({
             type="button"
             onClick={() => handleAction('accept')}
             disabled={submitting}
-            className="inline-flex items-center gap-1.5 px-4 py-1.5 text-xs font-semibold text-primary-foreground bg-primary hover:bg-primary/90 rounded-lg shadow transition-colors disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 px-4 py-1.5 text-xs font-semibold bg-button text-on-button hover:opacity-90 rounded-lg shadow transition-colors disabled:opacity-50"
           >
             {submitting ? (
               <IconLoader2 className="w-4 h-4 animate-spin" />

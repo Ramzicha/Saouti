@@ -79,7 +79,7 @@ export function RevisionHistoryList({ onRollbackComplete }: RevisionHistoryListP
   if (loading) {
     return (
       <div className="flex items-center justify-center p-8 text-muted-foreground text-sm gap-2">
-        <IconLoader2 className="w-4 h-4 animate-spin text-primary" />
+        <IconLoader2 className="w-4 h-4 animate-spin text-muted-foreground" />
         <span>Loading revision history...</span>
       </div>
     );
@@ -112,8 +112,8 @@ export function RevisionHistoryList({ onRollbackComplete }: RevisionHistoryListP
                     Version {ver.versionNumber}
                   </span>
                   {isCurrent && (
-                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/30">
-                      <IconCheck className="w-3 h-3" />
+                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full bg-surface-raised text-foreground border border-border">
+                      <IconCheck className="w-3 h-3 text-emerald-500" />
                       <span>{t('currentActive')}</span>
                     </span>
                   )}
