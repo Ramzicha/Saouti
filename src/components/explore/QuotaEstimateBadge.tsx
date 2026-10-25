@@ -19,29 +19,14 @@ interface QuotaEstimateBadgeProps {
 
 export function QuotaEstimateBadge({
   quota,
-  hasTavilyKey = false,
   className = '',
 }: QuotaEstimateBadgeProps) {
   const t = useTranslations('Explore');
 
-  const creditsCost = hasTavilyKey ? 1 : 0;
-  const isFeed = !hasTavilyKey;
+  if (!quota) return null;
 
   return (
     <div className={`inline-flex items-center gap-2 flex-wrap text-xs ${className}`}>
-      {/* Credit Estimate Pill */}
-      {isFeed ? (
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-medium">
-          <IconCheck className="w-3.5 h-3.5" />
-          <span>{t('creditsUsed', { count: 0 })}</span>
-        </span>
-      ) : (
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-surface border border-border text-foreground/80 font-medium">
-          <IconCoins className="w-3.5 h-3.5 text-muted-foreground" />
-          <span>{t('creditsUsed', { count: creditsCost })}</span>
-        </span>
-      )}
-
       {/* Daily Limit Tracker */}
       {quota && (
         <span

@@ -112,82 +112,100 @@ export function ExploreFeedView({
     }
   }, [initialTopics.length, t]);
 
-  // Fetch feed when active topic, search query, or filters change
-  const fetchFeed = useCallback(
+  // Executes live search (or auto-search on topic, filter, or query change)
+  const executeSearch = useCallback(
     async (topicPhrase?: string, currentFilters = filters) => {
+      const phraseToSearch =
+        topicPhrase !== undefined
+          ? topicPhrase
+          : searchQuery.trim() || activeTopic?.phrase || topicsList[0]?.phrase;
+
+      if (!phraseToSearch) return;
+
+      // 1. Instantly check local cache first so user doesn't wait if articles are already available
       setLoadingFeed(true);
       setFallbackNotice(null);
+      let foundCachedArticles = false;
 
       try {
         const params = new URLSearchParams();
-        if (topicPhrase) params.set('topic', topicPhrase);
+        if (phraseToSearch) params.set('topic', phraseToSearch);
         if (currentFilters.freshness) params.set('freshness', currentFilters.freshness);
         if (currentFilters.language) params.set('language', currentFilters.language);
 
-        const url = `/api/explore/feed?${params.toString()}`;
-        const res = await fetch(url);
-        if (!res.ok) throw new Error('Failed to load feed');
-
-        const data = await res.json();
-        setArticlesList(data.articles || []);
-        setSavedUrls(new Set(data.savedUrls || []));
-        setFallbackNotice(data.fallbackNotice || null);
+        const res = await fetch(`/api/explore/feed?${params.toString()}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.articles && data.articles.length > 0) {
+            setArticlesList(data.articles);
+            setSavedUrls(new Set(data.savedUrls || []));
+            setFallbackNotice(data.fallbackNotice || null);
+            foundCachedArticles = true;
+          }
+        }
       } catch {
-        // Continue with current list
+        // Continue to live search
       } finally {
         setLoadingFeed(false);
       }
+
+      // 2. Automatically dispatch live search pipeline via /api/explore/refresh
+      setRefreshing(true);
+      setAgentStatus(t('statusSearching'));
+
+      try {
+        setTimeout(() => setAgentStatus(t('statusSummarizing')), 1200);
+
+        const res = await fetch('/api/explore/refresh', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            topicPhrase: phraseToSearch,
+            freshness: currentFilters.freshness,
+            language: currentFilters.language,
+          }),
+        });
+
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          if (!foundCachedArticles) {
+            throw new Error(errData.error?.message || 'Search failed');
+          }
+        } else {
+          const data = await res.json();
+          setArticlesList(data.articles || []);
+          setSavedUrls(new Set(data.savedUrls || []));
+          setFallbackNotice(data.fallbackNotice || null);
+          loadQuota();
+          setAgentStatus(t('statusReady'));
+          setTimeout(() => setAgentStatus(null), 2000);
+        }
+      } catch (err: unknown) {
+        if (!foundCachedArticles) {
+          setAgentStatus(err instanceof Error ? err.message : 'Search failed');
+          setTimeout(() => setAgentStatus(null), 3500);
+        } else {
+          setAgentStatus(null);
+        }
+      } finally {
+        setRefreshing(false);
+      }
     },
-    [filters],
+    [filters, searchQuery, activeTopic?.phrase, topicsList, t, loadQuota],
   );
 
-  useEffect(() => {
-    const phrase = searchQuery.trim() || activeTopic?.phrase;
-    fetchFeed(phrase, filters);
-  }, [activeTopic, searchQuery, filters, fetchFeed]);
-
-  // Handle Refresh Action
-  const handleRefresh = async () => {
-    const currentTopicPhrase =
-      searchQuery.trim() || activeTopic?.phrase || topicsList[0]?.phrase;
-
-    if (!currentTopicPhrase) return;
-
-    setRefreshing(true);
-    setAgentStatus(t('statusSearching'));
-
-    try {
-      setTimeout(() => setAgentStatus(t('statusSummarizing')), 1500);
-
-      const res = await fetch('/api/explore/refresh', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          topicPhrase: currentTopicPhrase,
-          freshness: filters.freshness,
-          language: filters.language,
-        }),
-      });
-
-      if (!res.ok) {
-        const errData = await res.json().catch(() => ({}));
-        throw new Error(errData.error?.message || 'Refresh failed');
-      }
-
-      const data = await res.json();
-      setArticlesList(data.articles || []);
-      setSavedUrls(new Set(data.savedUrls || []));
-      setFallbackNotice(data.fallbackNotice || null);
-      loadQuota();
-      setAgentStatus(t('statusReady'));
-      setTimeout(() => setAgentStatus(null), 2500);
-    } catch (err: unknown) {
-      setAgentStatus(err instanceof Error ? err.message : 'Refresh failed');
-      setTimeout(() => setAgentStatus(null), 4000);
-    } finally {
-      setRefreshing(false);
-    }
+  const handleRefresh = () => {
+    const phrase = searchQuery.trim() || activeTopic?.phrase || topicsList[0]?.phrase;
+    executeSearch(phrase, filters);
   };
+
+  // Auto-search on initial mount if feed is empty and topics are ready
+  useEffect(() => {
+    if (articlesList.length === 0 && topicsList.length > 0 && !activeTopic && !searchQuery) {
+      executeSearch(topicsList[0]?.phrase, filters);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [topicsList.length]);
 
   // Topic CRUD Handlers
   const handleSaveTopic = async (data: {
@@ -416,6 +434,8 @@ export function ExploreFeedView({
         onSelectTopic={(topic) => {
           setActiveTopic(topic);
           setSearchQuery('');
+          const phrase = topic ? topic.phrase : (topicsList[0]?.phrase || '');
+          executeSearch(phrase, filters);
         }}
         onAddTopicClick={() => {
           setEditingTopic(null);
@@ -434,7 +454,10 @@ export function ExploreFeedView({
         value={searchQuery}
         onSearch={(query) => {
           setSearchQuery(query);
-          if (query) setActiveTopic(null);
+          if (query) {
+            setActiveTopic(null);
+            executeSearch(query, filters);
+          }
         }}
         onAddToTopics={(phrase) => {
           handleSaveTopic({ phrase });
@@ -442,7 +465,7 @@ export function ExploreFeedView({
         isExistingTopic={topicsList.some(
           (tp) => tp.phrase.toLowerCase() === searchQuery.trim().toLowerCase(),
         )}
-        isLoading={loadingFeed}
+        isLoading={loadingFeed || refreshing}
       />
 
       {/* Freshness & Language Filters Bar */}
@@ -450,6 +473,8 @@ export function ExploreFeedView({
         filters={filters}
         onChange={(newFilters) => {
           setFilters(newFilters);
+          const phrase = searchQuery.trim() || activeTopic?.phrase || topicsList[0]?.phrase;
+          executeSearch(phrase, newFilters);
         }}
       />
 
