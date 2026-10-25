@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 import { db } from '@/lib/db/client';
 import { topics, articles, apiKeys, users } from '@/lib/db/schema';
 import { eq, desc, asc, and, gt } from 'drizzle-orm';
-import { AppHeader } from '@/components/layout/AppHeader';
+import { ExploreShell } from '@/components/explore/ExploreShell';
 import { ExploreFeedView } from '@/components/explore/ExploreFeedView';
 
 interface ExplorePageProps {
@@ -54,16 +54,13 @@ export default async function ExplorePage({ params }: ExplorePageProps) {
   const hasDismissedPrompt = userRecord[0]?.hasDismissedTavilyPrompt ?? false;
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <AppHeader title="Explore" />
-      <main className="flex-1 p-4 sm:p-6 lg:p-8">
-        <ExploreFeedView
-          initialTopics={initialTopics}
-          initialArticles={initialArticles}
-          hasTavilyKey={hasTavilyKey}
-          hasDismissedPrompt={hasDismissedPrompt}
-        />
-      </main>
-    </div>
+    <ExploreShell title="Explore">
+      <ExploreFeedView
+        initialTopics={initialTopics}
+        initialArticles={initialArticles}
+        hasTavilyKey={hasTavilyKey}
+        hasDismissedPrompt={hasDismissedPrompt}
+      />
+    </ExploreShell>
   );
 }

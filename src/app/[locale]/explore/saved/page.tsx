@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 import { db } from '@/lib/db/client';
 import { savedArticles } from '@/lib/db/schema';
 import { eq, desc } from 'drizzle-orm';
-import { AppHeader } from '@/components/layout/AppHeader';
+import { ExploreShell } from '@/components/explore/ExploreShell';
 import { SavedArticlesView } from '@/components/explore/SavedArticlesView';
 
 interface SavedArticlesPageProps {
@@ -27,11 +27,8 @@ export default async function SavedArticlesPage({ params }: SavedArticlesPagePro
     .orderBy(desc(savedArticles.createdAt));
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <AppHeader title="Saved Articles" />
-      <main className="flex-1 p-4 sm:p-6 lg:p-8">
-        <SavedArticlesView initialArticles={initialSaved} />
-      </main>
-    </div>
+    <ExploreShell title="Saved Articles">
+      <SavedArticlesView initialArticles={initialSaved} />
+    </ExploreShell>
   );
 }
