@@ -53,9 +53,7 @@ export function QuotaEstimateBadge({
           title={`${quota.dailyCount} of ${quota.dailyLimit} daily searches used`}
         >
           <IconClock className="w-3 h-3" />
-          <span>
-            {quota.dailyRemaining} {quota.dailyRemaining === 1 ? 'search' : 'searches'} left today
-          </span>
+          <span>{t('dailyRemaining', { count: quota.dailyRemaining })}</span>
         </span>
       )}
 
