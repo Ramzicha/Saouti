@@ -64,7 +64,7 @@ export function ArticleCard({
               aria-label={isSaved ? t('unsaveArticle') : t('saveArticle')}
               className={`p-1.5 rounded-lg border transition-colors ${
                 isSaved
-                  ? 'bg-primary/10 border-primary/30 text-primary'
+                  ? 'bg-amber-500/10 border-amber-500/30 text-amber-500'
                   : 'bg-surface border-border text-muted-foreground hover:text-foreground hover:bg-surface-raised'
               }`}
             >
@@ -88,15 +88,15 @@ export function ArticleCard({
         </div>
 
         {/* Title */}
-        <h3 className="text-base sm:text-lg font-bold text-foreground leading-snug group-hover:text-primary transition-colors">
+        <h3 className="text-base sm:text-lg font-bold text-foreground leading-snug transition-colors">
           <a
             href={article.canonicalUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-start gap-1.5 focus:outline-none focus-visible:underline"
+            className="inline-flex items-start gap-1.5 focus:outline-none hover:underline"
           >
             <span>{article.title}</span>
-            <IconExternalLink className="w-4 h-4 shrink-0 mt-1 text-muted-foreground group-hover:text-primary opacity-70 group-hover:opacity-100 transition-opacity" />
+            <IconExternalLink className="w-4 h-4 shrink-0 mt-1 text-muted-foreground group-hover:text-foreground opacity-70 group-hover:opacity-100 transition-opacity" />
           </a>
         </h3>
 
@@ -106,8 +106,8 @@ export function ArticleCard({
         </p>
 
         {/* Why it matches badge */}
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-primary/10 border border-primary/20 text-xs font-medium text-primary">
-          <IconSparkles className="w-3.5 h-3.5 shrink-0" />
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-surface-raised border border-border text-xs font-medium text-foreground/85">
+          <IconSparkles className="w-3.5 h-3.5 shrink-0 text-muted-foreground" />
           <span>{article.matchReason}</span>
         </div>
       </div>
@@ -121,9 +121,9 @@ export function ArticleCard({
         <button
           type="button"
           onClick={() => onCreatePost(article)}
-          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors shadow-sm"
+          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-button text-on-button text-xs font-semibold hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-border transition-all shadow-sm"
         >
-          <IconSparkles className="w-3.5 h-3.5" />
+          <IconSparkles className="w-3.5 h-3.5 text-on-button/80" />
           <span>{t('createPost')}</span>
         </button>
       </div>

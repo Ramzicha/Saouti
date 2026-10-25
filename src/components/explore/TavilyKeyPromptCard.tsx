@@ -57,7 +57,7 @@ export function TavilyKeyPromptCard({
 
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pr-6">
         <div className="flex items-start gap-3.5">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-surface-raised border border-border text-foreground shadow-xs">
             <IconSparkles className="h-5 w-5" />
           </div>
           <div className="space-y-1">
@@ -84,7 +84,7 @@ export function TavilyKeyPromptCard({
             <button
               type="button"
               onClick={onAddKeyClick}
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 transition-colors shadow-sm"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-button text-on-button text-xs font-semibold hover:opacity-90 transition-all shadow-sm"
             >
               <span>{t('addTavilyKey')}</span>
               <IconArrowRight className="w-3.5 h-3.5" />
@@ -92,7 +92,7 @@ export function TavilyKeyPromptCard({
           ) : (
             <Link
               href="/settings/keys"
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 transition-colors shadow-sm"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-button text-on-button text-xs font-semibold hover:opacity-90 transition-all shadow-sm"
             >
               <span>{t('addTavilyKey')}</span>
               <IconArrowRight className="w-3.5 h-3.5" />

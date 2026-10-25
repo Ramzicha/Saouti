@@ -130,7 +130,7 @@ export function SavedArticlesView({
             <h1 className="text-2xl font-bold tracking-tight text-foreground">
               {t('savedTab')}
             </h1>
-            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary/10 text-primary">
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-surface-raised border border-border text-foreground">
               {articlesList.length}
             </span>
           </div>
@@ -152,7 +152,7 @@ export function SavedArticlesView({
             onClick={() => setSelectedTopic('all')}
             className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all ${
               selectedTopic === 'all'
-                ? 'bg-primary text-primary-foreground shadow-sm'
+                ? 'bg-button text-on-button font-semibold shadow-xs'
                 : 'bg-surface border border-border text-foreground hover:bg-surface-raised'
             }`}
           >
@@ -168,7 +168,7 @@ export function SavedArticlesView({
                 onClick={() => setSelectedTopic(topic)}
                 className={`px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition-all ${
                   isSelected
-                    ? 'bg-primary text-primary-foreground shadow-sm'
+                    ? 'bg-button text-on-button font-semibold shadow-xs'
                     : 'bg-surface border border-border text-foreground hover:bg-surface-raised'
                 }`}
               >
@@ -182,7 +182,7 @@ export function SavedArticlesView({
       {/* Saved Articles List */}
       {filteredArticles.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-border bg-surface p-12 text-center space-y-4">
-          <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary mx-auto flex items-center justify-center">
+          <div className="w-12 h-12 rounded-2xl bg-surface-raised border border-border text-muted-foreground mx-auto flex items-center justify-center">
             <IconBookmarkFilled className="w-6 h-6" />
           </div>
           <div className="space-y-1">
@@ -196,7 +196,7 @@ export function SavedArticlesView({
           <div>
             <Link
               href={`/${locale}/explore`}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 transition-colors shadow-sm"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-button text-on-button text-xs font-semibold hover:opacity-90 transition-all shadow-sm"
             >
               <IconSparkles className="w-3.5 h-3.5" />
               <span>Explore News</span>
@@ -217,14 +217,14 @@ export function SavedArticlesView({
             return (
               <div
                 key={article.id}
-                className="group relative flex flex-col justify-between rounded-2xl border border-border bg-surface p-5 sm:p-6 shadow-sm hover:border-primary/40 transition-all space-y-4"
+                className="group relative flex flex-col justify-between rounded-2xl border border-border bg-surface p-5 sm:p-6 shadow-sm hover:border-border/80 transition-all space-y-4"
               >
                 <div className="space-y-3">
                   {/* Top Meta */}
                   <div className="flex items-center justify-between gap-2 text-xs text-muted-foreground">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="inline-flex items-center gap-1 font-semibold text-foreground/90 bg-surface-raised border border-border/70 px-2.5 py-0.5 rounded-full">
-                        <IconWorld className="w-3 h-3 text-primary" />
+                        <IconWorld className="w-3 h-3 text-muted-foreground" />
                         <span>{article.sourceDomain}</span>
                       </span>
 
@@ -253,12 +253,12 @@ export function SavedArticlesView({
                   </div>
 
                   {/* Title */}
-                  <h3 className="text-base sm:text-lg font-bold text-foreground leading-snug group-hover:text-primary transition-colors">
+                  <h3 className="text-base sm:text-lg font-bold text-foreground leading-snug transition-colors">
                     <a
                       href={article.canonicalUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-start gap-1.5 focus:outline-none focus-visible:underline"
+                      className="inline-flex items-start gap-1.5 focus:outline-none hover:underline"
                     >
                       <span>{article.title}</span>
                       <IconExternalLink className="w-4 h-4 shrink-0 mt-1 text-muted-foreground opacity-70 group-hover:opacity-100 transition-opacity" />
@@ -273,13 +273,13 @@ export function SavedArticlesView({
                   {/* Private Note Section */}
                   <div className="pt-2">
                     {isEditing ? (
-                      <div className="space-y-2 rounded-xl border border-primary/30 bg-primary/5 p-3">
+                      <div className="space-y-2 rounded-xl border border-border bg-surface-raised/50 p-3">
                         <div className="flex items-center justify-between">
                           <label
                             htmlFor={`note-${article.id}`}
-                            className="text-xs font-semibold text-primary flex items-center gap-1"
+                            className="text-xs font-semibold text-foreground flex items-center gap-1"
                           >
-                            <IconNote className="w-3.5 h-3.5" />
+                            <IconNote className="w-3.5 h-3.5 text-muted-foreground" />
                             <span>Private Drafting Note</span>
                           </label>
                           <span className="text-[11px] text-muted-foreground">
@@ -293,7 +293,7 @@ export function SavedArticlesView({
                           maxLength={1000}
                           onChange={(e) => setNoteDraft(e.target.value)}
                           placeholder="Jot down key angles, questions, or ideas for your upcoming post..."
-                          className="w-full rounded-lg border border-border bg-background p-2.5 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                          className="w-full rounded-lg border border-border bg-background p-2.5 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-border"
                         />
                         <div className="flex items-center justify-end gap-2">
                           <button
@@ -308,7 +308,7 @@ export function SavedArticlesView({
                             type="button"
                             onClick={() => handleSaveNote(article.id)}
                             disabled={isSavingNote}
-                            className="inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 disabled:opacity-50"
+                            className="inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-button text-on-button text-xs font-semibold hover:opacity-90 disabled:opacity-50"
                           >
                             <IconCheck className="w-3.5 h-3.5" />
                             <span>Save Note</span>
@@ -319,7 +319,7 @@ export function SavedArticlesView({
                       <div className="rounded-xl border border-border bg-surface-raised/60 p-3 flex items-start justify-between gap-3">
                         <div className="space-y-1 min-w-0">
                           <span className="text-[11px] font-semibold text-muted-foreground flex items-center gap-1">
-                            <IconNote className="w-3.5 h-3.5 text-primary" />
+                            <IconNote className="w-3.5 h-3.5 text-muted-foreground" />
                             <span>Your Note</span>
                           </span>
                           <p className="text-xs text-foreground/90 whitespace-pre-wrap leading-relaxed">
@@ -329,7 +329,7 @@ export function SavedArticlesView({
                         <button
                           type="button"
                           onClick={() => handleStartEditNote(article)}
-                          className="text-xs font-semibold text-primary hover:underline shrink-0"
+                          className="text-xs font-semibold text-muted-foreground hover:text-foreground hover:underline shrink-0"
                         >
                           Edit
                         </button>
@@ -338,7 +338,7 @@ export function SavedArticlesView({
                       <button
                         type="button"
                         onClick={() => handleStartEditNote(article)}
-                        className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors"
+                        className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
                       >
                         <IconNote className="w-3.5 h-3.5" />
                         <span>Add private drafting note...</span>
@@ -352,9 +352,9 @@ export function SavedArticlesView({
                   <button
                     type="button"
                     onClick={() => handleCreatePost(article)}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors shadow-sm"
+                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-button text-on-button text-xs font-semibold hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-border transition-all shadow-sm"
                   >
-                    <IconSparkles className="w-3.5 h-3.5" />
+                    <IconSparkles className="w-3.5 h-3.5 text-on-button/80" />
                     <span>{t('createPost')}</span>
                   </button>
                 </div>

@@ -58,10 +58,10 @@ export function ExploreFiltersBar({
                 key={opt.id}
                 type="button"
                 onClick={() => onChange({ ...filters, freshness: opt.id })}
-                className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all ${
+                className={`px-2.5 py-1 rounded-lg text-xs transition-all ${
                   isSelected
-                    ? 'bg-primary text-primary-foreground shadow-sm'
-                    : 'text-muted-foreground hover:text-foreground'
+                    ? 'bg-surface-raised text-foreground font-semibold border border-border/80 shadow-xs'
+                    : 'text-muted-foreground hover:text-foreground border border-transparent'
                 }`}
               >
                 {opt.label}
@@ -83,10 +83,10 @@ export function ExploreFiltersBar({
                 key={opt.label}
                 type="button"
                 onClick={() => onChange({ ...filters, language: opt.id })}
-                className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all ${
+                className={`px-2.5 py-1 rounded-lg text-xs transition-all ${
                   isSelected
-                    ? 'bg-primary text-primary-foreground shadow-sm'
-                    : 'text-muted-foreground hover:text-foreground'
+                    ? 'bg-surface-raised text-foreground font-semibold border border-border/80 shadow-xs'
+                    : 'text-muted-foreground hover:text-foreground border border-transparent'
                 }`}
               >
                 {opt.label}

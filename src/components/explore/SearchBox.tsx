@@ -45,7 +45,7 @@ export function SearchBox({
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder={t('searchPlaceholder')}
-          className="w-full pl-10 pr-9 py-2.5 rounded-xl bg-surface border border-border text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-colors"
+          className="w-full pl-10 pr-9 py-2.5 rounded-xl bg-surface border border-border text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:ring-2 focus:ring-border focus:border-foreground/40 transition-colors"
         />
         {query && (
           <button
@@ -62,7 +62,7 @@ export function SearchBox({
       <button
         type="submit"
         disabled={isLoading || !query.trim()}
-        className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50 transition-colors shrink-0"
+        className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-button text-on-button text-xs font-semibold hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-border disabled:opacity-50 transition-all shrink-0"
       >
         {isLoading ? (
           <IconLoader2 className="w-4 h-4 animate-spin" />
@@ -79,7 +79,7 @@ export function SearchBox({
           className="hidden sm:inline-flex items-center gap-1 px-3 py-2.5 rounded-xl border border-border text-xs font-medium text-foreground bg-surface hover:bg-surface-raised transition-colors shrink-0"
           title="Save this search phrase as a permanent topic"
         >
-          <IconPlus className="w-3.5 h-3.5 text-primary" />
+          <IconPlus className="w-3.5 h-3.5 text-muted-foreground" />
           <span>Save Topic</span>
         </button>
       )}

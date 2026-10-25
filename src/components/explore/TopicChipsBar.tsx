@@ -42,7 +42,7 @@ export function TopicChipsBar({
         <button
           type="button"
           onClick={onAddTopicClick}
-          className="inline-flex items-center gap-1 text-xs text-primary font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-md px-1 py-0.5"
+          className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground font-medium transition-colors rounded-md px-1 py-0.5"
         >
           <IconPlus className="w-3.5 h-3.5" />
           <span>{t('addTopic')}</span>
@@ -56,8 +56,8 @@ export function TopicChipsBar({
           onClick={() => onSelectTopic(null)}
           className={`shrink-0 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium border transition-all ${
             activeTopicId === null
-              ? 'bg-primary text-primary-foreground border-primary shadow-sm'
-              : 'bg-surface text-foreground/80 border-border hover:bg-muted/70 hover:text-foreground'
+              ? 'bg-button text-on-button border-button font-semibold shadow-xs'
+              : 'bg-surface text-foreground/80 border-border hover:bg-surface-raised hover:text-foreground'
           }`}
         >
           <span>All Topics</span>
@@ -71,7 +71,7 @@ export function TopicChipsBar({
               key={topic.id}
               className={`group shrink-0 inline-flex items-center gap-1.5 pl-3 pr-2 py-1.5 rounded-full text-xs font-medium border transition-all ${
                 isActive
-                  ? 'bg-primary text-primary-foreground border-primary shadow-sm'
+                  ? 'bg-button text-on-button border-button font-semibold shadow-xs'
                   : 'bg-surface text-foreground/85 border-border hover:bg-surface-raised hover:text-foreground'
               }`}
             >
@@ -83,7 +83,7 @@ export function TopicChipsBar({
                 {topic.isPinned && (
                   <IconPin
                     className={`w-3 h-3 shrink-0 ${
-                      isActive ? 'text-primary-foreground' : 'text-primary'
+                      isActive ? 'text-on-button' : 'text-muted-foreground'
                     }`}
                   />
                 )}
@@ -100,7 +100,7 @@ export function TopicChipsBar({
                   }}
                   title={topic.isPinned ? t('unpinTopic') : t('pinTopic')}
                   className={`p-0.5 rounded hover:bg-black/10 dark:hover:bg-white/10 ${
-                    isActive ? 'text-primary-foreground' : 'text-muted-foreground'
+                    isActive ? 'text-on-button/80' : 'text-muted-foreground'
                   }`}
                 >
                   {topic.isPinned ? (
@@ -118,7 +118,7 @@ export function TopicChipsBar({
                   }}
                   title={t('editTopic')}
                   className={`p-0.5 rounded hover:bg-black/10 dark:hover:bg-white/10 ${
-                    isActive ? 'text-primary-foreground' : 'text-muted-foreground'
+                    isActive ? 'text-on-button/80' : 'text-muted-foreground'
                   }`}
                 >
                   <IconEdit className="w-3 h-3" />

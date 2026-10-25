@@ -36,8 +36,8 @@ export function QuotaEstimateBadge({
           <span>{t('creditsUsed', { count: 0 })}</span>
         </span>
       ) : (
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-primary/10 border border-primary/20 text-primary font-medium">
-          <IconCoins className="w-3.5 h-3.5" />
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-surface border border-border text-foreground/80 font-medium">
+          <IconCoins className="w-3.5 h-3.5 text-muted-foreground" />
           <span>{t('creditsUsed', { count: creditsCost })}</span>
         </span>
       )}

@@ -116,7 +116,7 @@ export function TopicEditModal({
               placeholder={t('topicPhrasePlaceholder')}
               maxLength={120}
               disabled={submitting}
-              className="w-full px-3.5 py-2.5 rounded-xl bg-surface-raised border border-border text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-colors"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-surface-raised border border-border text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:ring-2 focus:ring-border focus:border-foreground/40 transition-colors"
             />
             <p className="text-[11px] text-muted-foreground">
               Between 2 and 6 words. Only this topic phrase is queried, never your personal profile details.
@@ -129,13 +129,13 @@ export function TopicEditModal({
               type="checkbox"
               checked={isPinned}
               onChange={(e) => setIsPinned(e.target.checked)}
-              className="rounded border-border text-primary focus:ring-primary/40 h-4 w-4"
+              className="rounded border-border text-foreground focus:ring-border h-4 w-4 accent-foreground"
             />
             <label
               htmlFor="topic-pinned-checkbox"
               className="text-xs text-foreground cursor-pointer flex items-center gap-1.5 font-medium"
             >
-              <IconPin className="w-3.5 h-3.5 text-primary" />
+              <IconPin className="w-3.5 h-3.5 text-muted-foreground" />
               <span>{t('pinTopic')}</span>
             </label>
           </div>
@@ -152,7 +152,7 @@ export function TopicEditModal({
             <button
               type="submit"
               disabled={submitting || !phrase.trim()}
-              className="inline-flex items-center justify-center gap-2 px-5 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50 transition-colors"
+              className="inline-flex items-center justify-center gap-2 px-5 py-2 rounded-xl bg-button text-on-button text-xs font-semibold hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-border disabled:opacity-50 transition-all"
             >
               {submitting ? (
                 <>
