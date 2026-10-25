@@ -12,6 +12,8 @@ import { eq, and } from 'drizzle-orm';
 import Link from 'next/link';
 import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 
+import { SettingsNav } from '@/components/settings/SettingsNav';
+
 interface KeysSettingsPageProps {
   params: Promise<{ locale: string }>;
 }
@@ -68,21 +70,10 @@ export default async function KeysSettingsPage({ params }: KeysSettingsPageProps
       }
     : null;
 
-  const isRtl = locale === 'ar';
-  const BackIcon = isRtl ? IconChevronRight : IconChevronLeft;
-
   return (
     <div className="min-h-screen bg-background py-8 px-4 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-4xl space-y-6">
-        <div className="flex items-center gap-2">
-          <Link
-            href={`/${locale}/settings/account`}
-            className="inline-flex items-center gap-1 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <BackIcon className="w-4 h-4" aria-hidden="true" />
-            <span>Settings</span>
-          </Link>
-        </div>
+        <SettingsNav activeTab="keys" />
 
         <KeySetupDialog initialKey={initialKey} />
 

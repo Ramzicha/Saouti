@@ -33,6 +33,8 @@ export const users = pgTable('users', {
     .default(sql`gen_random_uuid()`),
   email: varchar('email', { length: 320 }).notNull().unique(),
   passwordHash: varchar('password_hash', { length: 255 }).notNull(),
+  name: varchar('name', { length: 255 }),
+  avatarUrl: text('avatar_url'),
   emailVerified: boolean('email_verified').default(false).notNull(),
   googleId: varchar('google_id', { length: 255 }).unique(),
   hasDismissedTavilyPrompt: boolean('has_dismissed_tavily_prompt')

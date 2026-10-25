@@ -23,7 +23,7 @@ export async function GET() {
 
     const profile = userProfiles[0] || null;
 
-    // Derive a clean, human-readable display name from email (e.g. "ramzi@saouti.local" -> "Ramzi")
+    // Use user.name if set, or derive from email prefix (e.g. "ramzi@saouti.local" -> "Ramzi")
     const emailPrefix = user.email.split('@')[0];
     const derivedName = emailPrefix
       .split(/[._-]/)
@@ -31,13 +31,15 @@ export async function GET() {
       .map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
       .join(' ') || 'User';
 
+    const displayName = user.name || derivedName;
+
     // Capitalize role from profile if present
     const rawRole = profile?.identityData?.role;
     const formattedRole = rawRole
       ? rawRole.charAt(0).toUpperCase() + rawRole.slice(1)
       : 'Creator';
 
-    const initials = derivedName
+    const initials = displayName
       .split(' ')
       .filter(Boolean)
       .map((w) => w[0])
@@ -49,7 +51,8 @@ export async function GET() {
       user: {
         id: user.id,
         email: user.email,
-        name: derivedName,
+        name: displayName,
+        avatarUrl: user.avatarUrl || null,
         role: formattedRole,
         industry: profile?.identityData?.industry || null,
         initials,

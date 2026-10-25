@@ -6,5 +6,5 @@ interface SettingsPageProps {
 
 export default async function SettingsPage({ params }: SettingsPageProps) {
   const { locale } = await params;
-  redirect(`/${locale}/settings/profile`);
+  redirect(`/${locale}/settings/account`);
 }

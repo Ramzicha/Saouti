@@ -20,6 +20,7 @@ interface CurrentUserData {
   id: string;
   email: string;
   name: string;
+  avatarUrl?: string | null;
   role: string;
   industry?: string | null;
   initials: string;
@@ -264,16 +265,24 @@ export function Sidebar({
       <div className="border-t border-border pt-3 mt-3 shrink-0">
         <div className="flex items-center justify-between rounded-xl p-1.5 transition-colors hover:bg-surface-raised">
           <Link
-            href="/settings/profile"
+            href="/settings/account"
             onClick={() => isMobileOpen && onCloseMobile?.()}
             className="flex min-w-0 flex-1 items-center gap-2.5"
             title="View profile settings"
           >
             {/* Profile Avatar / Picture */}
-            <div className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-tr from-accent via-purple-600 to-indigo-500 font-semibold text-white shadow-xs">
-              <span className="text-xs font-bold tracking-wider">
-                {currentUser?.initials || 'U'}
-              </span>
+            <div className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-surface-raised border border-border font-semibold text-foreground overflow-hidden shadow-xs">
+              {currentUser?.avatarUrl ? (
+                <img
+                  src={currentUser.avatarUrl}
+                  alt={currentUser.name || 'User avatar'}
+                  className="h-full w-full object-cover rounded-full"
+                />
+              ) : (
+                <span className="text-xs font-bold tracking-wider">
+                  {currentUser?.initials || 'U'}
+                </span>
+              )}
               <span
                 className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-surface bg-emerald-500"
                 title="Active"
