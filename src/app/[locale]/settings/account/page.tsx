@@ -1,6 +1,7 @@
 import React from 'react';
 import { validateCurrentSession } from '@/lib/auth/session';
 import { redirect } from 'next/navigation';
+import { SettingsShell } from '@/components/settings/SettingsShell';
 import { SettingsNav } from '@/components/settings/SettingsNav';
 import { UserProfileSettingsView } from '@/components/settings/UserProfileSettingsView';
 
@@ -17,11 +18,11 @@ export default async function AccountSettingsPage({ params }: AccountSettingsPag
   }
 
   return (
-    <div className="min-h-screen bg-background py-8 px-4 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-4xl space-y-6">
+    <SettingsShell title="Settings">
+      <div className="space-y-6">
         <SettingsNav activeTab="profile" />
         <UserProfileSettingsView />
       </div>
-    </div>
+    </SettingsShell>
   );
 }

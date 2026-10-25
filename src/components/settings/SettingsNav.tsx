@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { Link } from '@/i18n/routing';
+import { useLocale } from 'next-intl';
 import {
   IconUser,
   IconSparkles,
@@ -14,12 +14,10 @@ import clsx from 'clsx';
 
 interface SettingsNavProps {
   activeTab: 'profile' | 'voice' | 'keys';
-  locale?: string;
 }
 
 export function SettingsNav({ activeTab }: SettingsNavProps) {
-  const pathname = usePathname();
-  const locale = pathname?.split('/')[1] || 'en';
+  const locale = useLocale();
   const isRtl = locale === 'ar';
   const BackIcon = isRtl ? IconChevronRight : IconChevronLeft;
 
@@ -28,31 +26,31 @@ export function SettingsNav({ activeTab }: SettingsNavProps) {
       id: 'profile',
       label: locale === 'fr' ? 'Profil' : locale === 'ar' ? 'الملف الشخصي' : 'Profile',
       sublabel: locale === 'fr' ? 'Nom, email, mot de passe & photo' : locale === 'ar' ? 'الاسم والبريد وكلمة المرور' : 'Name, email, password & picture',
-      href: `/${locale}/settings/account`,
+      href: '/settings/account',
       icon: IconUser,
     },
     {
       id: 'voice',
       label: locale === 'fr' ? 'Profil Vocal' : locale === 'ar' ? 'نبرة الصوت' : 'Voice Profile',
       sublabel: locale === 'fr' ? 'Style, ton, plateformes & documents' : locale === 'ar' ? 'الأسلوب والنبرة والمستندات' : 'Style, tone, platforms & documents',
-      href: `/${locale}/settings/profile`,
+      href: '/settings/profile',
       icon: IconSparkles,
     },
     {
       id: 'keys',
       label: locale === 'fr' ? 'Clés API' : locale === 'ar' ? 'مفاتيح API' : 'API Keys',
       sublabel: locale === 'fr' ? 'Gemini, Tavily & modèles IA' : locale === 'ar' ? 'مزودات الذكاء الاصطناعي' : 'Gemini, Tavily & AI models',
-      href: `/${locale}/settings/keys`,
+      href: '/settings/keys',
       icon: IconKey,
     },
   ];
 
   return (
-    <div className="space-y-5 pb-2">
+    <div className="space-y-4 pb-2">
       {/* Breadcrumb Header */}
       <div className="flex items-center gap-2">
         <Link
-          href={`/${locale}`}
+          href="/"
           className="inline-flex items-center gap-1 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors"
         >
           <BackIcon className="w-4 h-4" aria-hidden="true" />

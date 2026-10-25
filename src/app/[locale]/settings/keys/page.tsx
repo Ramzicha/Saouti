@@ -12,6 +12,7 @@ import { eq, and } from 'drizzle-orm';
 import Link from 'next/link';
 import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 
+import { SettingsShell } from '@/components/settings/SettingsShell';
 import { SettingsNav } from '@/components/settings/SettingsNav';
 
 interface KeysSettingsPageProps {
@@ -71,8 +72,8 @@ export default async function KeysSettingsPage({ params }: KeysSettingsPageProps
     : null;
 
   return (
-    <div className="min-h-screen bg-background py-8 px-4 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-4xl space-y-6">
+    <SettingsShell title="API Keys">
+      <div className="space-y-6">
         <SettingsNav activeTab="keys" />
 
         <KeySetupDialog initialKey={initialKey} />
@@ -85,6 +86,6 @@ export default async function KeysSettingsPage({ params }: KeysSettingsPageProps
 
         <KeyCreationGuide />
       </div>
-    </div>
+    </SettingsShell>
   );
 }
