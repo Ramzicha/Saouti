@@ -112,6 +112,16 @@ export default function WorkspacePage() {
       setPreloadedBrief(preload.brief);
       setAttachedArticle(preload.sourceArticle);
       setCurrentChatId(null);
+      if (!preload.sourceArticle.content) {
+        fetch(`/api/explore/article-content?url=${encodeURIComponent(preload.sourceArticle.url)}`)
+          .then((res) => (res.ok ? res.json() : null))
+          .then((data) => {
+            if (data?.content) {
+              setAttachedArticle((prev) => (prev ? { ...prev, content: data.content } : null));
+            }
+          })
+          .catch(() => {});
+      }
     }
 
     // Load full runs history from database
@@ -797,6 +807,10 @@ export default function WorkspacePage() {
                   <span className="font-semibold text-primary shrink-0">Source Article:</span>
                   <span className="truncate text-foreground font-medium">{attachedArticle.title}</span>
                   <span className="text-muted-foreground shrink-0">({attachedArticle.sourceDomain})</span>
+                  <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 shrink-0">
+                    <IconCheck size={10} />
+                    Full Content
+                  </span>
                 </div>
                 <button
                   type="button"

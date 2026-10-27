@@ -10,7 +10,7 @@ export interface RunGenerationJobData {
   targetLanguage?: string | undefined;
   arabicDialect?: string | undefined;
   skipCritic?: boolean | undefined;
-  sourceArticle?: { title: string; sourceDomain: string; url: string; summary: string } | undefined;
+  sourceArticle?: { title: string; sourceDomain: string; url: string; summary: string; content?: string | undefined } | undefined;
 }
 
 /**

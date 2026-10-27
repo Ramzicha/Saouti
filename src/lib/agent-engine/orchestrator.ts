@@ -14,6 +14,7 @@ import type { AgentEngineEvent } from './events';
 import type { GeneratedPost } from '@/../specs/006-agent-engine/contracts/agent-engine.contract';
 import type { CriticScores, ArtDirectorOutput } from './schemas';
 import { autoSaveRunPosts } from '@/lib/library/post-service';
+import { extractArticleContent } from '@/lib/explore/article-extractor';
 
 export interface RunOrchestratorOptions {
   runId: string;
@@ -23,7 +24,7 @@ export interface RunOrchestratorOptions {
   targetLanguage?: string | undefined;
   arabicDialect?: string | undefined;
   skipCritic?: boolean | undefined;
-  sourceArticle?: { title: string; sourceDomain: string; url: string; summary: string } | undefined;
+  sourceArticle?: { title: string; sourceDomain: string; url: string; summary: string; content?: string | undefined } | undefined;
   onEvent?: ((event: AgentEngineEvent) => void | Promise<void>) | undefined;
   signal?: AbortSignal | undefined;
 }
@@ -129,6 +130,29 @@ export async function executeAgentPipeline(options: RunOrchestratorOptions): Pro
 
     await checkAbort();
 
+    // Ensure full content of source article is extracted and available for the Writer & Critic
+    let activeSourceArticle = sourceArticle;
+    if (sourceArticle) {
+      activeSourceArticle = { ...sourceArticle };
+      if (!activeSourceArticle.content || activeSourceArticle.content.trim().length < 100) {
+        try {
+          const extracted = await extractArticleContent(sourceArticle.url, userId);
+          if (extracted) {
+            activeSourceArticle.content = extracted;
+            logger.info(
+              { runId, url: sourceArticle.url, length: extracted.length },
+              'Enriched source article with full content for agents',
+            );
+          }
+        } catch (err) {
+          logger.warn(
+            { err, url: sourceArticle.url },
+            'Failed to extract full article content, falling back to summary',
+          );
+        }
+      }
+    }
+
     // 3. STEP 1: WRITER DRAFTING
     const writerStepStart = Date.now();
     const writerStepId =
@@ -157,7 +181,7 @@ export async function executeAgentPipeline(options: RunOrchestratorOptions): Pro
       platforms: selectedPlatforms,
       subreddits,
       brief: topicBrief,
-      sourceArticle,
+      sourceArticle: activeSourceArticle,
       signal,
     });
 
@@ -230,7 +254,7 @@ export async function executeAgentPipeline(options: RunOrchestratorOptions): Pro
         platforms: selectedPlatforms,
         brief: topicBrief,
         draftedPosts: activePosts,
-        sourceArticle,
+        sourceArticle: activeSourceArticle,
         signal,
       });
 
@@ -314,7 +338,7 @@ export async function executeAgentPipeline(options: RunOrchestratorOptions): Pro
             problem: i.problem,
             suggestedFix: i.suggestedFix,
           })),
-          sourceArticle,
+          sourceArticle: activeSourceArticle,
           signal,
         });
 

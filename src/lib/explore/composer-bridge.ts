@@ -8,6 +8,7 @@ export interface ComposerArticlePayload {
   sourceDomain: string;
   url: string;
   summary: string;
+  content?: string | undefined;
 }
 
 export interface ComposerPreloadState {
@@ -54,6 +55,7 @@ export function createComposerPreloadState(
       sourceDomain: article.sourceDomain,
       url: article.url,
       summary: article.summary,
+      content: article.content,
     },
     selectedPlatforms: platforms,
   };

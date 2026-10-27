@@ -18,7 +18,7 @@ export interface PromptBuilderInput {
   draftedPosts?: Array<{ platform: string; language: string; text: string; hashtags?: string[] | undefined }> | undefined;
   revisionNotes?: Array<{ exactPhrase: string; problem: string; suggestedFix: string }> | undefined;
   approvedFacts?: Array<{ factText: string; sourceCitation?: string | undefined; factCategory?: string | undefined }> | undefined;
-  sourceArticle?: { title: string; sourceDomain: string; url: string; summary: string } | undefined;
+  sourceArticle?: { title: string; sourceDomain: string; url: string; summary: string; content?: string | undefined } | undefined;
   promptVersion?: string | undefined;
 }
 
@@ -156,13 +156,21 @@ export function assembleAgentPrompt(input: PromptBuilderInput): string {
 
   // Layer 5b: Source Article (if present)
   if (input.sourceArticle) {
-    const formattedArticle = [
+    const lines = [
       `Title: ${input.sourceArticle.title}`,
       `Source: ${input.sourceArticle.sourceDomain}`,
       `URL: ${input.sourceArticle.url}`,
       `Summary: ${input.sourceArticle.summary}`,
-    ].join('\n');
-    layers.push(formatXmlBlock('source_article', formattedArticle));
+    ];
+    if (input.sourceArticle.content && input.sourceArticle.content.trim().length > 0) {
+      lines.push(
+        `Full Article Content:`,
+        `"""`,
+        input.sourceArticle.content.trim(),
+        `"""`,
+      );
+    }
+    layers.push(formatXmlBlock('source_article', lines.join('\n')));
   }
 
   // Layer 6: Brief and situational context

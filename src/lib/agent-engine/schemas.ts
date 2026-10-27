@@ -31,6 +31,7 @@ export const SourceArticleContextSchema = z.object({
   sourceDomain: z.string().min(1),
   url: z.string(),
   summary: z.string().min(1),
+  content: z.string().optional(),
 });
 
 export type SourceArticleContext = z.infer<typeof SourceArticleContextSchema>;

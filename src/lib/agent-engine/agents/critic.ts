@@ -19,7 +19,7 @@ export interface CriticStepInput {
   brief: string;
   draftedPosts: Array<{ platform: string; language: string; text: string; hashtags?: string[] | undefined }>;
   approvedFacts?: Array<{ factText: string; sourceCitation?: string | undefined; factCategory?: string | undefined }> | undefined;
-  sourceArticle?: { title: string; sourceDomain: string; url: string; summary: string } | undefined;
+  sourceArticle?: { title: string; sourceDomain: string; url: string; summary: string; content?: string | undefined } | undefined;
   promptVersion?: string | undefined;
   signal?: AbortSignal | undefined;
 }

@@ -107,10 +107,28 @@ export function SavedArticlesView({
         sourceDomain: article.sourceDomain,
         url: article.canonicalUrl,
         summary: article.summary,
+        content: article.content || undefined,
       },
       locale,
     );
     setComposerPreload(preload);
+    // Asynchronously prefetch content if not already stored
+    if (!article.content) {
+      fetch(`/api/explore/article-content?url=${encodeURIComponent(article.canonicalUrl)}`)
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (data?.content) {
+            setComposerPreload({
+              ...preload,
+              sourceArticle: {
+                ...preload.sourceArticle,
+                content: data.content,
+              },
+            });
+          }
+        })
+        .catch(() => {});
+    }
     router.push(`/${locale}?fromExplore=true`);
   };
 

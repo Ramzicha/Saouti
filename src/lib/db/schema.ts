@@ -867,6 +867,7 @@ export const articles = pgTable(
     summary: varchar('summary', { length: 500 }).notNull(),
     matchReason: varchar('match_reason', { length: 255 }).notNull(),
     topicPhrase: varchar('topic_phrase', { length: 120 }).notNull(),
+    content: text('content'),
     cachedUntil: timestamp('cached_until', { withTimezone: true }).notNull(),
     createdAt: timestamp('created_at', { withTimezone: true })
       .defaultNow()
@@ -900,6 +901,7 @@ export const savedArticles = pgTable(
     sourceDomain: varchar('source_domain', { length: 150 }).notNull(),
     publishedAt: timestamp('published_at', { withTimezone: true }),
     summary: varchar('summary', { length: 500 }).notNull(),
+    content: text('content'),
     topicPhrase: varchar('topic_phrase', { length: 120 }),
     privateNote: text('private_note'),
     createdAt: timestamp('created_at', { withTimezone: true })
