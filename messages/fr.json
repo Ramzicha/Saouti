@@ -507,6 +507,7 @@
     "statusSearching": "Recherche des articles récents sur le Web...",
     "statusParsing": "Lecture des flux d'actualités sélectionnés...",
     "statusSummarizing": "Le chercheur résume et sélectionne les articles...",
-    "statusReady": "Articles prêts."
+    "statusReady": "Articles prêts.",
+    "searchingFeedDesc": "Exploration des sources fiables et sélection des actualités les plus pertinentes pour votre voix..."
   }
 }

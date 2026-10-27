@@ -507,6 +507,7 @@
     "statusSearching": "Searching the web for recent articles...",
     "statusParsing": "Reading curated news feeds...",
     "statusSummarizing": "Researcher summarizing and matching articles...",
-    "statusReady": "Articles ready."
+    "statusReady": "Articles ready.",
+    "searchingFeedDesc": "Exploring trusted sources and analyzing the latest industry updates for you..."
   }
 }

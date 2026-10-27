@@ -114,13 +114,21 @@ export function ExploreFeedView({
 
   // Executes live search (or auto-search on topic, filter, or query change)
   const executeSearch = useCallback(
-    async (topicPhrase?: string, currentFilters = filters) => {
+    async (
+      topicPhrase?: string,
+      currentFilters = filters,
+      clearArticles = false,
+    ) => {
       const phraseToSearch =
         topicPhrase !== undefined
           ? topicPhrase
           : searchQuery.trim() || activeTopic?.phrase || topicsList[0]?.phrase;
 
       if (!phraseToSearch) return;
+
+      if (clearArticles) {
+        setArticlesList([]);
+      }
 
       // 1. Instantly check local cache first so user doesn't wait if articles are already available
       setLoadingFeed(true);
@@ -196,7 +204,7 @@ export function ExploreFeedView({
 
   const handleRefresh = () => {
     const phrase = searchQuery.trim() || activeTopic?.phrase || topicsList[0]?.phrase;
-    executeSearch(phrase, filters);
+    executeSearch(phrase, filters, false);
   };
 
   // Auto-search on initial mount if feed is empty and topics are ready
@@ -435,7 +443,7 @@ export function ExploreFeedView({
           setActiveTopic(topic);
           setSearchQuery('');
           const phrase = topic ? topic.phrase : (topicsList[0]?.phrase || '');
-          executeSearch(phrase, filters);
+          executeSearch(phrase, filters, true);
         }}
         onAddTopicClick={() => {
           setEditingTopic(null);
@@ -456,7 +464,7 @@ export function ExploreFeedView({
           setSearchQuery(query);
           if (query) {
             setActiveTopic(null);
-            executeSearch(query, filters);
+            executeSearch(query, filters, true);
           }
         }}
         onAddToTopics={(phrase) => {
@@ -474,36 +482,65 @@ export function ExploreFeedView({
         onChange={(newFilters) => {
           setFilters(newFilters);
           const phrase = searchQuery.trim() || activeTopic?.phrase || topicsList[0]?.phrase;
-          executeSearch(phrase, newFilters);
+          executeSearch(phrase, newFilters, true);
         }}
       />
 
-      {/* Feed Cards Grid */}
-      {loadingFeed ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
-          {[1, 2, 3, 4].map((n) => (
-            <div
-              key={n}
-              className="h-56 rounded-2xl border border-border/60 bg-surface/40 animate-pulse p-6 space-y-4"
-            >
-              <div className="h-4 w-28 bg-muted rounded" />
-              <div className="h-6 w-3/4 bg-muted rounded" />
-              <div className="h-12 w-full bg-muted rounded" />
-            </div>
-          ))}
+      {/* Feed Cards Grid / States */}
+      {(refreshing || loadingFeed || Boolean(agentStatus && agentStatus !== t('statusReady'))) &&
+      articlesList.length === 0 ? (
+        /* Active Searching State in the middle of the page */
+        <div className="text-center py-20 px-6 rounded-2xl border border-border bg-surface/50 space-y-4 animate-in fade-in">
+          <div className="inline-flex p-4 rounded-full bg-surface-raised border border-border text-foreground shadow-sm">
+            <IconLoader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+          </div>
+          <div className="space-y-1.5 max-w-md mx-auto">
+            <h3 className="text-base font-semibold text-foreground">
+              {agentStatus || t('statusSearching')}
+            </h3>
+            <p className="text-xs text-muted-foreground">
+              {t('searchingFeedDesc')}
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 max-w-4xl mx-auto opacity-60">
+            {[1, 2, 3, 4].map((n) => (
+              <div
+                key={n}
+                className="h-48 rounded-2xl border border-border/60 bg-surface/40 animate-pulse p-6 space-y-4 text-left"
+              >
+                <div className="h-4 w-28 bg-muted rounded" />
+                <div className="h-6 w-3/4 bg-muted rounded" />
+                <div className="h-12 w-full bg-muted rounded" />
+              </div>
+            ))}
+          </div>
         </div>
       ) : articlesList.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 pt-2">
-          {articlesList.map((article) => (
-            <ArticleCard
-              key={article.id}
-              article={article}
-              isSaved={savedUrls.has(article.canonicalUrl)}
-              onCreatePost={handleCreatePost}
-              onToggleSave={handleToggleSave}
-              onDismiss={handleDismissArticle}
-            />
-          ))}
+        <div className="space-y-3">
+          {(refreshing || loadingFeed || Boolean(agentStatus && agentStatus !== t('statusReady'))) && (
+            <div className="flex items-center justify-center gap-2.5 py-2.5 px-4 rounded-xl bg-surface-raised border border-border text-foreground text-xs font-medium animate-pulse">
+              <IconLoader2 className="w-4 h-4 animate-spin text-muted-foreground shrink-0" />
+              <span>{agentStatus || t('statusSearching')}</span>
+            </div>
+          )}
+          <div
+            className={`grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 pt-2 ${
+              refreshing || loadingFeed || Boolean(agentStatus && agentStatus !== t('statusReady'))
+                ? 'opacity-70 transition-opacity'
+                : ''
+            }`}
+          >
+            {articlesList.map((article) => (
+              <ArticleCard
+                key={article.id}
+                article={article}
+                isSaved={savedUrls.has(article.canonicalUrl)}
+                onCreatePost={handleCreatePost}
+                onToggleSave={handleToggleSave}
+                onDismiss={handleDismissArticle}
+              />
+            ))}
+          </div>
         </div>
       ) : (
         /* Empty State */
