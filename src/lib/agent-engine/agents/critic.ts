@@ -20,6 +20,7 @@ export interface CriticStepInput {
   draftedPosts: Array<{ platform: string; language: string; text: string; hashtags?: string[] | undefined }>;
   approvedFacts?: Array<{ factText: string; sourceCitation?: string | undefined; factCategory?: string | undefined }> | undefined;
   sourceArticle?: { title: string; sourceDomain: string; url: string; summary: string; content?: string | undefined } | undefined;
+  conversationHistory?: Array<{ topicBrief: string; posts?: Array<{ platform: string; text: string }> }> | undefined;
   promptVersion?: string | undefined;
   signal?: AbortSignal | undefined;
 }
@@ -50,6 +51,7 @@ export async function executeCriticStep(input: CriticStepInput): Promise<Evaluat
     draftedPosts: input.draftedPosts,
     approvedFacts: input.approvedFacts,
     sourceArticle: input.sourceArticle,
+    conversationHistory: input.conversationHistory,
     promptVersion: input.promptVersion || CRITIC_PROMPT_VERSION,
   });
 

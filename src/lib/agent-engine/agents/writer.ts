@@ -16,6 +16,7 @@ export interface WriterStepInput {
   revisionNotes?: Array<{ exactPhrase: string; problem: string; suggestedFix: string }> | undefined;
   approvedFacts?: Array<{ factText: string; sourceCitation?: string | undefined; factCategory?: string | undefined }> | undefined;
   sourceArticle?: { title: string; sourceDomain: string; url: string; summary: string; content?: string | undefined } | undefined;
+  conversationHistory?: Array<{ topicBrief: string; posts?: Array<{ platform: string; text: string }> }> | undefined;
   promptVersion?: string | undefined;
   signal?: AbortSignal | undefined;
 }
@@ -37,6 +38,7 @@ export async function executeWriterStep(input: WriterStepInput): Promise<WriterO
     revisionNotes: input.revisionNotes,
     approvedFacts: input.approvedFacts,
     sourceArticle: input.sourceArticle,
+    conversationHistory: input.conversationHistory,
     promptVersion: input.promptVersion || WRITER_PROMPT_VERSION,
   });
 

@@ -19,6 +19,7 @@ export interface PromptBuilderInput {
   revisionNotes?: Array<{ exactPhrase: string; problem: string; suggestedFix: string }> | undefined;
   approvedFacts?: Array<{ factText: string; sourceCitation?: string | undefined; factCategory?: string | undefined }> | undefined;
   sourceArticle?: { title: string; sourceDomain: string; url: string; summary: string; content?: string | undefined } | undefined;
+  conversationHistory?: Array<{ topicBrief: string; posts?: Array<{ platform: string; text: string }> }> | undefined;
   promptVersion?: string | undefined;
 }
 
@@ -171,6 +172,22 @@ export function assembleAgentPrompt(input: PromptBuilderInput): string {
       );
     }
     layers.push(formatXmlBlock('source_article', lines.join('\n')));
+  }
+
+  // Layer 5c: Conversation History (multi-turn context in same chat session)
+  if (input.conversationHistory && input.conversationHistory.length > 0) {
+    const formattedHistory = input.conversationHistory
+      .map((turn, idx) => {
+        const postsText = (turn.posts || [])
+          .map((p) => `[Platform: ${p.platform.toUpperCase()}]\n${p.text}`)
+          .join('\n\n');
+        return `Turn ${idx + 1}:\nUser Request: "${turn.topicBrief}"\n${
+          postsText ? `Generated Output:\n${postsText}` : ''
+        }`;
+      })
+      .join('\n\n---\n\n');
+
+    layers.push(formatXmlBlock('conversation_history', formattedHistory));
   }
 
   // Layer 6: Brief and situational context

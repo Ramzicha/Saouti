@@ -448,6 +448,13 @@ export const runs = pgTable(
         }> | undefined;
       }>
     >(),
+    sourceArticle: jsonb('source_article').$type<{
+      title: string;
+      sourceDomain: string;
+      url: string;
+      summary: string;
+      content?: string | undefined;
+    }>(),
     totalDurationMs: integer('total_duration_ms').default(0),
     errorMessage: text('error_message'),
     createdAt: timestamp('created_at', { withTimezone: true })

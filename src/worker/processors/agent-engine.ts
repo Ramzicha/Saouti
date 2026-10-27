@@ -5,6 +5,7 @@ import { logger } from '@/lib/logger';
 export interface RunGenerationJobData {
   runId: string;
   userId: string;
+  chatId?: string | undefined;
   topicBrief: string;
   selectedPlatforms: Array<'linkedin' | 'instagram' | 'reddit' | 'x' | 'facebook'>;
   targetLanguage?: string | undefined;
@@ -17,13 +18,14 @@ export interface RunGenerationJobData {
  * BullMQ Job Processor for multi-agent post generation runs.
  */
 export async function processRunGenerationJob(job: Job<RunGenerationJobData>): Promise<void> {
-  const { runId, userId, topicBrief, selectedPlatforms, targetLanguage, arabicDialect, skipCritic, sourceArticle } = job.data;
+  const { runId, userId, chatId, topicBrief, selectedPlatforms, targetLanguage, arabicDialect, skipCritic, sourceArticle } = job.data;
 
-  logger.info({ runId, userId, jobName: job.name }, 'Processing post generation run in worker');
+  logger.info({ runId, userId, chatId, jobName: job.name }, 'Processing post generation run in worker');
 
   await executeAgentPipeline({
     runId,
     userId,
+    chatId,
     topicBrief,
     selectedPlatforms,
     targetLanguage,

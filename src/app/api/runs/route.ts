@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { validateCurrentSession } from '@/lib/auth/session';
 import { db } from '@/lib/db/client';
 import { runs } from '@/lib/db/schema';
-import { eq, asc, and } from 'drizzle-orm';
+import { eq, asc, desc, and } from 'drizzle-orm';
 import { saoutiQueue } from '@/lib/queue/client';
 import { CreateRunRequestSchema } from '@/lib/agent-engine/schemas';
 import { logger } from '@/lib/logger';
@@ -52,6 +52,25 @@ export async function POST(req: NextRequest) {
 
     const sessionChatId = incomingChatId || crypto.randomUUID();
 
+    // Inherit sourceArticle from earlier runs in the same chat session if not re-sent
+    let effectiveSourceArticle = sourceArticle;
+    if (!effectiveSourceArticle && incomingChatId) {
+      try {
+        const [prevWithArticle] = await db
+          .select({ sourceArticle: runs.sourceArticle })
+          .from(runs)
+          .where(and(eq(runs.userId, user.id), eq(runs.chatId, incomingChatId)))
+          .orderBy(desc(runs.createdAt))
+          .limit(1);
+
+        if (prevWithArticle?.sourceArticle) {
+          effectiveSourceArticle = prevWithArticle.sourceArticle;
+        }
+      } catch {
+        // Non-blocking
+      }
+    }
+
     // 1. Persist pending run record
     const [insertedRun] = await db
       .insert(runs)
@@ -63,6 +82,7 @@ export async function POST(req: NextRequest) {
         targetLanguage,
         arabicDialect,
         skipCritic,
+        sourceArticle: effectiveSourceArticle,
         status: 'pending',
       })
       .returning({ id: runs.id });
@@ -80,12 +100,13 @@ export async function POST(req: NextRequest) {
         {
           runId,
           userId: user.id,
+          chatId: sessionChatId,
           topicBrief,
           selectedPlatforms,
           targetLanguage,
           arabicDialect,
           skipCritic,
-          sourceArticle,
+          sourceArticle: effectiveSourceArticle,
         },
         {
           jobId: `run-${runId}`,

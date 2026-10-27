@@ -1,6 +1,6 @@
 import { db } from '@/lib/db/client';
-import { profiles, voiceSamples, platformPreferences } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
+import { profiles, voiceSamples, platformPreferences, runs } from '@/lib/db/schema';
+import { eq, and, ne, asc } from 'drizzle-orm';
 import { logger } from '@/lib/logger';
 import { QuotaExhaustedError } from '@/lib/ai/errors';
 import { aiConfig } from '@/lib/ai/config';
@@ -19,6 +19,7 @@ import { extractArticleContent } from '@/lib/explore/article-extractor';
 export interface RunOrchestratorOptions {
   runId: string;
   userId: string;
+  chatId?: string | undefined;
   topicBrief: string;
   selectedPlatforms: Array<'linkedin' | 'instagram' | 'reddit' | 'x' | 'facebook'>;
   targetLanguage?: string | undefined;
@@ -47,6 +48,7 @@ export async function executeAgentPipeline(options: RunOrchestratorOptions): Pro
   const {
     runId,
     userId,
+    chatId,
     topicBrief,
     selectedPlatforms,
     targetLanguage = 'en',
@@ -130,23 +132,64 @@ export async function executeAgentPipeline(options: RunOrchestratorOptions): Pro
 
     await checkAbort();
 
-    // Ensure full content of source article is extracted and available for the Writer & Critic
+    // 1. Resolve conversation history and inherit source article if in the same chat session
+    let conversationHistory: Array<{
+      topicBrief: string;
+      posts?: Array<{ platform: string; text: string }>;
+    }> = [];
+
     let activeSourceArticle = sourceArticle;
-    if (sourceArticle) {
-      activeSourceArticle = { ...sourceArticle };
+
+    if (chatId) {
+      try {
+        const prevRuns = await db
+          .select({
+            id: runs.id,
+            topicBrief: runs.topicBrief,
+            posts: runs.posts,
+            sourceArticle: runs.sourceArticle,
+          })
+          .from(runs)
+          .where(and(eq(runs.userId, userId), eq(runs.chatId, chatId), ne(runs.id, runId)))
+          .orderBy(asc(runs.createdAt));
+
+        if (prevRuns.length > 0) {
+          conversationHistory = prevRuns.map((r) => ({
+            topicBrief: r.topicBrief,
+            posts: (r.posts || []).map((p) => ({ platform: p.platform, text: p.text })),
+          }));
+
+          if (!activeSourceArticle) {
+            const runWithArticle = prevRuns.find((r) => r.sourceArticle);
+            if (runWithArticle?.sourceArticle) {
+              activeSourceArticle = { ...runWithArticle.sourceArticle };
+              logger.info(
+                { runId, chatId, articleTitle: activeSourceArticle.title },
+                'Inherited source article from earlier turn in chat',
+              );
+            }
+          }
+        }
+      } catch (historyErr) {
+        logger.warn({ historyErr, runId, chatId }, 'Failed to load conversation history for chat');
+      }
+    }
+
+    // 2. Ensure full content of source article is extracted and available for the Writer & Critic
+    if (activeSourceArticle) {
       if (!activeSourceArticle.content || activeSourceArticle.content.trim().length < 100) {
         try {
-          const extracted = await extractArticleContent(sourceArticle.url, userId);
+          const extracted = await extractArticleContent(activeSourceArticle.url, userId);
           if (extracted) {
             activeSourceArticle.content = extracted;
             logger.info(
-              { runId, url: sourceArticle.url, length: extracted.length },
+              { runId, url: activeSourceArticle.url, length: extracted.length },
               'Enriched source article with full content for agents',
             );
           }
         } catch (err) {
           logger.warn(
-            { err, url: sourceArticle.url },
+            { err, url: activeSourceArticle.url },
             'Failed to extract full article content, falling back to summary',
           );
         }
@@ -182,6 +225,7 @@ export async function executeAgentPipeline(options: RunOrchestratorOptions): Pro
       subreddits,
       brief: topicBrief,
       sourceArticle: activeSourceArticle,
+      conversationHistory: conversationHistory.length > 0 ? conversationHistory : undefined,
       signal,
     });
 
@@ -255,6 +299,7 @@ export async function executeAgentPipeline(options: RunOrchestratorOptions): Pro
         brief: topicBrief,
         draftedPosts: activePosts,
         sourceArticle: activeSourceArticle,
+        conversationHistory: conversationHistory.length > 0 ? conversationHistory : undefined,
         signal,
       });
 
@@ -339,6 +384,7 @@ export async function executeAgentPipeline(options: RunOrchestratorOptions): Pro
             suggestedFix: i.suggestedFix,
           })),
           sourceArticle: activeSourceArticle,
+          conversationHistory: conversationHistory.length > 0 ? conversationHistory : undefined,
           signal,
         });
 
