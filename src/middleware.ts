@@ -11,6 +11,7 @@ const PUBLIC_PATHS = [
   '/verify-email',
   '/forgot-password',
   '/reset-password',
+  '/landing',
 ];
 
 export function middleware(request: NextRequest) {
@@ -19,6 +20,11 @@ export function middleware(request: NextRequest) {
   request.headers.set('x-request-id', requestId);
 
   const pathname = request.nextUrl.pathname;
+
+  // Direct access for static html files
+  if (pathname.endsWith('.html')) {
+    return NextResponse.next();
+  }
 
   // Strip locale prefix to test route pattern (e.g. /en/login -> /login)
   const pathnameWithoutLocale = pathname.replace(/^\/(?:en|fr|ar)/, '') || '/';
@@ -51,6 +57,6 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|html)$).*)',
   ],
 };

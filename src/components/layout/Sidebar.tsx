@@ -37,6 +37,8 @@ export interface SidebarRunItem {
   chatId?: string;
   title?: string;
   topicBrief: string;
+  sourceArticle?: { title: string; sourceDomain?: string } | null;
+  posts?: Array<{ text?: string | null }> | null;
   status?: string;
   createdAt?: string;
 }
@@ -114,7 +116,7 @@ export function Sidebar({
       if (!map.has(cId)) {
         map.set(cId, {
           id: cId,
-          title: r.title || formatChatTitle(r.topicBrief),
+          title: formatChatTitle(r.topicBrief, r.sourceArticle, r.posts),
           createdAt: r.createdAt,
         });
       }
@@ -283,10 +285,6 @@ export function Sidebar({
                   {currentUser?.initials || 'U'}
                 </span>
               )}
-              <span
-                className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-surface bg-emerald-500"
-                title="Active"
-              />
             </div>
 
             {/* Name & Role / Details */}

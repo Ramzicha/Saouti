@@ -34,6 +34,7 @@ export interface RunThreadItem {
   chatId?: string;
   title?: string;
   topicBrief: string;
+  sourceArticle?: { title: string; sourceDomain?: string } | null;
   selectedPlatforms: string[];
   targetLanguage: string;
   arabicDialect?: string | undefined;
@@ -51,6 +52,16 @@ export interface ChatSession {
   runs: RunThreadItem[];
 }
 
+interface CurrentUserData {
+  id: string;
+  email: string;
+  name: string;
+  avatarUrl?: string | null;
+  role: string;
+  industry?: string | null;
+  initials: string;
+}
+
 export default function WorkspacePage() {
   const t = useTranslations('App');
   const tKeys = useTranslations('Keys');
@@ -60,6 +71,7 @@ export default function WorkspacePage() {
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [hasKey, setHasKey] = useState<boolean | null>(null);
   const [hasProfile, setHasProfile] = useState<boolean | null>(null);
+  const [currentUser, setCurrentUser] = useState<CurrentUserData | null>(null);
 
   const [runsList, setRunsList] = useState<RunThreadItem[]>([]);
   const [currentChatId, setCurrentChatId] = useState<string | null>(null);
@@ -105,6 +117,15 @@ export default function WorkspacePage() {
         }
       })
       .catch(() => setHasProfile(false));
+
+    fetch('/api/auth/me')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.user) {
+          setCurrentUser(data.user);
+        }
+      })
+      .catch(() => {});
 
     // Check for preloaded article from Explore
     const preload = consumeComposerPreload();
@@ -257,7 +278,7 @@ export default function WorkspacePage() {
       : [selectedPlatforms];
 
     const tempId = `temp-${Date.now()}`;
-    const autoTitle = formatChatTitle(topicBrief);
+    const autoTitle = formatChatTitle(topicBrief, attachedArticle);
     const sessionChatId = currentChatId || `chat-${Date.now()}`;
 
     if (!currentChatId) {
@@ -269,6 +290,7 @@ export default function WorkspacePage() {
       chatId: sessionChatId,
       title: autoTitle,
       topicBrief,
+      sourceArticle: attachedArticle,
       selectedPlatforms: platformsArray,
       targetLanguage: locale,
       status: 'pending',
@@ -451,7 +473,7 @@ export default function WorkspacePage() {
       } else {
         map.set(cId, {
           id: cId,
-          title: run.title || formatChatTitle(run.topicBrief),
+          title: formatChatTitle(run.topicBrief, run.sourceArticle, run.posts),
           createdAt: run.createdAt,
           runs: [run],
         });
@@ -567,8 +589,20 @@ export default function WorkspacePage() {
                             {run.topicBrief}
                           </p>
                         </div>
-                        <div className="w-8 h-8 rounded-full bg-primary/20 text-primary flex items-center justify-center shrink-0 mt-0.5">
-                          <IconUser size={16} />
+                        <div className="w-8 h-8 rounded-full overflow-hidden bg-surface-raised border border-border flex items-center justify-center shrink-0 mt-0.5 shadow-xs font-semibold text-foreground">
+                          {currentUser?.avatarUrl ? (
+                            <img
+                              src={currentUser.avatarUrl}
+                              alt={currentUser.name || 'User'}
+                              className="w-full h-full object-cover rounded-full"
+                            />
+                          ) : currentUser?.initials ? (
+                            <span className="text-xs font-bold tracking-wider">
+                              {currentUser.initials}
+                            </span>
+                          ) : (
+                            <IconUser size={16} className="text-muted" />
+                          )}
                         </div>
                       </div>
 

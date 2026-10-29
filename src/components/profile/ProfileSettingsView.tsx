@@ -352,6 +352,21 @@ export function ProfileSettingsView() {
           <h1 className="text-2xl font-bold tracking-tight text-foreground">{t('title')}</h1>
           <p className="text-sm text-muted-foreground mt-1 max-w-2xl">{t('subtitle')}</p>
         </div>
+        {activeTab === 'editor' && (
+          <button
+            type="submit"
+            form="voice-profile-form"
+            disabled={saving}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-button text-on-button font-semibold text-sm shadow-sm hover:opacity-90 active:scale-[0.99] transition-all disabled:opacity-50 shrink-0"
+          >
+            {saving ? (
+              <IconLoader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <IconDeviceFloppy className="w-4 h-4" />
+            )}
+            <span>{saving ? tOnboarding('saving') : t('saveChanges')}</span>
+          </button>
+        )}
       </div>
 
       {/* Completeness Meter */}
@@ -438,7 +453,7 @@ export function ProfileSettingsView() {
       {/* Tab 1: Profile Editor */}
       {activeTab === 'editor' && (
         <FormProvider {...methods}>
-          <form onSubmit={handleSubmit(onSave)} className="space-y-8">
+          <form id="voice-profile-form" onSubmit={handleSubmit(onSave)} className="space-y-8">
             <div className="space-y-8 bg-card/60 p-6 sm:p-8 rounded-2xl border border-border/60">
               <Step1Identity />
               <div className="border-t border-border/40 pt-6">
@@ -459,22 +474,26 @@ export function ProfileSettingsView() {
               <div className="border-t border-border/40 pt-6">
                 <Step7Platforms />
               </div>
-            </div>
 
-            {/* Actions Bar */}
-            <div className="sticky bottom-4 z-10 p-4 bg-background/90 backdrop-blur-md rounded-xl border border-border/80 shadow-lg flex justify-end items-center gap-3">
-              <button
-                type="submit"
-                disabled={saving}
-                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-button text-on-button font-semibold text-sm shadow-sm hover:opacity-90 transition-all disabled:opacity-50"
-              >
-                {saving ? (
-                  <IconLoader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <IconDeviceFloppy className="w-4 h-4" />
-                )}
-                <span>{saving ? tOnboarding('saving') : t('saveChanges')}</span>
-              </button>
+              {/* Form Action Footer */}
+              <div className="border-t border-border/50 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <IconCheck className="w-4 h-4 text-emerald-500 shrink-0" />
+                  <span>Changes update your voice profile and can be restored in Revision History.</span>
+                </div>
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-button text-on-button font-semibold text-sm shadow-sm hover:opacity-90 active:scale-[0.99] transition-all disabled:opacity-50"
+                >
+                  {saving ? (
+                    <IconLoader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <IconDeviceFloppy className="w-4 h-4" />
+                  )}
+                  <span>{saving ? tOnboarding('saving') : t('saveChanges')}</span>
+                </button>
+              </div>
             </div>
           </form>
         </FormProvider>

@@ -43,10 +43,11 @@ export async function GET(_req: NextRequest, context: RouteContext) {
     return NextResponse.json({
       id: runRecord.id,
       chatId: runRecord.chatId || runRecord.id,
-      title: formatChatTitle(runRecord.topicBrief),
+      title: formatChatTitle(runRecord.topicBrief, runRecord.sourceArticle, runRecord.posts),
       status: runRecord.status,
 
       topicBrief: runRecord.topicBrief,
+      sourceArticle: runRecord.sourceArticle,
       selectedPlatforms: runRecord.selectedPlatforms,
       targetLanguage: runRecord.targetLanguage,
       skipCritic: runRecord.skipCritic,

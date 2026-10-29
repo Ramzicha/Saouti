@@ -126,7 +126,7 @@ export async function POST(req: NextRequest) {
       {
         runId,
         chatId: sessionChatId,
-        title: formatChatTitle(topicBrief),
+        title: formatChatTitle(topicBrief, sourceArticle),
         status: 'pending',
         eventsUrl: `/api/runs/${runId}/events`,
       },
@@ -175,8 +175,9 @@ export async function GET(req: NextRequest) {
       runs: userRuns.map((r) => ({
         id: r.id,
         chatId: r.chatId || r.id,
-        title: formatChatTitle(r.topicBrief),
+        title: formatChatTitle(r.topicBrief, r.sourceArticle, r.posts),
         topicBrief: r.topicBrief,
+        sourceArticle: r.sourceArticle,
         selectedPlatforms: r.selectedPlatforms,
         targetLanguage: r.targetLanguage,
         arabicDialect: r.arabicDialect,
