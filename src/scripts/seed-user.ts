@@ -4,8 +4,8 @@ import { hashPassword } from '../lib/auth/password';
 import { eq } from 'drizzle-orm';
 
 async function seed() {
-  const email = 'ramzi@saouti.local';
-  const plainPassword = 'password1234';
+  const email = process.env.SEED_USER_EMAIL || 'admin@saouti.local';
+  const plainPassword = process.env.SEED_USER_PASSWORD || 'password1234';
 
   console.log(`Checking if user ${email} exists...`);
   const existing = await db.select().from(users).where(eq(users.email, email)).limit(1);
