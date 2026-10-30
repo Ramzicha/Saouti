@@ -2,7 +2,11 @@ const fs = require('fs');
 const path = require('path');
 
 // 1. Read base64 logos
-const logos = JSON.parse(fs.readFileSync(path.join(__dirname, '../scratch/logos-base64.json'), 'utf8'));
+const logos = {
+  dark: fs.readFileSync(path.join(__dirname, '../public/logo-dark.png')).toString('base64'),
+  light: fs.readFileSync(path.join(__dirname, '../public/logo-light.png')).toString('base64'),
+  favicon: fs.readFileSync(path.join(__dirname, '../public/favicon.png')).toString('base64'),
+};
 
 // 2. Generate Animated, Vibrant, Video-Only Landing Page
 const htmlContent = `<!DOCTYPE html>

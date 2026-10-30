@@ -238,6 +238,14 @@ pnpm build
 
 ---
 
+## Author & Project Owner
+
+**Ramzi Chalal**
+- GitHub: [@Ramzicha](https://github.com/Ramzicha)
+- Project: [Saouti](https://github.com/Ramzicha/Saouti)
+
+---
+
 ## License
 
 Private & Proprietary. All rights reserved.
